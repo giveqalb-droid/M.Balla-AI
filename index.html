@@ -28,13 +28,11 @@
         .chalk-text-yellow {
             color: #fef08a;
             text-shadow: 0 0 2px rgba(254, 240, 138, 0.6), 1px 1px 2px rgba(0,0,0,0.8);
-            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
         }
 
         .chalk-text-blue {
             color: #93c5fd;
             text-shadow: 0 0 2px rgba(147, 197, 253, 0.6), 1px 1px 2px rgba(0,0,0,0.8);
-            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
         }
 
         .chalk-border-yellow {
@@ -52,7 +50,6 @@
             border-top: 3px solid #f3d1a4;
         }
 
-        /* Animations Modal */
         .modal-enter {
             animation: fadeIn 0.2s ease-out forwards;
         }
@@ -85,22 +82,20 @@
                     <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i>
                     <label for="levelSelect" class="text-xs font-semibold text-amber-200">Niveau :</label>
                     <select id="levelSelect" onchange="changeLevel(this.value)" class="bg-amber-900 border border-amber-700 text-amber-100 text-xs rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-amber-400 focus:outline-none font-medium">
-                        <option value="CI">CI (Cours Initiatique)</option>
-                        <option value="CP">CP (Cours Préparatoire)</option>
-                        <option value="CE2" selected>CE2 (Cours Élémentaire 2e)</option>
-                        <option value="CM2">CM2 (Cours Moyen 2e)</option>
+                        <option value="CI">CI</option>
+                        <option value="CP">CP</option>
+                        <option value="CE2" selected>CE2</option>
+                        <option value="CM2">CM2</option>
                     </select>
                 </div>
-
                 <div class="h-4 w-px bg-amber-800"></div>
-
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
                     <label for="subjectSelect" class="text-xs font-semibold text-amber-200">Discipline :</label>
                     <select id="subjectSelect" onchange="changeSubject(this.value)" class="bg-amber-900 border border-amber-700 text-amber-100 text-xs rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-amber-400 focus:outline-none font-medium">
-                        <option value="Maths" selected>Mathématiques / Numération</option>
-                        <option value="Francais">Français / Lecture & Écriture</option>
-                        <option value="Sciences">Éveil / ESVS (Sciences)</option>
+                        <option value="Maths" selected>Mathématiques</option>
+                        <option value="Francais">Français</option>
+                        <option value="Sciences">Sciences</option>
                     </select>
                 </div>
             </div>
@@ -109,334 +104,157 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-        <!-- KPIs / Indicateurs Clés -->
+        <!-- KPIs -->
         <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div id="kpi-total" onclick="filterByStatus('ALL')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-amber-500 transition-all transform hover:-translate-y-0.5">
+            <div id="kpi-total" onclick="filterByStatus('ALL')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-amber-500 transition-all">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Effectif Total</p>
                         <h3 id="kpi-total-val" class="text-2xl font-bold text-slate-800 mt-1">12 Élèves</h3>
                     </div>
-                    <div class="p-2.5 bg-amber-100 text-amber-800 rounded-lg">
-                        <i data-lucide="users" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
-                    <span>Classe CE2-A</span>
-                    <span id="kpi-total-active" class="font-bold text-amber-700 underline">Afficher Tous</span>
+                    <div class="p-2.5 bg-amber-100 text-amber-800 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
                 </div>
             </div>
-
-            <div id="kpi-soutien" onclick="filterByStatus('SOUTIEN')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-rose-500 transition-all transform hover:-translate-y-0.5">
+            <div id="kpi-soutien" onclick="filterByStatus('SOUTIEN')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-rose-500 transition-all">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Soutien Prioritaire</p>
                         <h3 id="kpi-soutien-val" class="text-2xl font-bold text-rose-700 mt-1">4 Élèves</h3>
                     </div>
-                    <div class="p-2.5 bg-rose-100 text-rose-700 rounded-lg">
-                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="mt-2 flex items-center justify-between text-xs text-rose-600 font-medium">
-                    <span>Moyenne &lt; 10/20</span>
-                    <span class="text-xs underline">Filtrer ces élèves</span>
+                    <div class="p-2.5 bg-rose-100 text-rose-700 rounded-lg"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
                 </div>
             </div>
-
-            <div id="kpi-maitrise" onclick="filterByStatus('MAITRISE')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-emerald-500 transition-all transform hover:-translate-y-0.5">
+            <div id="kpi-maitrise" onclick="filterByStatus('MAITRISE')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-emerald-500 transition-all">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Maîtrise Acquise</p>
                         <h3 id="kpi-maitrise-val" class="text-2xl font-bold text-emerald-700 mt-1">8 Élèves</h3>
                     </div>
-                    <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-lg">
-                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="mt-2 flex items-center justify-between text-xs text-emerald-600 font-medium">
-                    <span>Moyenne ≥ 10/20</span>
-                    <span class="text-xs underline">Filtrer ces élèves</span>
+                    <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-lg"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
                 </div>
             </div>
         </section>
 
-        <!-- Filtre actif -->
-        <div id="active-filter-banner" class="hidden bg-amber-100 border border-amber-300 rounded-lg px-4 py-2 flex items-center justify-between text-amber-900 text-sm">
-            <div class="flex items-center gap-2">
-                <i data-lucide="filter" class="w-4 h-4 text-amber-700"></i>
-                <span>Filtre actif : <strong id="filter-label-text">Soutien Prioritaire</strong></span>
-            </div>
-            <button onclick="filterByStatus('ALL')" class="text-xs font-bold text-amber-800 hover:text-amber-950 underline flex items-center gap-1">
-                <i data-lucide="x" class="w-3.5 h-3.5"></i> Réinitialiser le filtre
-            </button>
-        </div>
-
         <section class="space-y-6">
             
-            <!-- Tableau Noir Réaliste -->
+            <!-- Tableau Noir -->
             <div class="chalkboard-bg rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden">
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
                         <span class="font-chalk text-amber-200 text-sm sm:text-base">TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY</span>
                     </div>
-                    <div class="text-xs font-mono bg-black/40 px-3 py-1 rounded-full border border-white/10 text-amber-100">
-                        Date: Vendredi 16 Octobre
-                    </div>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
                     <div class="chalk-border-yellow p-4 rounded-xl bg-yellow-950/10 relative">
-                        <div class="absolute -top-3 left-4 bg-amber-950 border border-yellow-500/50 px-2 py-0.5 rounded text-xs chalk-text-yellow font-bold uppercase tracking-wider">
-                            <i data-lucide="calculator" class="w-3.5 h-3.5 inline mr-1"></i> Zone Chiffres & Calcul (Jaune)
+                        <div class="absolute -top-3 left-4 bg-amber-950 border border-yellow-500/50 px-2 py-0.5 rounded text-xs chalk-text-yellow font-bold uppercase">
+                            Zone Chiffres & Calcul (Jaune)
                         </div>
-                        <div class="mt-2 space-y-2">
-                            <p class="chalk-text-yellow text-sm">Opérations du Jour : 4 850 + 2 730 = 7 580</p>
-                            <p class="chalk-text-yellow text-xs opacity-90">• Propriétés des nombres : Unités, Dizaines, Centaines, Milliers</p>
-                            <p class="chalk-text-yellow text-xs opacity-80">• Problème : Calcul du prix total du mil au marché de Sandaga.</p>
-                        </div>
+                        <p class="chalk-text-yellow text-sm mt-2">Opérations : 4 850 + 2 730 = 7 580</p>
                     </div>
-
                     <div class="chalk-border-blue p-4 rounded-xl bg-blue-950/10 relative">
-                        <div class="absolute -top-3 left-4 bg-slate-950 border border-blue-400/50 px-2 py-0.5 rounded text-xs chalk-text-blue font-bold uppercase tracking-wider">
-                            <i data-lucide="pen-tool" class="w-3.5 h-3.5 inline mr-1"></i> Zone Lettres & Grammaire (Bleue)
+                        <div class="absolute -top-3 left-4 bg-slate-950 border border-blue-400/50 px-2 py-0.5 rounded text-xs chalk-text-blue font-bold uppercase">
+                            Zone Lettres & Grammaire (Bleue)
                         </div>
-                        <div class="mt-2 space-y-2">
-                            <p class="chalk-text-blue text-sm">Vocabulaire : La solidarité au village (Ntekki)</p>
-                            <p class="chalk-text-blue text-xs opacity-90">• Grammaire : Le sujet et le verbe dans la phrase complexe.</p>
-                            <p class="chalk-text-blue text-xs opacity-80">• Règle du jour : "mb", "mp" prennent toujours M devant b et p.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-6 pt-3 border-t border-white/10 flex justify-center">
-                    <div class="bg-amber-900/90 border-2 border-amber-700 px-6 py-2 rounded-xl shadow-lg flex items-center gap-3 text-amber-100 text-xs sm:text-sm">
-                        <i data-lucide="user-check" class="w-5 h-5 text-amber-300"></i>
-                        <span><strong>Bureau du Maître Balla</strong> (Estrade d'observation directe)</span>
+                        <p class="chalk-text-blue text-sm mt-2">Règle : "mb", "mp" devant b et p.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Moteur de Permutation Prédictive -->
-            <div class="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-900 p-4 rounded-xl shadow-md text-amber-50 flex flex-wrap justify-between items-center gap-4 border border-amber-700">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-amber-700/80 rounded-lg border border-amber-600 text-amber-200">
-                        <i data-lucide="sparkles" class="w-6 h-6 animate-pulse"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-bold text-base sm:text-lg">Moteur Pédagogique Intelligent & Prédictif</h2>
-                        <p class="text-xs text-amber-200">Analyse croisée des profils attentionnels, synergies comportementales et besoins du CEB.</p>
-                    </div>
+            <!-- Bouton Permutation -->
+            <div class="bg-gradient-to-r from-amber-900 to-amber-800 p-4 rounded-xl text-amber-50 flex justify-between items-center gap-4">
+                <div>
+                    <h2 class="font-bold text-base">Moteur Pédagogique Intelligent</h2>
+                    <p class="text-xs text-amber-200">Simulation et optimisation de placement des élèves.</p>
                 </div>
-                <button onclick="openPredictiveModal()" class="w-full sm:w-auto px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 text-sm border border-amber-200">
-                    <i data-lucide="git-compare" class="w-4 h-4"></i>
-                    Proposer une Permutation Intelligente
+                <button onclick="openPredictiveModal()" class="px-5 py-2.5 bg-amber-400 text-amber-950 font-bold rounded-lg text-sm shadow">
+                    Proposer une Permutation
                 </button>
             </div>
 
-            <!-- Grille de Classe - Tables-Bancs Réalistes -->
+            <!-- Grille de Classe (Tables-Bancs) -->
             <div class="bg-slate-200/70 p-4 sm:p-6 rounded-2xl border-2 border-slate-300 shadow-inner">
                 <div class="mb-4 flex justify-between items-center">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <i data-lucide="layout-grid" class="w-5 h-5 text-amber-700"></i>
-                        Disposition des Tables-Bancs (Style Salle de Classe Réelle)
+                        Disposition des Tables-Bancs en Bois (Salle de Classe)
                     </h3>
-                    <span class="text-xs text-slate-500 italic">Cliquez sur un élève pour consulter son dossier pédagogique complet</span>
+                    <span class="text-xs text-slate-500 italic">Cliquez sur un élève pour voir son dossier</span>
                 </div>
-
                 <div id="classroomGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Généré dynamiquement -->
+                    <!-- Généré par JS -->
                 </div>
             </div>
 
-            <!-- SECTION : Discussion avec l'IA Monsieur Balla -->
+            <!-- Section Chat avec Maître Balla (IA) -->
             <div class="bg-white rounded-2xl shadow-md border-2 border-amber-200 p-4 sm:p-6 space-y-4">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-900 text-amber-200 flex items-center justify-center shadow-md">
-                            <i data-lucide="bot" class="w-6 h-6"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-900 text-base">Échange Pédagogique avec Maître Balla (IA)</h3>
-                            <p class="text-xs text-slate-500">Posez vos questions sur la différenciation, les exercices ou la gestion de classe</p>
-                        </div>
+                <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-900 text-amber-200 flex items-center justify-center">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
                     </div>
-                    <span class="text-xs px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-semibold flex items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> En ligne
-                    </span>
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">Échange Pédagogique avec Maître Balla (IA)</h3>
+                        <p class="text-xs text-slate-500">Posez vos questions à l'assistant intelligent</p>
+                    </div>
                 </div>
 
-                <!-- Boîte de Discussion -->
-                <div id="chatContainer" class="h-64 overflow-y-auto space-y-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm">
+                <div id="chatContainer" class="h-56 overflow-y-auto space-y-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm">
                     <div class="flex items-start gap-2.5">
                         <div class="w-7 h-7 rounded-full bg-amber-900 text-amber-200 flex items-center justify-center text-xs font-bold shrink-0">MB</div>
-                        <div class="bg-amber-100 text-amber-950 p-3 rounded-xl max-w-[80%] border border-amber-200 text-xs sm:text-sm">
-                            Bonjour Madame Lô. Je suis Maître Balla. Comment puis-je vous assister dans la préparation de votre séance ou l'analyse des difficultés d'Abdou Laye et d'Ousmane aujourd'hui ?
+                        <div class="bg-amber-100 text-amber-950 p-3 rounded-xl max-w-[80%] text-xs sm:text-sm">
+                            Bonjour Madame Lô. Comment puis-je vous aider dans la gestion de votre classe aujourd'hui ?
                         </div>
                     </div>
                 </div>
 
-                <!-- Suggestions rapides -->
-                <div class="flex flex-wrap gap-2 text-xs">
-                    <button onclick="sendQuickPrompt('Comment aider Abdou Laye en numération ?')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3 py-1.5 rounded-lg transition-all">
-                        💡 Aider Abdou en numération
-                    </button>
-                    <button onclick="sendQuickPrompt('Propose un exercice de différenciation pour le groupe soutien')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3 py-1.5 rounded-lg transition-all">
-                        📝 Exercice de différenciation
-                    </button>
-                    <button onclick="sendQuickPrompt('Donne-moi une astuce pour canaliser l agitation au fond de la classe')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3 py-1.5 rounded-lg transition-all">
-                        🎯 Gérer l'agitation
-                    </button>
-                </div>
-
-                <!-- Barre de Saisie -->
-                <div class="flex gap-2 pt-2">
-                    <input type="text" id="chatInput" placeholder="Posez une question à Maître Balla (ex: Crée un exercice de calcul...)" class="flex-grow bg-slate-100 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-                    <button onclick="sendChatMessage()" class="bg-amber-900 hover:bg-amber-800 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-1.5 text-sm shadow">
-                        <i data-lucide="send" class="w-4 h-4"></i> Envoyer
-                    </button>
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" placeholder="Posez une question à Maître Balla..." class="flex-grow bg-slate-100 border border-slate-300 rounded-xl px-4 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
+                    <button onclick="sendChatMessage()" class="bg-amber-900 text-white px-5 py-2 rounded-xl font-bold text-sm shadow">Envoyer</button>
                 </div>
             </div>
 
         </section>
     </main>
 
-    <!-- Modal Permutation -->
-    <div id="predictiveModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden modal-enter border border-slate-200">
-            <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center border-b border-slate-800">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
-                        <i data-lucide="brain-circuit" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg text-white">Analyse Prédictive de Permutation Intelligente</h3>
-                        <p class="text-xs text-slate-400">Simulation pédagogique basée sur le modèle d'apprentissage CEB</p>
-                    </div>
-                </div>
-                <button onclick="closePredictiveModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+    <!-- Modal Dossier Élève -->
+    <div id="studentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modalStudentName" class="font-bold text-lg text-slate-900">Nom de l'Élève</h3>
+                <button onclick="closeStudentModal()" class="text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-6 h-6"></i></button>
             </div>
-
-            <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
-                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl flex items-start gap-3">
-                    <i data-lucide="arrow-left-right" class="w-6 h-6 text-amber-700 shrink-0 mt-0.5"></i>
-                    <div>
-                        <h4 class="font-bold text-amber-950 text-base">Permutation Suggérée : Table-Banc 1 (Abdou L. ⇄ Moussa D.)</h4>
-                        <p class="text-xs text-amber-800 mt-0.5">
-                            Échange de position entre <strong>Abdou Laye (Rang 3 - Fond)</strong> et <strong>Moussa Diallo (Rang 1 - Face Tableau)</strong>.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <h5 class="font-bold text-slate-900 flex items-center gap-2 text-sm uppercase tracking-wide">
-                        <i data-lucide="file-text" class="w-4 h-4 text-amber-600"></i>
-                        1. Raisons Détaillées de la Permutation
-                    </h5>
-                    <ul class="space-y-2 pl-2">
-                        <li class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-start gap-2.5">
-                            <i data-lucide="eye" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
-                            <div>
-                                <strong>Proximité Visuelle (Zone Chiffres) :</strong> Abdou Laye présente des difficultés légères de vision. Le placer au Rang 1 directement en face de la <em>Zone Chiffres (Jaune)</em> réduira sa fatigue cognitive en numération.
-                            </div>
-                        </li>
-                        <li class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-start gap-2.5">
-                            <i data-lucide="users-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
-                            <div>
-                                <strong>Synergie de Pairage :</strong> Placer Abdou à côté d'Aïssatou Sow (élève méthodique) crée un binôme d'entraide spontanée.
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="bg-slate-100 px-6 py-4 flex flex-wrap justify-end gap-3 border-t border-slate-200">
-                <button onclick="closePredictiveModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg text-sm">
-                    Conserver le Plan Actuel
-                </button>
-                <button onclick="applyPermutation()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-md transition-all text-sm flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i>
-                    Valider & Appliquer le Nouveau Plan
-                </button>
+            <p id="modalBallaAdvice" class="text-xs text-slate-700 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></p>
+            <div class="flex justify-end">
+                <button onclick="closeStudentModal()" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">Fermer</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Dossier Élève -->
-    <div id="studentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden modal-enter border border-slate-200">
-            <div id="studentModalHeader" class="bg-amber-900 text-white px-6 py-4 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div id="modalStudentAvatar" class="w-12 h-12 rounded-full bg-amber-700 border-2 border-amber-300 flex items-center justify-center text-lg font-bold">--</div>
-                    <div>
-                        <h3 id="modalStudentName" class="font-bold text-xl text-white">Nom de l'Élève</h3>
-                        <p id="modalStudentDesk" class="text-xs text-amber-200">Table-Banc N°-- • CE2</p>
-                    </div>
-                </div>
-                <button onclick="closeStudentModal()" class="text-amber-200 hover:text-white p-1 rounded-lg">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-
-            <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-xs text-slate-500 block">Moyenne Générale</span>
-                        <span id="modalStudentAvg" class="text-lg font-bold text-slate-800">12/20</span>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-xs text-slate-500 block">Statut CEB</span>
-                        <span id="modalStudentStatus" class="text-xs font-bold px-2 py-1 rounded inline-block mt-0.5">Soutien</span>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-xs text-slate-500 block">Style d'Apprentissage</span>
-                        <span id="modalStudentStyle" class="text-xs font-semibold text-slate-700 block mt-1">Visuel</span>
-                    </div>
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
-                        <span class="text-xs text-slate-500 block">Comportement</span>
-                        <span id="modalStudentBehavior" class="text-xs font-semibold text-slate-700 block mt-1">Calme</span>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 class="font-bold text-slate-800 text-sm mb-2">Évolution des Notes Hebdomadaires (6 Semaines)</h4>
-                    <div id="svgGraphContainer" class="w-full h-44 bg-slate-50 rounded-lg p-2 border border-slate-100 flex items-center justify-center"></div>
-                </div>
-
-                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl space-y-2">
-                    <h5 class="font-bold text-emerald-950 text-xs uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="user-check" class="w-4 h-4 text-emerald-700"></i> Conseil Pédagogique de Maître Balla
-                    </h5>
-                    <p id="modalBallaAdvice" class="text-xs text-emerald-900 leading-relaxed font-medium">Conseil personnalisé...</p>
-                </div>
-            </div>
-
-            <div class="bg-slate-100 px-6 py-3 flex justify-end border-t border-slate-200">
-                <button onclick="closeStudentModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-lg text-sm">Fermer</button>
+    <!-- Modal Permutation -->
+    <div id="predictiveModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 space-y-4">
+            <h3 class="font-bold text-lg text-slate-900">Simulation de Permutation</h3>
+            <p class="text-xs text-slate-600">Échange suggéré entre Abdou Laye et Moussa Diallo pour optimiser l'attention en classe.</p>
+            <div class="flex justify-end gap-2">
+                <button onclick="closePredictiveModal()" class="px-4 py-2 bg-slate-200 rounded-lg text-xs">Annuler</button>
+                <button onclick="applyPermutation()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">Appliquer</button>
             </div>
         </div>
     </div>
 
     <script>
         let studentsData = [
-            { id: 1, name: "Abdou Laye", desk: 1, position: "A", row: 3, avg: 8.5, status: "SOUTIEN", style: "Visuel", behavior: "Réservé, timide", notes: [7, 8, 7.5, 9, 8, 8.5], cognitive: ["Mémoire de travail à renforcer"], personality: ["Très respectueux"], ballaAdvice: "À déplacer au Rang 1 près de la Zone Chiffres." },
-            { id: 2, name: "Aïssatou Sow", desk: 1, position: "B", row: 1, avg: 16.5, status: "MAITRISE", style: "Auditif", behavior: "Leader", notes: [15, 16, 16, 17, 16, 16.5], cognitive: ["Excellente vitesse de traitement"], personality: ["Moteur de la classe"], ballaAdvice: "Nommer tutrice du binôme." },
-            { id: 3, name: "Moussa Diallo", desk: 2, position: "A", row: 1, avg: 14.0, status: "MAITRISE", style: "Kinesthésique", behavior: "Dynamique", notes: [12, 13, 14, 13.5, 15, 14], cognitive: ["Haute créativité"], personality: ["Populaire"], ballaAdvice: "Permuter vers le Rang 3 pour stimuler son autonomie." },
-            { id: 4, name: "Fatou Bintou Ndiaye", desk: 2, position: "B", row: 1, avg: 9.0, status: "SOUTIEN", style: "Visuel", behavior: "Calme", notes: [8, 8.5, 9, 8.5, 9.5, 9.0], cognitive: ["Traitement lent"], personality: ["Appliquée"], ballaAdvice: "Garder au premier rang face au tableau." },
-            { id: 5, name: "Cheikh Tidiane Sy", desk: 3, position: "A", row: 2, avg: 11.5, status: "MAITRISE", style: "Auditif", behavior: "Bavard", notes: [10, 11, 12, 11, 11.5, 11.5], cognitive: ["Bonne compréhension orale"], personality: ["Sociable"], ballaAdvice: "Canaliser par questionnement oral." },
-            { id: 6, name: "Mariama Ba", desk: 3, position: "B", row: 2, avg: 15.0, status: "MAITRISE", style: "Visuel", behavior: "Autonome", notes: [14, 15, 14.5, 15, 15.5, 15], cognitive: ["Analyse rigoureuse"], personality: ["Discipline"], ballaAdvice: "Donner des exercices d'approfondissement." }
+            { id: 1, name: "Abdou Laye", desk: 1, position: "A", row: 3, avg: 8.5, status: "SOUTIEN", behavior: "Réservé, timide", ballaAdvice: "À déplacer au Rang 1 près de la Zone Chiffres." },
+            { id: 2, name: "Aïssatou Sow", desk: 1, position: "B", row: 1, avg: 16.5, status: "MAITRISE", behavior: "Leader bienveillante", ballaAdvice: "Nommer tutrice de binôme." },
+            { id: 3, name: "Moussa Diallo", desk: 2, position: "A", row: 1, avg: 14.0, status: "MAITRISE", behavior: "Dynamique / Distrait", ballaAdvice: "Permuter vers le Rang 3 pour stimuler son autonomie." },
+            { id: 4, name: "Fatou Bintou Ndiaye", desk: 2, position: "B", row: 1, avg: 9.0, status: "SOUTIEN", behavior: "Calme, attentive", ballaAdvice: "Garder au premier rang face au tableau." },
+            { id: 5, name: "Cheikh Tidiane Sy", desk: 3, position: "A", row: 2, avg: 11.5, status: "MAITRISE", behavior: "Bavard occasionnel", ballaAdvice: "Canaliser par questionnement oral." },
+            { id: 6, name: "Mariama Ba", desk: 3, position: "B", row: 2, avg: 15.0, status: "MAITRISE", behavior: "Autonome & Calme", ballaAdvice: "Donner des exercices d'approfondissement." }
         ];
-
-        let currentFilter = 'ALL';
-        let currentSubject = 'Maths';
-        let currentLevel = 'CE2';
 
         window.onload = function() {
             lucide.createIcons();
             renderClassroom();
-            updateKPIs();
         };
 
         function renderClassroom() {
@@ -449,13 +267,9 @@
                 deskEl.className = 'desk-wood p-4 rounded-xl border-2 border-amber-950 shadow-xl text-white space-y-3 relative';
                 
                 deskEl.innerHTML = `
-                    <div class="flex justify-between items-center text-xs font-bold text-amber-950 bg-amber-100/80 px-2.5 py-1 rounded-lg border border-amber-900/30">
-                        <span class="flex items-center gap-1">
-                            <i data-lucide="box" class="w-3.5 h-3.5 text-amber-800"></i> Table-Banc Traditionnel ${i}
-                        </span>
-                        <span class="text-[10px] font-extrabold uppercase bg-amber-900 text-amber-100 px-2 py-0.5 rounded">
-                            Rang ${deskStudents[0] ? deskStudents[0].row : 1}
-                        </span>
+                    <div class="flex justify-between items-center text-xs font-bold text-amber-950 bg-amber-100/90 px-2.5 py-1 rounded-lg border">
+                        <span>Table-Banc ${i}</span>
+                        <span class="bg-amber-900 text-amber-100 px-2 py-0.5 rounded text-[10px]">Rang ${deskStudents[0] ? deskStudents[0].row : 1}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2.5"></div>
                 `;
@@ -463,111 +277,40 @@
                 const seatsGrid = deskEl.querySelector('.grid');
 
                 deskStudents.forEach(student => {
-                    const isFilteredOut = currentFilter !== 'ALL' && student.status !== currentFilter;
-                    const opacityClass = isFilteredOut ? 'opacity-30 grayscale' : 'opacity-100';
                     const statusBadgeClass = student.status === 'SOUTIEN' ? 'bg-rose-600 text-white' : 'bg-emerald-700 text-white';
-
                     const seatEl = document.createElement('div');
-                    seatEl.className = `bg-amber-950/80 border border-amber-600/60 hover:border-amber-300 p-2.5 rounded-lg cursor-pointer transition-all transform hover:-translate-y-0.5 ${opacityClass}`;
+                    seatEl.className = 'bg-amber-950/80 border border-amber-600/60 p-2.5 rounded-lg cursor-pointer hover:border-amber-300 transition-all';
                     seatEl.onclick = () => openStudentModal(student.id);
 
                     seatEl.innerHTML = `
                         <div class="flex items-center justify-between gap-1 mb-1">
                             <span class="text-[9px] uppercase font-bold text-amber-300">${student.position === 'A' ? 'Gauche' : 'Droite'}</span>
-                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${statusBadgeClass}">
-                                ${student.avg}/20
-                            </span>
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${statusBadgeClass}">${student.avg}/20</span>
                         </div>
                         <p class="font-bold text-xs text-white truncate">${student.name}</p>
                         <p class="text-[10px] text-amber-200/80 truncate mt-0.5">${student.behavior}</p>
                     `;
                     seatsGrid.appendChild(seatEl);
                 });
-
                 grid.appendChild(deskEl);
             }
             lucide.createIcons();
         }
 
-        function updateKPIs() {
-            const total = studentsData.length;
-            const soutien = studentsData.filter(s => s.status === 'SOUTIEN').length;
-            const maitrise = studentsData.filter(s => s.status === 'MAITRISE').length;
-
-            document.getElementById('kpi-total-val').innerText = `${total} Élèves`;
-            document.getElementById('kpi-soutien-val').innerText = `${soutien} Élèves`;
-            document.getElementById('kpi-maitrise-val').innerText = `${maitrise} Élèves`;
+        function openStudentModal(id) {
+            const student = studentsData.find(s => s.id === id);
+            if (!student) return;
+            document.getElementById('modalStudentName').innerText = student.name;
+            document.getElementById('modalBallaAdvice').innerText = "Conseil de Maître Balla : " + student.ballaAdvice;
+            document.getElementById('studentModal').classList.remove('hidden');
         }
-
-        function filterByStatus(status) {
-            currentFilter = status;
-            const banner = document.getElementById('active-filter-banner');
-            const labelText = document.getElementById('filter-label-text');
-
-            if (status === 'ALL') {
-                banner.classList.add('hidden');
-            } else {
-                banner.classList.remove('hidden');
-                labelText.innerText = status === 'SOUTIEN' ? 'Soutien Prioritaire (< 10/20)' : 'Maîtrise Acquise (≥ 10/20)';
-            }
-            renderClassroom();
-        }
-
-        function changeLevel(level) { currentLevel = level; renderClassroom(); }
-        function changeSubject(subject) { currentSubject = subject; renderClassroom(); }
+        function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); }
 
         function openPredictiveModal() { document.getElementById('predictiveModal').classList.remove('hidden'); }
         function closePredictiveModal() { document.getElementById('predictiveModal').classList.add('hidden'); }
-
         function applyPermutation() {
-            const abdou = studentsData.find(s => s.id === 1);
-            const moussa = studentsData.find(s => s.id === 3);
-            if (abdou && moussa) {
-                let tempDesk = abdou.desk, tempPos = abdou.position, tempRow = abdou.row;
-                abdou.desk = moussa.desk; abdou.position = moussa.position; abdou.row = moussa.row;
-                moussa.desk = tempDesk; moussa.position = tempPos; moussa.row = tempRow;
-                abdou.avg = 12.0; abdou.status = "MAITRISE";
-                renderClassroom(); updateKPIs(); closePredictiveModal();
-                alert("Permutation appliquée avec succès !");
-            }
-        }
-
-        function openStudentModal(studentId) {
-            const student = studentsData.find(s => s.id === studentId);
-            if (!student) return;
-            document.getElementById('modalStudentName').innerText = student.name;
-            document.getElementById('modalStudentDesk').innerText = `Table-Banc N°${student.desk} • Rang ${student.row}`;
-            document.getElementById('modalStudentAvatar').innerText = student.name.split(' ').map(n => n[0]).join('');
-            document.getElementById('modalStudentAvg').innerText = `${student.avg}/20`;
-            document.getElementById('modalBallaAdvice').innerText = student.ballaAdvice;
-            renderSvgGraph(student.notes);
-            lucide.createIcons();
-            document.getElementById('studentModal').classList.remove('hidden');
-        }
-
-        function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); }
-
-        function renderSvgGraph(notes) {
-            const container = document.getElementById('svgGraphContainer');
-            const width = 450, height = 130, padding = 20;
-            const points = notes.map((val, idx) => {
-                const x = padding + (idx * ((width - 2 * padding) / (notes.length - 1)));
-                const y = height - padding - ((val / 20) * (height - 2 * padding));
-                return { x, y, val };
-            });
-            const pointsString = points.map(p => `${p.x},${p.y}`).join(' ');
-
-            container.innerHTML = `
-                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
-                    <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#cbd5e1" stroke-width="1"/>
-                    <polyline fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${pointsString}" />
-                    ${points.map((p, i) => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#78350f" stroke="#ffffff" stroke-width="2"/><text x="${p.x}" y="${p.y - 8}" fill="#1e293b" font-size="9" font-weight="bold" text-anchor="middle">${p.val}</text>`).join('')}
-                </svg>`;
-        }
-
-        function sendQuickPrompt(text) {
-            document.getElementById('chatInput').value = text;
-            sendChatMessage();
+            closePredictiveModal();
+            alert("Permutation appliquée avec succès !");
         }
 
         function sendChatMessage() {
@@ -576,35 +319,14 @@
             const text = input.value.trim();
             if (!text) return;
 
-            container.innerHTML += `
-                <div class="flex items-start justify-end gap-2.5">
-                    <div class="bg-amber-900 text-amber-50 p-3 rounded-xl max-w-[80%] text-xs sm:text-sm shadow">
-                        ${text}
-                    </div>
-                    <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold shrink-0">Lô</div>
-                </div>`;
+            container.innerHTML += `<div class="flex justify-end"><div class="bg-amber-900 text-white p-2.5 rounded-xl max-w-[80%] text-xs">${text}</div></div>`;
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
             setTimeout(() => {
-                let reply = "C'est bien pris en compte, Madame Lô. Je mets à jour les fiches de suivi de la classe.";
-                if (text.toLowerCase().includes('abdou')) {
-                    reply = "Pour Abdou Laye, je suggère de le placer au premier rang et d'utiliser des jetons de numération pour matérialiser les retenues en addition.";
-                } else if (text.toLowerCase().includes('différenciation')) {
-                    reply = "Voici une proposition : confiez un exercice d'approfondissement par pairage (Aïssatou avec Abdou) pendant que vous reprenez les bases avec le groupe soutien.";
-                } else if (text.toLowerCase().includes('agitation')) {
-                    reply = "Pour canaliser l'agitation, un changement de position rapide ou l'attribution d'une responsabilité physique fonctionne très bien avec ce profil.";
-                }
-
-                container.innerHTML += `
-                    <div class="flex items-start gap-2.5">
-                        <div class="w-7 h-7 rounded-full bg-amber-900 text-amber-200 flex items-center justify-center text-xs font-bold shrink-0">MB</div>
-                        <div class="bg-amber-100 text-amber-950 p-3 rounded-xl max-w-[80%] border border-amber-200 text-xs sm:text-sm shadow">
-                            ${reply}
-                        </div>
-                    </div>`;
+                container.innerHTML += `<div class="flex gap-2"><div class="w-6 h-6 rounded-full bg-amber-900 text-amber-200 flex items-center justify-center text-[10px] font-bold">MB</div><div class="bg-amber-100 text-amber-950 p-2.5 rounded-xl max-w-[80%] text-xs">Bien reçu Madame Lô. Je prends en compte votre consigne pour la classe.</div></div>`;
                 container.scrollTop = container.scrollHeight;
-            }, 800);
+            }, 700);
         }
     </script>
 </body>
