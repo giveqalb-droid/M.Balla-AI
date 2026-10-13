@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,17 +23,20 @@
                 radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 80%),
                 repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.15) 2px, rgba(0, 0, 0, 0.15) 4px);
             box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.8), 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-            border: 12px solid #3e2723;
+            border: 12px solid #8B4513;
         }
 
+        /* Effet Craie Jaune et Bleue */
         .chalk-text-yellow {
             color: #fef08a;
             text-shadow: 0 0 2px rgba(254, 240, 138, 0.6), 1px 1px 2px rgba(0,0,0,0.8);
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
         }
 
         .chalk-text-blue {
             color: #93c5fd;
             text-shadow: 0 0 2px rgba(147, 197, 253, 0.6), 1px 1px 2px rgba(0,0,0,0.8);
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
         }
 
         .chalk-border-yellow {
@@ -43,13 +47,13 @@
             border: 2px dashed rgba(147, 197, 253, 0.5);
         }
 
-        /* Style Bois Tables-Bancs (Inspiré photo de classe moderne) */
+        /* Style Bois Tables-Bancs */
         .desk-wood {
-            background: linear-gradient(135deg, #e2b174 0%, #c68a4d 50%, #965b26 100%);
-            box-shadow: 0 6px 12px -2px rgba(0,0,0,0.25), inset 0 2px 4px rgba(255,255,255,0.4);
-            border-top: 3px solid #f3d1a4;
+            background: linear-gradient(135deg, #d97706 0%, #b45309 50%, #78350f 100%);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.2);
         }
 
+        /* Animations Modal */
         .modal-enter {
             animation: fadeIn 0.2s ease-out forwards;
         }
@@ -59,9 +63,8 @@
         }
     </style>
 </head>
-<body class="bg-emerald-50/30 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-amber-50/40 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- En-tête -->
     <header class="bg-amber-900 text-amber-50 shadow-md border-b-4 border-amber-950 sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
@@ -77,25 +80,28 @@
                 </div>
             </div>
 
+            <!-- Controls Header: Level & Subject Selectors -->
             <div class="flex items-center gap-3 bg-amber-950/60 p-2 rounded-xl border border-amber-800/80">
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="book-open" class="w-4 h-4 text-amber-400"></i>
                     <label for="levelSelect" class="text-xs font-semibold text-amber-200">Niveau :</label>
                     <select id="levelSelect" onchange="changeLevel(this.value)" class="bg-amber-900 border border-amber-700 text-amber-100 text-xs rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-amber-400 focus:outline-none font-medium">
-                        <option value="CI">CI</option>
-                        <option value="CP">CP</option>
-                        <option value="CE2" selected>CE2</option>
-                        <option value="CM2">CM2</option>
+                        <option value="CI">CI (Cours Initiatique)</option>
+                        <option value="CP">CP (Cours Préparatoire)</option>
+                        <option value="CE2" selected>CE2 (Cours Élémentaire 2e)</option>
+                        <option value="CM2">CM2 (Cours Moyen 2e)</option>
                     </select>
                 </div>
+
                 <div class="h-4 w-px bg-amber-800"></div>
+
                 <div class="flex items-center gap-1.5">
                     <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
                     <label for="subjectSelect" class="text-xs font-semibold text-amber-200">Discipline :</label>
                     <select id="subjectSelect" onchange="changeSubject(this.value)" class="bg-amber-900 border border-amber-700 text-amber-100 text-xs rounded-lg px-2.5 py-1 focus:ring-2 focus:ring-amber-400 focus:outline-none font-medium">
-                        <option value="Maths" selected>Mathématiques</option>
-                        <option value="Francais">Français</option>
-                        <option value="Sciences">Sciences</option>
+                        <option value="Maths" selected>Mathématiques / Numération</option>
+                        <option value="Francais">Français / Lecture & Écriture</option>
+                        <option value="Sciences">Éveil / ESVS (Sciences)</option>
                     </select>
                 </div>
             </div>
@@ -104,229 +110,936 @@
 
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-        <!-- KPIs -->
         <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div id="kpi-total" onclick="filterByStatus('ALL')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-amber-500 transition-all">
+            <!-- Card 1: Total Students -->
+            <div id="kpi-total" onclick="filterByStatus('ALL')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-amber-500 transition-all transform hover:-translate-y-0.5">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Effectif Total</p>
                         <h3 id="kpi-total-val" class="text-2xl font-bold text-slate-800 mt-1">12 Élèves</h3>
                     </div>
-                    <div class="p-2.5 bg-amber-100 text-amber-800 rounded-lg"><i data-lucide="users" class="w-5 h-5"></i></div>
+                    <div class="p-2.5 bg-amber-100 text-amber-800 rounded-lg">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-2 flex items-center justify-between text-xs text-slate-500">
+                    <span>Classe CE2-A</span>
+                    <span id="kpi-total-active" class="font-bold text-amber-700 underline">Afficher Tous</span>
                 </div>
             </div>
-            <div id="kpi-soutien" onclick="filterByStatus('SOUTIEN')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-rose-500 transition-all">
+
+            <!-- Card 2: Priority Support -->
+            <div id="kpi-soutien" onclick="filterByStatus('SOUTIEN')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-rose-500 transition-all transform hover:-translate-y-0.5">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Soutien Prioritaire</p>
                         <h3 id="kpi-soutien-val" class="text-2xl font-bold text-rose-700 mt-1">4 Élèves</h3>
                     </div>
-                    <div class="p-2.5 bg-rose-100 text-rose-700 rounded-lg"><i data-lucide="alert-triangle" class="w-5 h-5"></i></div>
+                    <div class="p-2.5 bg-rose-100 text-rose-700 rounded-lg">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-2 flex items-center justify-between text-xs text-rose-600 font-medium">
+                    <span>Moyenne &lt; 10/20</span>
+                    <span class="text-xs underline">Filtrer ces élèves</span>
                 </div>
             </div>
-            <div id="kpi-maitrise" onclick="filterByStatus('MAITRISE')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-emerald-500 transition-all">
+
+            <!-- Card 3: Mastered -->
+            <div id="kpi-maitrise" onclick="filterByStatus('MAITRISE')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-emerald-500 transition-all transform hover:-translate-y-0.5">
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Maîtrise Acquise</p>
                         <h3 id="kpi-maitrise-val" class="text-2xl font-bold text-emerald-700 mt-1">8 Élèves</h3>
                     </div>
-                    <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-lg"><i data-lucide="check-circle-2" class="w-5 h-5"></i></div>
+                    <div class="p-2.5 bg-emerald-100 text-emerald-700 rounded-lg">
+                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-2 flex items-center justify-between text-xs text-emerald-600 font-medium">
+                    <span>Moyenne ≥ 10/20</span>
+                    <span class="text-xs underline">Filtrer ces élèves</span>
                 </div>
             </div>
         </section>
 
-        <section class="space-y-6">
+        <!-- Active Filter Bar (shown if filtered) -->
+        <div id="active-filter-banner" class="hidden bg-amber-100 border border-amber-300 rounded-lg px-4 py-2 flex items-center justify-between text-amber-900 text-sm">
+            <div class="flex items-center gap-2">
+                <i data-lucide="filter" class="w-4 h-4 text-amber-700"></i>
+                <span>Filtre actif : <strong id="filter-label-text">Soutien Prioritaire</strong></span>
+            </div>
+            <button onclick="filterByStatus('ALL')" class="text-xs font-bold text-amber-800 hover:text-amber-950 underline flex items-center gap-1">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i> Réinitialiser le filtre
+            </button>
+        </div>
+
+        <section class="space-y-4">
             
-            <!-- Tableau Noir -->
+            <!-- Classroom Blackboard (Zone Chiffres & Zone Lettres) -->
             <div class="chalkboard-bg rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden">
+                <!-- Chalkboard Header / Maître Balla Desk Indicator -->
                 <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                     <div class="flex items-center gap-2">
                         <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
                         <span class="font-chalk text-amber-200 text-sm sm:text-base">TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY</span>
                     </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
-                    <div class="chalk-border-yellow p-4 rounded-xl bg-yellow-950/10 relative">
-                        <div class="absolute -top-3 left-4 bg-amber-950 border border-yellow-500/50 px-2 py-0.5 rounded text-xs chalk-text-yellow font-bold uppercase">
-                            Zone Chiffres & Calcul (Jaune)
-                        </div>
-                        <p class="chalk-text-yellow text-sm mt-2">Opérations : 4 850 + 2 730 = 7 580</p>
+                    <div class="text-xs font-mono bg-black/40 px-3 py-1 rounded-full border border-white/10 text-amber-100">
+                        Date: Vendredi 16 Octobre
                     </div>
-                    <div class="chalk-border-blue p-4 rounded-xl bg-blue-950/10 relative">
-                        <div class="absolute -top-3 left-4 bg-slate-950 border border-blue-400/50 px-2 py-0.5 rounded text-xs chalk-text-blue font-bold uppercase">
-                            Zone Lettres & Grammaire (Bleue)
+                </div>
+
+                <!-- BlackBoard Split Zones -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                    <!-- Zone Chiffres (Jaune) -->
+                    <div class="chalk-border-yellow p-4 rounded-xl bg-yellow-950/10 relative">
+                        <div class="absolute -top-3 left-4 bg-amber-950 border border-yellow-500/50 px-2 py-0.5 rounded text-xs chalk-text-yellow font-bold uppercase tracking-wider">
+                            <i data-lucide="calculator" class="w-3.5 h-3.5 inline mr-1"></i> Zone Chiffres & Calcul (Jaune)
                         </div>
-                        <p class="chalk-text-blue text-sm mt-2">Règle : "mb", "mp" devant b et p.</p>
+                        <div class="mt-2 space-y-2">
+                            <p class="chalk-text-yellow text-sm">Opérations du Jour : 4 850 + 2 730 = 7 580</p>
+                            <p class="chalk-text-yellow text-xs opacity-90">• Propriétés des nombres : Unités, Dizaines, Centaines, Milliers</p>
+                            <p class="chalk-text-yellow text-xs opacity-80">• Problème : Calcul du prix total du mil au marché de Sandaga.</p>
+                        </div>
+                    </div>
+
+                    <!-- Zone Lettres (Bleue) -->
+                    <div class="chalk-border-blue p-4 rounded-xl bg-blue-950/10 relative">
+                        <div class="absolute -top-3 left-4 bg-slate-950 border border-blue-400/50 px-2 py-0.5 rounded text-xs chalk-text-blue font-bold uppercase tracking-wider">
+                            <i data-lucide="pen-tool" class="w-3.5 h-3.5 inline mr-1"></i> Zone Lettres & Grammaire (Bleue)
+                        </div>
+                        <div class="mt-2 space-y-2">
+                            <p class="chalk-text-blue text-sm">Vocabulaire : La solidarité au village (Ntekki)</p>
+                            <p class="chalk-text-blue text-xs opacity-90">• Grammaire : Le sujet et le verbe dans la phrase complexe.</p>
+                            <p class="chalk-text-blue text-xs opacity-80">• Règle du jour : "mb", "mp" prennent toujours M devant b et p.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bureau du Maître Balla (Estrade) -->
+                <div class="mt-6 pt-3 border-t border-white/10 flex justify-center">
+                    <div class="bg-amber-900/90 border-2 border-amber-700 px-6 py-2 rounded-xl shadow-lg flex items-center gap-3 text-amber-100 text-xs sm:text-sm">
+                        <i data-lucide="user-check" class="w-5 h-5 text-amber-300"></i>
+                        <span><strong>Bureau du Maître Balla</strong> (Estrade d'observation directe)</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Bouton Permutation -->
-            <div class="bg-gradient-to-r from-amber-900 to-amber-800 p-4 rounded-xl text-amber-50 flex justify-between items-center gap-4">
-                <div>
-                    <h2 class="font-bold text-base">Moteur Pédagogique Intelligent</h2>
-                    <p class="text-xs text-amber-200">Simulation et optimisation de placement des élèves.</p>
+            <!-- Intelligent Permutation Predictive Engine Bar -->
+            <div class="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-900 p-4 rounded-xl shadow-md text-amber-50 flex flex-wrap justify-between items-center gap-4 border border-amber-700">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-amber-700/80 rounded-lg border border-amber-600 text-amber-200">
+                        <i data-lucide="sparkles" class="w-6 h-6 animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base sm:text-lg">Moteur Pédagogique Intelligente & Prédictif</h2>
+                        <p class="text-xs text-amber-200">Analyse croisée des profils attentionnels, synergies comportementales et besoins du CEB.</p>
+                    </div>
                 </div>
-                <button onclick="openPredictiveModal()" class="px-5 py-2.5 bg-amber-400 text-amber-950 font-bold rounded-lg text-sm shadow">
-                    Proposer une Permutation
+                <button onclick="openPredictiveModal()" class="w-full sm:w-auto px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 text-sm border border-amber-200">
+                    <i data-lucide="git-compare" class="w-4 h-4"></i>
+                    Proposer une Permutation Intelligente
                 </button>
             </div>
 
-            <!-- Grille de Classe (Tables-Bancs) -->
-            <div class="bg-slate-200/70 p-4 sm:p-6 rounded-2xl border-2 border-slate-300 shadow-inner">
+            <div class="bg-amber-100/50 p-4 sm:p-6 rounded-2xl border-2 border-amber-200/80 shadow-inner">
                 <div class="mb-4 flex justify-between items-center">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2">
                         <i data-lucide="layout-grid" class="w-5 h-5 text-amber-700"></i>
-                        Disposition des Tables-Bancs en Bois (Salle de Classe)
+                        Disposition des Tables-Bancs (2 Élèves par Table)
                     </h3>
-                    <span class="text-xs text-slate-500 italic">Cliquez sur un élève pour voir son dossier</span>
+                    <span class="text-xs text-slate-500 italic">Cliquez sur un élève pour consulter son dossier pédagogique complet</span>
                 </div>
+
                 <div id="classroomGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Généré par JS -->
-                </div>
-            </div>
-
-            <!-- Section Chat avec Maître Balla (IA) -->
-            <div class="bg-white rounded-2xl shadow-md border-2 border-amber-200 p-4 sm:p-6 space-y-4">
-                <div class="flex items-center gap-3 border-b border-slate-100 pb-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-900 text-amber-200 flex items-center justify-center">
-                        <i data-lucide="bot" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base">Échange Pédagogique avec Maître Balla (IA)</h3>
-                        <p class="text-xs text-slate-500">Posez vos questions à l'assistant intelligent</p>
-                    </div>
-                </div>
-
-                <div id="chatContainer" class="h-56 overflow-y-auto space-y-3 p-3 bg-slate-50 rounded-xl border border-slate-200 text-sm">
-                    <div class="flex items-start gap-2.5">
-                        <div class="w-7 h-7 rounded-full bg-amber-900 text-amber-200 flex items-center justify-center text-xs font-bold shrink-0">MB</div>
-                        <div class="bg-amber-100 text-amber-950 p-3 rounded-xl max-w-[80%] text-xs sm:text-sm">
-                            Bonjour Madame Lô. Comment puis-je vous aider dans la gestion de votre classe aujourd'hui ?
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-2">
-                    <input type="text" id="chatInput" placeholder="Posez une question à Maître Balla..." class="flex-grow bg-slate-100 border border-slate-300 rounded-xl px-4 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500" onkeypress="if(event.key === 'Enter') sendChatMessage()">
-                    <button onclick="sendChatMessage()" class="bg-amber-900 text-white px-5 py-2 rounded-xl font-bold text-sm shadow">Envoyer</button>
+                    <!-- Tables-bancs will be rendered dynamically -->
                 </div>
             </div>
 
         </section>
     </main>
 
-    <!-- Modal Dossier Élève -->
-    <div id="studentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 id="modalStudentName" class="font-bold text-lg text-slate-900">Nom de l'Élève</h3>
-                <button onclick="closeStudentModal()" class="text-slate-500 hover:text-slate-900"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <div id="predictiveModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden modal-enter border border-slate-200">
+            <!-- Modal Header -->
+            <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg">
+                        <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Analyse Prédictive de Permutation Intelligente</h3>
+                        <p class="text-xs text-slate-400">Simulation pédagogique basée sur le modèle d'apprentissage CEB</p>
+                    </div>
+                </div>
+                <button onclick="closePredictiveModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
             </div>
-            <p id="modalBallaAdvice" class="text-xs text-slate-700 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></p>
-            <div class="flex justify-end">
-                <button onclick="closeStudentModal()" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">Fermer</button>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+
+                <!-- Proposal Header -->
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl flex items-start gap-3">
+                    <i data-lucide="arrow-left-right" class="w-6 h-6 text-amber-700 shrink-0 mt-0.5"></i>
+                    <div>
+                        <h4 class="font-bold text-amber-950 text-base">Permutation Suggérée : Table-Banc 1 (Abdou L. ⇄ Moussa D.)</h4>
+                        <p class="text-xs text-amber-800 mt-0.5">
+                            Échange de position entre <strong>Abdou Laye (Rang 3 - Fond)</strong> et <strong>Moussa Diallo (Rang 1 - Face Tableau)</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 1. Detailed Reasons -->
+                <div class="space-y-2">
+                    <h5 class="font-bold text-slate-900 flex items-center gap-2 text-sm uppercase tracking-wide">
+                        <i data-lucide="file-text" class="w-4 h-4 text-amber-600"></i>
+                        1. Raisons Détaillées de la Permutation
+                    </h5>
+                    <ul class="space-y-2 pl-2">
+                        <li class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-start gap-2.5">
+                            <i data-lucide="eye" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong>Proximité Visuelle (Zone Chiffres) :</strong> Abdou Laye présente des difficultés légères de vision non corrigées. Le placer au Rang 1 directement en face de la <em>Zone Chiffres (Jaune)</em> réduira sa fatigue cognitive en numération.
+                            </div>
+                        </li>
+                        <li class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-start gap-2.5">
+                            <i data-lucide="users-2" class="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong>Synergie de Pairage (Tutorat Naturel) :</strong> Placer Abdou à côté d'Aïssatou Sow (élève très méthodique et calme) crée un binôme d'entraide spontanée.
+                            </div>
+                        </li>
+                        <li class="bg-slate-50 p-3 rounded-lg border border-slate-200 flex items-start gap-2.5">
+                            <i data-lucide="zap" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong>Canalisation de Moussa D. :</strong> Moussa (profil Leader/Autonome mais parfois distrait en 1er rang) bénéficiera d'une autonomie accrue au Rang 3 aux côtés de Cheikh Tidiane.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. Results & Pupil Influence Predictions -->
+                <div class="space-y-2">
+                    <h5 class="font-bold text-slate-900 flex items-center gap-2 text-sm uppercase tracking-wide">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+                        2. Prédictions d'Impact & Évolution des Élèves
+                    </h5>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-emerald-950">Impact sur Abdou Laye</span>
+                                <span class="text-xs font-bold bg-emerald-200 text-emerald-800 px-2 py-0.5 rounded">+3.5 Pts Estimés</span>
+                            </div>
+                            <p class="text-xs text-emerald-800">
+                                Augmentation estimée des performances en numération (+3.5 pts au test hebdomadaire) grâce au repérage facilité des colonnes d'unités/dizaines sur le tableau. Gain notable en confiance.
+                            </p>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-200 p-3.5 rounded-xl">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="font-bold text-blue-950">Impact sur Moussa Diallo</span>
+                                <span class="text-xs font-bold bg-blue-200 text-blue-800 px-2 py-0.5 rounded">+1.5 Pts Estimés</span>
+                            </div>
+                            <p class="text-xs text-blue-800">
+                                Amélioration du calme global du premier rang et responsabilisation de Moussa dans la résolution autonome de problèmes complexes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Risks & Precautions -->
+                <div class="space-y-2">
+                    <h5 class="font-bold text-slate-900 flex items-center gap-2 text-sm uppercase tracking-wide">
+                        <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
+                        3. Risques Identifiés & Mesures de Précaution
+                    </h5>
+                    <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl space-y-2">
+                        <div class="flex items-start gap-2">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 shrink-0 mt-0.5"></i>
+                            <div>
+                                <strong class="text-rose-950">Risque de Bavardage Discret au Rang 3 :</strong> Moussa et Cheikh Tidiane ont une affinité de jeu durant les récréations.
+                            </div>
+                        </div>
+                        <div class="bg-white/80 p-2.5 rounded-lg border border-rose-100 text-xs text-rose-900 font-medium ml-6">
+                            <strong>Consigne Pédagogique pour Maître Balla :</strong> Effectuer des déplacements réguliers vers l'allée droite lors des travaux individuels et désigner Cheikh comme responsable du cahier de roulement.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="bg-slate-100 px-6 py-4 flex flex-wrap justify-end gap-3 border-t border-slate-200">
+                <button onclick="closePredictiveModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg transition-all text-sm">
+                    Conserver le Plan Actuel
+                </button>
+                <button onclick="applyPermutation()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-md transition-all text-sm flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Valider & Appliquer le Nouveau Plan
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Permutation -->
-    <div id="predictiveModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 space-y-4">
-            <h3 class="font-bold text-lg text-slate-900">Simulation de Permutation</h3>
-            <p class="text-xs text-slate-600">Échange suggéré entre Abdou Laye et Moussa Diallo pour optimiser l'attention en classe.</p>
-            <div class="flex justify-end gap-2">
-                <button onclick="closePredictiveModal()" class="px-4 py-2 bg-slate-200 rounded-lg text-xs">Annuler</button>
-                <button onclick="applyPermutation()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">Appliquer</button>
+    <div id="studentModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden modal-enter border border-slate-200">
+            <!-- Header -->
+            <div id="studentModalHeader" class="bg-amber-900 text-white px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div id="modalStudentAvatar" class="w-12 h-12 rounded-full bg-amber-700 border-2 border-amber-300 flex items-center justify-center text-lg font-bold">
+                        --
+                    </div>
+                    <div>
+                        <h3 id="modalStudentName" class="font-bold text-xl text-white">Nom de l'Élève</h3>
+                        <p id="modalStudentDesk" class="text-xs text-amber-200">Table-Banc N°-- • CE2</p>
+                    </div>
+                </div>
+                <button onclick="closeStudentModal()" class="text-amber-200 hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6 overflow-y-auto space-y-6 text-sm text-slate-700">
+
+                <!-- Overview Badges -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-xs text-slate-500 block">Moyenne Générale</span>
+                        <span id="modalStudentAvg" class="text-lg font-bold text-slate-800">12/20</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-xs text-slate-500 block">Statut CEB</span>
+                        <span id="modalStudentStatus" class="text-xs font-bold px-2 py-1 rounded inline-block mt-0.5">Soutien</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-xs text-slate-500 block">Style d'Apprentissage</span>
+                        <span id="modalStudentStyle" class="text-xs font-semibold text-slate-700 block mt-1">Visuel / Kinesthésique</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                        <span class="text-xs text-slate-500 block">Comportement</span>
+                        <span id="modalStudentBehavior" class="text-xs font-semibold text-slate-700 block mt-1">Calme & Attentif</span>
+                    </div>
+                </div>
+
+                <!-- Weekly Evolution Interactive SVG Graph -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i data-lucide="line-chart" class="w-4 h-4 text-amber-600"></i>
+                            Évolution des Notes Hebdomadaires (Tests du Vendredi - 6 Semaines)
+                        </h4>
+                        <span class="text-xs text-slate-500">Moyenne classe: 11.5</span>
+                    </div>
+                    <div id="svgGraphContainer" class="w-full h-44 bg-slate-50 rounded-lg p-2 border border-slate-100 flex items-center justify-center">
+                        <!-- SVG chart dynamically inserted -->
+                    </div>
+                </div>
+
+                <!-- Cognitive & Behavioral Profile -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200/60 space-y-2">
+                        <h5 class="font-bold text-amber-950 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="brain" class="w-4 h-4 text-amber-700"></i>
+                            Profil Cognitif & Attentionnel
+                        </h5>
+                        <ul id="modalCognitiveList" class="space-y-1 text-xs text-slate-700">
+                            <!-- Dynamic cognitive traits -->
+                        </ul>
+                    </div>
+
+                    <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-200/60 space-y-2">
+                        <h5 class="font-bold text-blue-950 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="smile" class="w-4 h-4 text-blue-700"></i>
+                            Personnalité & Climat Social
+                        </h5>
+                        <ul id="modalBehaviorList" class="space-y-1 text-xs text-slate-700">
+                            <!-- Dynamic behavior traits -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Scanned Homework OCR Diagnostic -->
+                <div class="bg-slate-900 text-slate-100 p-4 rounded-xl shadow-inner space-y-3">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h5 class="font-bold text-amber-400 text-xs uppercase tracking-wider flex items-center gap-2">
+                            <i data-lucide="scan-line" class="w-4 h-4"></i>
+                            Analyse OCR du Dernier Devoir Scanné (Vendredi Dernier)
+                        </h5>
+                        <span class="text-xs text-slate-400">Mathématiques - Numération</span>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 col-span-1">
+                            <span class="text-slate-400 block mb-1">Erreur OCR Détectée :</span>
+                            <p id="modalOcrError" class="font-mono text-rose-300 font-semibold">"450 + 30 = 750" (Erreur de retenue des dizaines)</p>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 col-span-2">
+                            <span class="text-slate-400 block mb-1">Diagnostic Cognitif Automatique :</span>
+                            <p id="modalOcrDiag" class="text-slate-200">Confusion dans le report d'alignement spatial lors des additions à 3 chiffres.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnostic & Master Balla Advice -->
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl space-y-2">
+                    <h5 class="font-bold text-emerald-950 text-xs uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-4 h-4 text-emerald-700"></i>
+                        Conseil Pédagogique Personnalisé de Maître Balla
+                    </h5>
+                    <p id="modalBallaAdvice" class="text-xs text-emerald-900 leading-relaxed font-medium">
+                        Placer l'élève au premier rang près de la Zone Chiffres du tableau noir. Utiliser le boulier traditionnel et lui donner 2 exercices de consolidation ciblés avant le grand test du vendredi.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="bg-slate-100 px-6 py-3 flex justify-end border-t border-slate-200">
+                <button onclick="closeStudentModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-lg text-sm">
+                    Fermer le Dossier
+                </button>
             </div>
         </div>
     </div>
 
     <script>
+        // Sample Classroom Data (CE2 Class)
         let studentsData = [
-            { id: 1, name: "Abdou Laye", desk: 1, position: "A", row: 3, avg: 8.5, status: "SOUTIEN", behavior: "Réservé, timide", ballaAdvice: "À déplacer au Rang 1 près de la Zone Chiffres." },
-            { id: 2, name: "Aïssatou Sow", desk: 1, position: "B", row: 1, avg: 16.5, status: "MAITRISE", behavior: "Leader bienveillante", ballaAdvice: "Nommer tutrice de binôme." },
-            { id: 3, name: "Moussa Diallo", desk: 2, position: "A", row: 1, avg: 14.0, status: "MAITRISE", behavior: "Dynamique / Distrait", ballaAdvice: "Permuter vers le Rang 3 pour stimuler son autonomie." },
-            { id: 4, name: "Fatou Bintou Ndiaye", desk: 2, position: "B", row: 1, avg: 9.0, status: "SOUTIEN", behavior: "Calme, attentive", ballaAdvice: "Garder au premier rang face au tableau." },
-            { id: 5, name: "Cheikh Tidiane Sy", desk: 3, position: "A", row: 2, avg: 11.5, status: "MAITRISE", behavior: "Bavard occasionnel", ballaAdvice: "Canaliser par questionnement oral." },
-            { id: 6, name: "Mariama Ba", desk: 3, position: "B", row: 2, avg: 15.0, status: "MAITRISE", behavior: "Autonome & Calme", ballaAdvice: "Donner des exercices d'approfondissement." }
+            {
+                id: 1,
+                name: "Abdou Laye",
+                desk: 1,
+                position: "A", // Left seat on bench
+                row: 3,
+                avg: 8.5,
+                status: "SOUTIEN",
+                style: "Visuel",
+                behavior: "Réservé, timide",
+                notes: [7, 8, 7.5, 9, 8, 8.5],
+                cognitive: [
+                    "Mémoire de travail à renforcer sur les suites numériques",
+                    "Fatigue attentionnelle rapide en fin de matinée",
+                    "Sensibilité aux détails visuels au tableau"
+                ],
+                personality: [
+                    "Très respectueux et à l'écoute",
+                    "N'ose pas lever la main en cas de doute",
+                    "Préfère travailler en petit groupe restreint"
+                ],
+                ocrError: "4 850 + 2 730 = 6 580 (Omission de retenue)",
+                ocrDiag: "Erreur systématique sur les retenues de centaines. Alignement correct mais mémoire tampon limitée.",
+                ballaAdvice: "À déplacer au Rang 1 près de la Zone Chiffres. Utiliser des jetons de comptage pour matérialiser la retenue."
+            },
+            {
+                id: 2,
+                name: "Aïssatou Sow",
+                desk: 1,
+                position: "B",
+                row: 1,
+                avg: 16.5,
+                status: "MAITRISE",
+                style: "Auditif / Méthodique",
+                behavior: "Leader bienveillante",
+                notes: [15, 16, 16, 17, 16, 16.5],
+                cognitive: [
+                    "Excellente vitesse de traitement de l'information",
+                    "Capacité d'abstraction élevée en calcul mental",
+                    "Capacité de concentration prolongée"
+                ],
+                personality: [
+                    "Moteur de la classe, aime expliquer aux camarades",
+                    "Soignée, très organisée dans ses cahiers",
+                    "Excellente participante au tableau"
+                ],
+                ocrError: "Aucune erreur majeure détectée",
+                ocrDiag: "Maîtrise parfaite de la numération et de la résolution de problèmes complexes.",
+                ballaAdvice: "Nommer tutrice du binôme de la Table-Banc 1 pour renforcer la cohésion de rang."
+            },
+            {
+                id: 3,
+                name: "Moussa Diallo",
+                desk: 2,
+                position: "A",
+                row: 1,
+                avg: 14.0,
+                status: "MAITRISE",
+                style: "Kinesthésique",
+                behavior: "Dynamique / Parfois distrait",
+                notes: [12, 13, 14, 13.5, 15, 14],
+                cognitive: [
+                    "Haute créativité dans la recherche de solutions",
+                    "Besoin de manipuler les objets de la classe",
+                    "Impulsivité dans la lecture des énoncés"
+                ],
+                personality: [
+                    "Trs populaire auprès de ses camarades",
+                    "Esprit de compétition positif",
+                    "Se déconcentre s'il a fini en premier"
+                ],
+                ocrError: "Lecture rapide : confusion entre 73 et 37",
+                ocrDiag: "Inattention liée à une vitesse d'exécution trop rapide.",
+                ballaAdvice: "Permuter vers le Rang 3 pour stimuler son autonomie et lui confier la responsabilité de la distribution."
+            },
+            {
+                id: 4,
+                name: "Fatou Bintou Ndiaye",
+                desk: 2,
+                position: "B",
+                row: 1,
+                avg: 9.0,
+                status: "SOUTIEN",
+                style: "Visuel",
+                behavior: "Calme, attentive",
+                notes: [8, 8.5, 9, 8.5, 9.5, 9.0],
+                cognitive: [
+                    "Traitement visuel lent des symboles mathématiques",
+                    "Mémoire à long terme solide une fois le concept ancré",
+                    "Sensible au bruit ambiant"
+                ],
+                personality: [
+                    "Très appliquée dans l'écriture cursive",
+                    "Prudente, attend confirmation du maître",
+                    "Belles compétences en lecture"
+                ],
+                ocrError: "Soustraction avec retenue : inversion des termes",
+                ocrDiag: "Besoin de revoir la méthode de la cassure de la dizaine.",
+                ballaAdvice: "Garder au premier rang face à la Zone Lettres/Chiffres avec fiches synthétiques."
+            },
+            {
+                id: 5,
+                name: "Cheikh Tidiane Sy",
+                desk: 3,
+                position: "A",
+                row: 2,
+                avg: 11.5,
+                status: "MAITRISE",
+                style: "Auditif",
+                behavior: "Bavard occasionnel",
+                notes: [10, 11, 12, 11, 11.5, 11.5],
+                cognitive: [
+                    "Bonne compréhension orale des consignes",
+                    "Distraction par le bruit environnant",
+                    "Mémoire auditive très développée"
+                ],
+                personality: [
+                    "Sociable, aime la discussion",
+                    "Participe activement à l'oral",
+                    "Parfois étourdi sur la tenue du cahier"
+                ],
+                ocrError: "Erreur de frappe/recopie depuis le tableau",
+                ocrDiag: "Saut de ligne lors de la recopie d'exercices.",
+                ballaAdvice: "Canaliser par un questionnement oral direct au début de chaque séance."
+            },
+            {
+                id: 6,
+                name: "Mariama Ba",
+                desk: 3,
+                position: "B",
+                row: 2,
+                avg: 15.0,
+                status: "MAITRISE",
+                style: "Visuel / Méthodique",
+                behavior: "Autonome & Calme",
+                notes: [14, 15, 14.5, 15, 15.5, 15],
+                cognitive: [
+                    "Analyse rigoureuse des problèmes",
+                    "Excellente rétention des règles de grammaire",
+                    "Attention soutenue"
+                ],
+                personality: [
+                    "Modèle de discipline",
+                    "Aide volontiers ses voisins",
+                    "Régulière dans ses efforts"
+                ],
+                ocrError: "Rien à signaler",
+                ocrDiag: "Compréhension conceptuelle parfaite.",
+                ballaAdvice: "Donner des exercices d'approfondissement en calcul rapide."
+            },
+            {
+                id: 7,
+                name: "Ousmane Kane",
+                desk: 4,
+                position: "A",
+                row: 2,
+                avg: 7.5,
+                status: "SOUTIEN",
+                style: "Kinesthésique",
+                behavior: "Agité / Recherche d'attention",
+                notes: [6, 7, 7, 8, 7, 7.5],
+                cognitive: [
+                    "Difficultés de concentration au-delà de 15 min",
+                    "Besoin de supports concrètes (bâtonnets)",
+                    "Vitesse de traitement verbale lente"
+                ],
+                personality: [
+                    "Très affectueux, réactif aux encouragements",
+                    "Se décourage facilement devant la longueur",
+                    "Aime les tâches physiques de la classe"
+                ],
+                ocrError: "Confusion entre les signes + et x",
+                ocrDiag: "Déficit d'attention visuelle sur les opérations posées.",
+                ballaAdvice: "Utiliser un code couleur strict pour les opérations et le rapprocher du maître."
+            },
+            {
+                id: 8,
+                name: "Khadija Faye",
+                desk: 4,
+                position: "B",
+                row: 2,
+                avg: 13.5,
+                status: "MAITRISE",
+                style: "Auditif",
+                behavior: "Attentive",
+                notes: [12, 13, 13, 14, 13.5, 13.5],
+                cognitive: [
+                    "Bonne assimilation par la répétition chorale",
+                    "Raisonnement logique structuré",
+                    "Lecture fluide"
+                ],
+                personality: [
+                    "Discrète et constante",
+                    "Bonne camaraderie",
+                    "Travail propre"
+                ],
+                ocrError: "Erreur mineure de calcul mental",
+                ocrDiag: "Fatigue ponctuelle en fin de devoir.",
+                ballaAdvice: "Encourager la prise de parole spontanée en classe."
+            },
+            {
+                id: 9,
+                name: "Ibrahima Sarr",
+                desk: 5,
+                position: "A",
+                row: 3,
+                avg: 12.0,
+                status: "MAITRISE",
+                style: "Visuel",
+                behavior: "Calme",
+                notes: [11, 12, 11.5, 12, 12.5, 12],
+                cognitive: [
+                    "Visualisation spatiale correcte",
+                    "Mémoire visuelle des mots de dictée",
+                    "Rythme de travail régulier"
+                ],
+                personality: [
+                    "Autonome",
+                    "Aime la lecture de contes",
+                    "Respectueux"
+                ],
+                ocrError: "Omission d'un chiffre dans un grand nombre",
+                ocrDiag: "Inattention de relecture.",
+                ballaAdvice: "Inciter à la relecture systématique au doigt."
+            },
+            {
+                id: 10,
+                name: "Aminata Touré",
+                desk: 5,
+                position: "B",
+                row: 3,
+                avg: 8.0,
+                status: "SOUTIEN",
+                style: "Auditif",
+                behavior: "Timide / Passive",
+                notes: [7, 7.5, 8, 8, 8.5, 8],
+                cognitive: [
+                    "Surcharge cognitive rapide sur les consignes multiples",
+                    "Besoin de reformulation individuelle",
+                    "Lenteur dans le passage à l'écrit"
+                ],
+                personality: [
+                    "Effacée, n'exprime pas ses besoins",
+                    "Soignée mais très lente",
+                    "Sensible aux félicitations"
+                ],
+                ocrError: "Exercice non terminé à 40%",
+                ocrDiag: "Gestion du temps déficiente pendant les évaluations.",
+                ballaAdvice: "Raccourcir la longueur des évaluations et accorder 5 min supplémentaires."
+            },
+            {
+                id: 11,
+                name: "Mamadou Diop",
+                desk: 6,
+                position: "A",
+                row: 3,
+                avg: 14.5,
+                status: "MAITRISE",
+                style: "Kinesthésique",
+                behavior: "Enthousiaste",
+                notes: [13, 14, 14, 15, 14, 14.5],
+                cognitive: [
+                    "Comprenant rapide par l'expérimentation",
+                    "Excellente capacité de résolution de problèmes",
+                    "Bonne logique géométrique"
+                ],
+                personality: [
+                    "Très actif, volontaire",
+                    "Aime passer au tableau",
+                    "Esprit d'équipe"
+                ],
+                ocrError: "Erreur d'inattention sur unité de mesure",
+                ocrDiag: "Omission de l'unité (cm/m) dans la réponse.",
+                ballaAdvice: "Mettre en avant sa démarche scientifique lors de l'éveil."
+            },
+            {
+                id: 12,
+                name: "Ndeye Cissé",
+                desk: 6,
+                position: "B",
+                row: 3,
+                avg: 17.0,
+                status: "MAITRISE",
+                style: "Visuel / Logique",
+                behavior: "Exemplaire",
+                notes: [16, 17, 16.5, 17, 17.5, 17],
+                cognitive: [
+                    "Capacités de synthèse remarquables",
+                    "Maîtrise complète du programme CE2",
+                    "Autonomie totale"
+                ],
+                personality: [
+                    "Calme, sereine",
+                    "Chaleureuse envers ses pairs",
+                    "Prise d'initiative pédagogique"
+                ],
+                ocrError: "Sans erreur",
+                ocrDiag: "Excellence académique.",
+                ballaAdvice: "Proposer des défis de niveau CM1 pour entretenir la motivation."
+            }
         ];
+
+        let currentFilter = 'ALL';
+        let currentSubject = 'Maths';
+        let currentLevel = 'CE2';
 
         window.onload = function() {
             lucide.createIcons();
             renderClassroom();
+            updateKPIs();
         };
 
         function renderClassroom() {
             const grid = document.getElementById('classroomGrid');
             grid.innerHTML = '';
 
-            for (let i = 1; i <= 3; i++) {
+            // Group students by table-banc desk ID (1 to 6)
+            for (let i = 1; i <= 6; i++) {
                 const deskStudents = studentsData.filter(s => s.desk === i);
-                const deskEl = document.createElement('div');
-                deskEl.className = 'desk-wood p-4 rounded-xl border-2 border-amber-950 shadow-xl text-white space-y-3 relative';
                 
+                // Desk Container
+                const deskEl = document.createElement('div');
+                deskEl.className = 'desk-wood p-3.5 rounded-xl border-2 border-amber-900 shadow-lg text-white space-y-2 relative';
+                
+                // Desk Header
                 deskEl.innerHTML = `
-                    <div class="flex justify-between items-center text-xs font-bold text-amber-950 bg-amber-100/90 px-2.5 py-1 rounded-lg border">
-                        <span>Table-Banc ${i}</span>
-                        <span class="bg-amber-900 text-amber-100 px-2 py-0.5 rounded text-[10px]">Rang ${deskStudents[0] ? deskStudents[0].row : 1}</span>
+                    <div class="flex justify-between items-center text-xs font-bold text-amber-200 border-b border-amber-700/60 pb-1.5">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="armchair" class="w-3.5 h-3.5 text-amber-300"></i> Table-Banc ${i}
+                        </span>
+                        <span class="bg-amber-950/80 px-2 py-0.5 rounded text-[10px] text-amber-300 border border-amber-800">
+                            Rang ${deskStudents[0] ? deskStudents[0].row : 1}
+                        </span>
                     </div>
-                    <div class="grid grid-cols-2 gap-2.5"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <!-- Seats A & B -->
+                    </div>
                 `;
 
                 const seatsGrid = deskEl.querySelector('.grid');
 
+                // Render seats
                 deskStudents.forEach(student => {
-                    const statusBadgeClass = student.status === 'SOUTIEN' ? 'bg-rose-600 text-white' : 'bg-emerald-700 text-white';
+                    const isFilteredOut = currentFilter !== 'ALL' && student.status !== currentFilter;
+                    const opacityClass = isFilteredOut ? 'opacity-30 grayscale' : 'opacity-100';
+
+                    const statusBadgeClass = student.status === 'SOUTIEN' 
+                        ? 'bg-rose-500/90 text-white' 
+                        : 'bg-emerald-600/90 text-white';
+
                     const seatEl = document.createElement('div');
-                    seatEl.className = 'bg-amber-950/80 border border-amber-600/60 p-2.5 rounded-lg cursor-pointer hover:border-amber-300 transition-all';
+                    seatEl.className = `bg-amber-950/70 border border-amber-600/50 hover:border-amber-300 p-2.5 rounded-lg cursor-pointer transition-all transform hover:-translate-y-0.5 ${opacityClass}`;
                     seatEl.onclick = () => openStudentModal(student.id);
 
                     seatEl.innerHTML = `
                         <div class="flex items-center justify-between gap-1 mb-1">
-                            <span class="text-[9px] uppercase font-bold text-amber-300">${student.position === 'A' ? 'Gauche' : 'Droite'}</span>
-                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${statusBadgeClass}">${student.avg}/20</span>
+                            <span class="text-[10px] uppercase font-bold text-amber-300 truncate">${student.position === 'A' ? 'Place G.' : 'Place D.'}</span>
+                            <span class="text-[10px] font-bold px-1.5 py-0.2 rounded ${statusBadgeClass}">
+                                ${student.avg}/20
+                            </span>
                         </div>
                         <p class="font-bold text-xs text-white truncate">${student.name}</p>
-                        <p class="text-[10px] text-amber-200/80 truncate mt-0.5">${student.behavior}</p>
+                        <p class="text-[10px] text-amber-200/80 truncate mt-0.5">${student.behavior.split('/')[0]}</p>
                     `;
+
                     seatsGrid.appendChild(seatEl);
                 });
+
                 grid.appendChild(deskEl);
             }
+
             lucide.createIcons();
         }
 
-        function openStudentModal(id) {
-            const student = studentsData.find(s => s.id === id);
+        function updateKPIs() {
+            const total = studentsData.length;
+            const soutien = studentsData.filter(s => s.status === 'SOUTIEN').length;
+            const maitrise = studentsData.filter(s => s.status === 'MAITRISE').length;
+
+            document.getElementById('kpi-total-val').innerText = `${total} Élèves`;
+            document.getElementById('kpi-soutien-val').innerText = `${soutien} Élèves`;
+            document.getElementById('kpi-maitrise-val').innerText = `${maitrise} Élèves`;
+        }
+
+        function filterByStatus(status) {
+            currentFilter = status;
+            const banner = document.getElementById('active-filter-banner');
+            const labelText = document.getElementById('filter-label-text');
+
+            if (status === 'ALL') {
+                banner.classList.add('hidden');
+            } else {
+                banner.classList.remove('hidden');
+                labelText.innerText = status === 'SOUTIEN' ? 'Soutien Prioritaire (< 10/20)' : 'Maîtrise Acquise (≥ 10/20)';
+            }
+
+            renderClassroom();
+        }
+
+        function changeLevel(level) {
+            currentLevel = level;
+            // Visual feedback
+            renderClassroom();
+        }
+
+        function changeSubject(subject) {
+            currentSubject = subject;
+            // Visual feedback
+            renderClassroom();
+        }
+
+        function openPredictiveModal() {
+            document.getElementById('predictiveModal').classList.remove('hidden');
+        }
+
+        function closePredictiveModal() {
+            document.getElementById('predictiveModal').classList.add('hidden');
+        }
+
+        function applyPermutation() {
+            // Permute Abdou (id 1) and Moussa (id 3)
+            const abdou = studentsData.find(s => s.id === 1);
+            const moussa = studentsData.find(s => s.id === 3);
+
+            if (abdou && moussa) {
+                // Swap desks and positions
+                const tempDesk = abdou.desk;
+                const tempPos = abdou.position;
+                const tempRow = abdou.row;
+
+                abdou.desk = moussa.desk;
+                abdou.position = moussa.position;
+                abdou.row = moussa.row;
+
+                moussa.desk = tempDesk;
+                moussa.position = tempPos;
+                moussa.row = tempRow;
+
+                // Update Abdou's expected average (+3.5)
+                abdou.avg = 12.0;
+                abdou.status = "MAITRISE";
+
+                renderClassroom();
+                updateKPIs();
+                closePredictiveModal();
+
+                // Show Notification
+                alert("Permutation appliquée avec succès ! Le plan de classe a été réorganisé selon les prédictions du Maître Balla.");
+            }
+        }
+
+        function openStudentModal(studentId) {
+            const student = studentsData.find(s => s.id === studentId);
             if (!student) return;
+
             document.getElementById('modalStudentName').innerText = student.name;
-            document.getElementById('modalBallaAdvice').innerText = "Conseil de Maître Balla : " + student.ballaAdvice;
+            document.getElementById('modalStudentDesk').innerText = `Table-Banc N°${student.desk} • Rang ${student.row} • Place ${student.position}`;
+            document.getElementById('modalStudentAvatar').innerText = student.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('modalStudentAvg').innerText = `${student.avg}/20`;
+            
+            const statusEl = document.getElementById('modalStudentStatus');
+            statusEl.innerText = student.status === 'SOUTIEN' ? 'Soutien Prioritaire' : 'Maîtrise Acquise';
+            statusEl.className = `text-xs font-bold px-2.5 py-1 rounded inline-block mt-0.5 ${student.status === 'SOUTIEN' ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-emerald-100 text-emerald-800 border border-emerald-300'}`;
+
+            document.getElementById('modalStudentStyle').innerText = student.style;
+            document.getElementById('modalStudentBehavior').innerText = student.behavior;
+
+            // Render Cognitive List
+            const cogList = document.getElementById('modalCognitiveList');
+            cogList.innerHTML = student.cognitive.map(c => `<li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5"></i> <span>${c}</span></li>`).join('');
+
+            // Render Behavior List
+            const behList = document.getElementById('modalBehaviorList');
+            behList.innerHTML = student.personality.map(p => `<li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5"></i> <span>${p}</span></li>`).join('');
+
+            // OCR Diagnostics
+            document.getElementById('modalOcrError').innerText = student.ocrError;
+            document.getElementById('modalOcrDiag').innerText = student.ocrDiag;
+
+            // Advice
+            document.getElementById('modalBallaAdvice').innerText = student.ballaAdvice;
+
+            // Render SVG Line Chart
+            renderSvgGraph(student.notes);
+
+            lucide.createIcons();
             document.getElementById('studentModal').classList.remove('hidden');
         }
-        function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); }
 
-        function openPredictiveModal() { document.getElementById('predictiveModal').classList.remove('hidden'); }
-        function closePredictiveModal() { document.getElementById('predictiveModal').classList.add('hidden'); }
-        function applyPermutation() {
-            closePredictiveModal();
-            alert("Permutation appliquée avec succès !");
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
         }
 
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const container = document.getElementById('chatContainer');
-            const text = input.value.trim();
-            if (!text) return;
+        function renderSvgGraph(notes) {
+            const container = document.getElementById('svgGraphContainer');
+            const width = 500;
+            const height = 140;
+            const padding = 25;
 
-            container.innerHTML += `<div class="flex justify-end"><div class="bg-amber-900 text-white p-2.5 rounded-xl max-w-[80%] text-xs">${text}</div></div>`;
-            input.value = '';
-            container.scrollTop = container.scrollHeight;
+            // Calculate SVG Points
+            const minVal = 0;
+            const maxVal = 20;
 
-            setTimeout(() => {
-                container.innerHTML += `<div class="flex gap-2"><div class="w-6 h-6 rounded-full bg-amber-900 text-amber-200 flex items-center justify-center text-[10px] font-bold">MB</div><div class="bg-amber-100 text-amber-950 p-2.5 rounded-xl max-w-[80%] text-xs">Bien reçu Madame Lô. Je prends en compte votre consigne pour la classe.</div></div>`;
-                container.scrollTop = container.scrollHeight;
-            }, 700);
+            const points = notes.map((val, idx) => {
+                const x = padding + (idx * ((width - 2 * padding) / (notes.length - 1)));
+                const y = height - padding - ((val - minVal) / (maxVal - minVal)) * (height - 2 * padding);
+                return { x, y, val };
+            });
+
+            const pointsString = points.map(p => `${p.x},${p.y}`).join(' ');
+
+            // SVG Markup
+            let svg = `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+                    <!-- Background Grid Lines -->
+                    <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#cbd5e1" stroke-width="1"/>
+                    <line x1="${padding}" y1="${padding}" x2="${width - padding}" y2="${padding}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="${padding}" y1="${height/2}" x2="${width - padding}" y2="${height/2}" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                    
+                    <!-- Average Line (10/20) -->
+                    <line x1="${padding}" y1="${height - padding - (10/20)*(height - 2*padding)}" x2="${width - padding}" y2="${height - padding - (10/20)*(height - 2*padding)}" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="3,3"/>
+                    <text x="${width - padding + 2}" y="${height - padding - (10/20)*(height - 2*padding) + 3}" fill="#f43f5e" font-size="8" font-weight="bold">10</text>
+
+                    <!-- Trend Line -->
+                    <polyline fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${pointsString}" />
+
+                    <!-- Points & Tooltips -->
+                    ${points.map((p, i) => `
+                        <circle cx="${p.x}" cy="${p.y}" r="4" fill="#78350f" stroke="#ffffff" stroke-width="2"/>
+                        <text x="${p.x}" y="${p.y - 8}" fill="#1e293b" font-size="10" font-weight="bold" text-anchor="middle">${p.val}</text>
+                        <text x="${p.x}" y="${height - 8}" fill="#64748b" font-size="9" text-anchor="middle">S${i+1}</text>
+                    `).join('')}
+                </svg>
+            `;
+
+            container.innerHTML = svg;
         }
     </script>
 </body>
