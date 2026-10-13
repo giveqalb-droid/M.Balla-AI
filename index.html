@@ -284,7 +284,7 @@
                     <button onclick="sendQuickPrompt('Propose un exercice de différenciation pour le groupe soutien')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3 py-1.5 rounded-lg transition-all">
                         📝 Exercice de différenciation
                     </button>
-                    <button onclick="sendQuickPrompt('Donne-moi une astuce pour canaliser l'agitation au fond de la classe')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3 py-1.5 rounded-lg transition-all">
+                    <button onclick="sendQuickPrompt('Donne-moi une astuce pour canaliser l agitation au fond de la classe')" class="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 px-3 py-1.5 rounded-lg transition-all">
                         🎯 Gérer l'agitation
                     </button>
                 </div>
@@ -426,4 +426,186 @@
             { id: 3, name: "Moussa Diallo", desk: 2, position: "A", row: 1, avg: 14.0, status: "MAITRISE", style: "Kinesthésique", behavior: "Dynamique", notes: [12, 13, 14, 13.5, 15, 14], cognitive: ["Haute créativité"], personality: ["Populaire"], ballaAdvice: "Permuter vers le Rang 3 pour stimuler son autonomie." },
             { id: 4, name: "Fatou Bintou Ndiaye", desk: 2, position: "B", row: 1, avg: 9.0, status: "SOUTIEN", style: "Visuel", behavior: "Calme", notes: [8, 8.5, 9, 8.5, 9.5, 9.0], cognitive: ["Traitement lent"], personality: ["Appliquée"], ballaAdvice: "Garder au premier rang face au tableau." },
             { id: 5, name: "Cheikh Tidiane Sy", desk: 3, position: "A", row: 2, avg: 11.5, status: "MAITRISE", style: "Auditif", behavior: "Bavard", notes: [10, 11, 12, 11, 11.5, 11.5], cognitive: ["Bonne compréhension orale"], personality: ["Sociable"], ballaAdvice: "Canaliser par questionnement oral." },
-            { id: 6, name: "Mariama Ba", desk: 3, position: "B", row: 2, avg: 15.0, status: "MAITRISE", style: "Visuel", behavior: "Autonome", notes: [14, 15, 14.5, 15, 15.5, 15], cognitive: ["Analyse rigoureuse"], personality: ["Discipline"], ballaAdvice: "Donner des exercices d
+            { id: 6, name: "Mariama Ba", desk: 3, position: "B", row: 2, avg: 15.0, status: "MAITRISE", style: "Visuel", behavior: "Autonome", notes: [14, 15, 14.5, 15, 15.5, 15], cognitive: ["Analyse rigoureuse"], personality: ["Discipline"], ballaAdvice: "Donner des exercices d'approfondissement." }
+        ];
+
+        let currentFilter = 'ALL';
+        let currentSubject = 'Maths';
+        let currentLevel = 'CE2';
+
+        window.onload = function() {
+            lucide.createIcons();
+            renderClassroom();
+            updateKPIs();
+        };
+
+        function renderClassroom() {
+            const grid = document.getElementById('classroomGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 3; i++) {
+                const deskStudents = studentsData.filter(s => s.desk === i);
+                const deskEl = document.createElement('div');
+                deskEl.className = 'desk-wood p-4 rounded-xl border-2 border-amber-950 shadow-xl text-white space-y-3 relative';
+                
+                deskEl.innerHTML = `
+                    <div class="flex justify-between items-center text-xs font-bold text-amber-950 bg-amber-100/80 px-2.5 py-1 rounded-lg border border-amber-900/30">
+                        <span class="flex items-center gap-1">
+                            <i data-lucide="box" class="w-3.5 h-3.5 text-amber-800"></i> Table-Banc Traditionnel ${i}
+                        </span>
+                        <span class="text-[10px] font-extrabold uppercase bg-amber-900 text-amber-100 px-2 py-0.5 rounded">
+                            Rang ${deskStudents[0] ? deskStudents[0].row : 1}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5"></div>
+                `;
+
+                const seatsGrid = deskEl.querySelector('.grid');
+
+                deskStudents.forEach(student => {
+                    const isFilteredOut = currentFilter !== 'ALL' && student.status !== currentFilter;
+                    const opacityClass = isFilteredOut ? 'opacity-30 grayscale' : 'opacity-100';
+                    const statusBadgeClass = student.status === 'SOUTIEN' ? 'bg-rose-600 text-white' : 'bg-emerald-700 text-white';
+
+                    const seatEl = document.createElement('div');
+                    seatEl.className = `bg-amber-950/80 border border-amber-600/60 hover:border-amber-300 p-2.5 rounded-lg cursor-pointer transition-all transform hover:-translate-y-0.5 ${opacityClass}`;
+                    seatEl.onclick = () => openStudentModal(student.id);
+
+                    seatEl.innerHTML = `
+                        <div class="flex items-center justify-between gap-1 mb-1">
+                            <span class="text-[9px] uppercase font-bold text-amber-300">${student.position === 'A' ? 'Gauche' : 'Droite'}</span>
+                            <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${statusBadgeClass}">
+                                ${student.avg}/20
+                            </span>
+                        </div>
+                        <p class="font-bold text-xs text-white truncate">${student.name}</p>
+                        <p class="text-[10px] text-amber-200/80 truncate mt-0.5">${student.behavior}</p>
+                    `;
+                    seatsGrid.appendChild(seatEl);
+                });
+
+                grid.appendChild(deskEl);
+            }
+            lucide.createIcons();
+        }
+
+        function updateKPIs() {
+            const total = studentsData.length;
+            const soutien = studentsData.filter(s => s.status === 'SOUTIEN').length;
+            const maitrise = studentsData.filter(s => s.status === 'MAITRISE').length;
+
+            document.getElementById('kpi-total-val').innerText = `${total} Élèves`;
+            document.getElementById('kpi-soutien-val').innerText = `${soutien} Élèves`;
+            document.getElementById('kpi-maitrise-val').innerText = `${maitrise} Élèves`;
+        }
+
+        function filterByStatus(status) {
+            currentFilter = status;
+            const banner = document.getElementById('active-filter-banner');
+            const labelText = document.getElementById('filter-label-text');
+
+            if (status === 'ALL') {
+                banner.classList.add('hidden');
+            } else {
+                banner.classList.remove('hidden');
+                labelText.innerText = status === 'SOUTIEN' ? 'Soutien Prioritaire (< 10/20)' : 'Maîtrise Acquise (≥ 10/20)';
+            }
+            renderClassroom();
+        }
+
+        function changeLevel(level) { currentLevel = level; renderClassroom(); }
+        function changeSubject(subject) { currentSubject = subject; renderClassroom(); }
+
+        function openPredictiveModal() { document.getElementById('predictiveModal').classList.remove('hidden'); }
+        function closePredictiveModal() { document.getElementById('predictiveModal').classList.add('hidden'); }
+
+        function applyPermutation() {
+            const abdou = studentsData.find(s => s.id === 1);
+            const moussa = studentsData.find(s => s.id === 3);
+            if (abdou && moussa) {
+                let tempDesk = abdou.desk, tempPos = abdou.position, tempRow = abdou.row;
+                abdou.desk = moussa.desk; abdou.position = moussa.position; abdou.row = moussa.row;
+                moussa.desk = tempDesk; moussa.position = tempPos; moussa.row = tempRow;
+                abdou.avg = 12.0; abdou.status = "MAITRISE";
+                renderClassroom(); updateKPIs(); closePredictiveModal();
+                alert("Permutation appliquée avec succès !");
+            }
+        }
+
+        function openStudentModal(studentId) {
+            const student = studentsData.find(s => s.id === studentId);
+            if (!student) return;
+            document.getElementById('modalStudentName').innerText = student.name;
+            document.getElementById('modalStudentDesk').innerText = `Table-Banc N°${student.desk} • Rang ${student.row}`;
+            document.getElementById('modalStudentAvatar').innerText = student.name.split(' ').map(n => n[0]).join('');
+            document.getElementById('modalStudentAvg').innerText = `${student.avg}/20`;
+            document.getElementById('modalBallaAdvice').innerText = student.ballaAdvice;
+            renderSvgGraph(student.notes);
+            lucide.createIcons();
+            document.getElementById('studentModal').classList.remove('hidden');
+        }
+
+        function closeStudentModal() { document.getElementById('studentModal').classList.add('hidden'); }
+
+        function renderSvgGraph(notes) {
+            const container = document.getElementById('svgGraphContainer');
+            const width = 450, height = 130, padding = 20;
+            const points = notes.map((val, idx) => {
+                const x = padding + (idx * ((width - 2 * padding) / (notes.length - 1)));
+                const y = height - padding - ((val / 20) * (height - 2 * padding));
+                return { x, y, val };
+            });
+            const pointsString = points.map(p => `${p.x},${p.y}`).join(' ');
+
+            container.innerHTML = `
+                <svg viewBox="0 0 ${width} ${height}" class="w-full h-full">
+                    <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#cbd5e1" stroke-width="1"/>
+                    <polyline fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${pointsString}" />
+                    ${points.map((p, i) => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#78350f" stroke="#ffffff" stroke-width="2"/><text x="${p.x}" y="${p.y - 8}" fill="#1e293b" font-size="9" font-weight="bold" text-anchor="middle">${p.val}</text>`).join('')}
+                </svg>`;
+        }
+
+        function sendQuickPrompt(text) {
+            document.getElementById('chatInput').value = text;
+            sendChatMessage();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const container = document.getElementById('chatContainer');
+            const text = input.value.trim();
+            if (!text) return;
+
+            container.innerHTML += `
+                <div class="flex items-start justify-end gap-2.5">
+                    <div class="bg-amber-900 text-amber-50 p-3 rounded-xl max-w-[80%] text-xs sm:text-sm shadow">
+                        ${text}
+                    </div>
+                    <div class="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold shrink-0">Lô</div>
+                </div>`;
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+
+            setTimeout(() => {
+                let reply = "C'est bien pris en compte, Madame Lô. Je mets à jour les fiches de suivi de la classe.";
+                if (text.toLowerCase().includes('abdou')) {
+                    reply = "Pour Abdou Laye, je suggère de le placer au premier rang et d'utiliser des jetons de numération pour matérialiser les retenues en addition.";
+                } else if (text.toLowerCase().includes('différenciation')) {
+                    reply = "Voici une proposition : confiez un exercice d'approfondissement par pairage (Aïssatou avec Abdou) pendant que vous reprenez les bases avec le groupe soutien.";
+                } else if (text.toLowerCase().includes('agitation')) {
+                    reply = "Pour canaliser l'agitation, un changement de position rapide ou l'attribution d'une responsabilité physique fonctionne très bien avec ce profil.";
+                }
+
+                container.innerHTML += `
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-7 h-7 rounded-full bg-amber-900 text-amber-200 flex items-center justify-center text-xs font-bold shrink-0">MB</div>
+                        <div class="bg-amber-100 text-amber-950 p-3 rounded-xl max-w-[80%] border border-amber-200 text-xs sm:text-sm shadow">
+                            ${reply}
+                        </div>
+                    </div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
