@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant Pédagogique & IA - Monsieur Balla</title>
+    <title>Assistant Pédagogique - Monsieur Balla</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -15,159 +15,164 @@
         .chalkboard-bg {
             background-color: #1e2920;
             background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 80%),
-                              repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+                              repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.15) 2px, rgba(0, 0, 0, 0.15) 4px);
             box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.8), 0 10px 25px -5px rgba(0, 0, 0, 0.5);
             border: 12px solid #8B4513;
         }
         .chalk-text-yellow { color: #fef08a; text-shadow: 0 0 2px rgba(254, 240, 138, 0.6); }
         .chalk-text-blue { color: #93c5fd; text-shadow: 0 0 2px rgba(147, 197, 253, 0.6); }
-        @media print {
-            header, footer, .no-print { display: none !important; }
-            .chalkboard-bg { border: 2px solid #000; color: #000 !important; background: none !important; }
-        }
+        .chalk-border-yellow { border: 2px dashed rgba(254, 240, 138, 0.5); }
+        .chalk-border-blue { border: 2px dashed rgba(147, 197, 253, 0.5); }
+        .modal-enter { animation: fadeIn 0.2s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+        @media print { header, footer, .no-print { display: none !important; } }
     </style>
 </head>
 <body class="bg-amber-50/40 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Header principal -->
+    <!-- En-tête -->
     <header class="bg-amber-900 text-amber-50 shadow-md border-b-4 border-amber-950 sticky top-0 z-30">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
-                <div class="p-2 bg-amber-800 rounded-lg border border-amber-700 shadow-inner">
+                <div class="p-2 bg-amber-800 rounded-lg border border-amber-700">
                     <i data-lucide="graduation-cap" class="w-7 h-7 text-amber-300"></i>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-wide flex items-center gap-2">
-                        <span>Assistant Pédagogique IA</span>
-                        <span class="text-xs px-2 py-0.5 rounded bg-amber-700 text-amber-200 border border-amber-600">CEB Sénégal</span>
+                        <span>Assistant Pédagogique</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-amber-700 text-amber-200">CEB Sénégal</span>
                     </h1>
-                    <p class="text-xs text-amber-200">Gestion Prédictive de Classe & AI Chat • Maître Balla</p>
+                    <p class="text-xs text-amber-200">Gestion Prédictive de Classe & IA • Maître Balla</p>
                 </div>
             </div>
-
-            <!-- Options Header & Bouton Imprimer -->
             <div class="flex items-center gap-3 no-print">
-                <button onclick="window.print()" class="px-3 py-1.5 bg-amber-800 hover:bg-amber-700 text-amber-100 rounded-lg border border-amber-600 text-xs font-semibold flex items-center gap-1.5 shadow">
+                <button onclick="window.print()" class="px-3 py-1.5 bg-amber-800 hover:bg-amber-700 text-amber-100 rounded-lg text-xs font-semibold flex items-center gap-1.5 border border-amber-600">
                     <i data-lucide="printer" class="w-4 h-4 text-amber-300"></i> Imprimer Plan
                 </button>
             </div>
         </div>
     </header>
 
+    <!-- Contenu Principal -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 space-y-6">
 
-        <!-- Tableau Noir de la Classe -->
-        <div class="chalkboard-bg rounded-2xl p-6 text-white relative">
-            <div class="flex flex-wrap justify-between items-center mb-4 border-b border-white/10 pb-3 gap-2">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
-                    <span class="font-chalk text-amber-200 text-base">TABLEAU NOIR DE LA CLASSE DE CE2</span>
-                </div>
-                <div class="flex items-center gap-2">
+        <!-- KPIs de la classe -->
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div onclick="filterByStatus('ALL')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-amber-500 transition-all">
+                <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Effectif Total</p>
+                <h3 class="text-2xl font-bold text-slate-800 mt-1">12 Élèves</h3>
+                <span class="text-xs text-amber-700 font-bold underline mt-2 inline-block">Afficher Tous</span>
+            </div>
+            <div onclick="filterByStatus('SOUTIEN')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-rose-500 transition-all">
+                <p class="text-xs font-semibold uppercase tracking-wider text-rose-600">Soutien Prioritaire</p>
+                <h3 class="text-2xl font-bold text-rose-700 mt-1">4 Élèves</h3>
+                <span class="text-xs text-rose-600 underline mt-2 inline-block">Moyenne &lt; 10/20</span>
+            </div>
+            <div onclick="filterByStatus('MAITRISE')" class="cursor-pointer bg-white p-4 rounded-xl shadow-sm border-2 border-slate-200 hover:border-emerald-500 transition-all">
+                <p class="text-xs font-semibold uppercase tracking-wider text-emerald-600">Maîtrise Acquise</p>
+                <h3 class="text-2xl font-bold text-emerald-700 mt-1">8 Élèves</h3>
+                <span class="text-xs text-emerald-600 underline mt-2 inline-block">Moyenne ≥ 10/20</span>
+            </div>
+        </section>
+
+        <!-- Tableau Noir et Zone Pédagogique -->
+        <section class="space-y-4">
+            <div class="chalkboard-bg rounded-2xl p-6 text-white relative">
+                <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                    <span class="font-chalk text-amber-200 text-sm sm:text-base">TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY</span>
                     <button onclick="generateFichePrep()" class="px-3 py-1 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-lg text-xs flex items-center gap-1 shadow">
-                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Générer Fiche de Prep IA
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Fiche de Prep IA
                     </button>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="border-2 border-dashed border-yellow-400/50 p-4 rounded-xl bg-yellow-950/20">
-                    <h3 class="chalk-text-yellow font-bold mb-2 flex items-center gap-2">
-                        <i data-lucide="calculator" class="w-4 h-4"></i> Zone Chiffres & Calcul (Jaune)
-                    </h3>
-                    <p class="chalk-text-yellow text-sm">• Séquence : Addition avec retenue en CE2</p>
-                    <p class="chalk-text-yellow text-xs opacity-90">• Problème concret : Calcul des récoltes de riz à la vallée du Fleuve Sénégal.</p>
-                </div>
-                <div class="border-2 border-dashed border-blue-400/50 p-4 rounded-xl bg-blue-950/20">
-                    <h3 class="chalk-text-blue font-bold mb-2 flex items-center gap-2">
-                        <i data-lucide="pen-tool" class="w-4 h-4"></i> Zone Lettres & Grammaire (Bleue)
-                    </h3>
-                    <p class="chalk-text-blue text-sm">• Vocabulaire : L'entraide communautaire</p>
-                    <p class="chalk-text-blue text-xs opacity-90">• Règle orthographique : Devant 'm', 'b', 'p', le 'n' devient 'm'.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section Chatbot IA Interactif en Direct -->
-        <div class="bg-white p-5 rounded-2xl border-2 border-amber-300 shadow-sm space-y-4 no-print">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 bg-amber-100 text-amber-800 rounded-lg">
-                        <i data-lucide="bot" class="w-5 h-5"></i>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="chalk-border-yellow p-4 rounded-xl bg-yellow-950/10">
+                        <h4 class="chalk-text-yellow font-bold text-sm mb-1"><i data-lucide="calculator" class="w-4 h-4 inline mr-1"></i> Zone Chiffres & Calcul</h4>
+                        <p class="chalk-text-yellow text-xs">• Opérations : Addition avec retenue</p>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Assistant Pédagogique IA en Direct</h3>
-                        <p class="text-xs text-slate-500">Posez vos questions de préparation de cours, de différenciation ou d'évaluation.</p>
-                    </div>
-                </div>
-                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> IA En Ligne
-                </span>
-            </div>
-
-            <!-- Zone d'affichage des messages -->
-            <div id="chatMessages" class="h-64 overflow-y-auto bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs sm:text-sm">
-                <div class="flex gap-3">
-                    <div class="w-7 h-7 rounded-full bg-amber-800 text-amber-200 flex items-center justify-center shrink-0 font-bold text-xs">IA</div>
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm max-w-xl text-slate-700">
-                        Bonjour Maître Balla ! Je suis votre assistant pédagogique IA. Que souhaitez-vous préparer aujourd'hui ? (Ex: une séance de lecture, une grille d'évaluation ou des exercices différenciés).
+                    <div class="chalk-border-blue p-4 rounded-xl bg-blue-950/10">
+                        <h4 class="chalk-text-blue font-bold text-sm mb-1"><i data-lucide="pen-tool" class="w-4 h-4 inline mr-1"></i> Zone Lettres & Grammaire</h4>
+                        <p class="chalk-text-blue text-xs">• Règle : 'm' devant 'b, p'</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Saisie de question -->
-            <div class="flex gap-2">
-                <input type="text" id="chatInput" placeholder="Posez une question à l'assistant pédagogique..." class="flex-grow bg-slate-50 border border-slate-300 rounded-xl px-4 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                <button onclick="sendChatMessage()" class="px-4 py-2 bg-amber-900 hover:bg-amber-800 text-white font-bold rounded-xl text-xs sm:text-sm shadow transition-all flex items-center gap-1.5">
-                    <span>Envoyer</span>
-                    <i data-lucide="send" class="w-4 h-4"></i>
+            <!-- Moteur Prédictif de Permutation -->
+            <div class="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-900 p-4 rounded-xl shadow-md text-amber-50 flex flex-wrap justify-between items-center gap-4 border border-amber-700">
+                <div>
+                    <h2 class="font-bold text-base">Moteur Pédagogique Intelligent & Prédictif</h2>
+                    <p class="text-xs text-amber-200">Simulation d'optimisation des places et du climat de classe.</p>
+                </div>
+                <button onclick="openPredictiveModal()" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold rounded-lg text-sm flex items-center gap-2 shadow">
+                    <i data-lucide="git-compare" class="w-4 h-4"></i> Proposer une Permutation Intelligente
                 </button>
             </div>
-        </div>
+        </section>
+
+        <!-- Chatbot IA en Direct -->
+        <section class="bg-white p-5 rounded-2xl border-2 border-amber-300 shadow-sm space-y-3 no-print">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2 text-sm uppercase tracking-wide">
+                <i data-lucide="bot" class="w-4 h-4 text-amber-700"></i> Assistant Pédagogique IA (En Direct)
+            </h3>
+            <div id="chatMessages" class="h-48 overflow-y-auto bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs sm:text-sm">
+                <div class="flex gap-2">
+                    <div class="w-6 h-6 rounded-full bg-amber-800 text-amber-200 flex items-center justify-center font-bold text-xs shrink-0">IA</div>
+                    <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-slate-700">Bonjour Maître Balla ! Posez vos questions de préparation ou de pédagogie ci-dessous.</div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Posez une question à l'assistant..." class="flex-grow bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <button onclick="sendChatMessage()" class="px-4 py-2 bg-amber-900 hover:bg-amber-800 text-white font-bold rounded-lg text-xs flex items-center gap-1">
+                    <span>Envoyer</span> <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+        </section>
 
     </main>
 
-    <!-- Modal Générateur de Fiche de Prep -->
-    <div id="prepModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
-            <div class="bg-amber-900 text-white px-6 py-4 flex justify-between items-center">
-                <h3 class="font-bold text-base flex items-center gap-2">
-                    <i data-lucide="file-check" class="w-5 h-5 text-amber-300"></i> Fiche de Préparation Générée par l'IA
-                </h3>
-                <button onclick="closePrepModal()" class="text-amber-200 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+    <!-- Modal Prédictif -->
+    <div id="predictiveModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-900">Analyse Prédictive de Permutation</h3>
+                <button onclick="closePredictiveModal()" class="text-slate-500 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto text-xs sm:text-sm text-slate-700 space-y-3 font-mono bg-slate-50">
-                <p class="font-bold text-amber-900 border-b border-amber-200 pb-1">DISCIPLINE : Mathématiques (Numération) | NIVEAU : CE2</p>
-                <p><strong>OBJECTIF DE LA SÉANCE :</strong> Effectuer des additions posées avec retenue dans des situations de résolution de problèmes concrées.</p>
-                <p><strong>DURÉE :</strong> 45 minutes | <strong>MATÉRIEL :</strong> Tableaux individuels, jetons de manipulation.</p>
-                <hr>
-                <p class="font-bold text-slate-900">1. PHASE D'EXPLORATION (10 min) :</p>
-                <p>- Présentation d'un problème sur le prix du mil au marché.</p>
-                <p>- Demander aux élèves de poser l'opération sur leur ardoise.</p>
-                <p class="font-bold text-slate-900">2. APPRENTISSAGE ACTIF & MANIPULATION (20 min) :</p>
-                <p>- Traitement de la retenue des dizaines avec le matériel de manipulation.</p>
-                <p class="font-bold text-slate-900">3. DIFFÉRENCIATION PÉDAGOGIQUE (15 min) :</p>
-                <p>- <em>Niveau Soutien :</em> Utilisation de la table d'addition assistée.</p>
-                <p>- <em>Niveau Standard :</em> 3 exercices d'application directe.</p>
-                <p>- <em>Niveau Dépassement :</em> Problème à deux étapes avec calcul mental.</p>
-            </div>
-            <div class="bg-slate-100 px-6 py-3 flex justify-end gap-2">
-                <button onclick="closePrepModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-xs font-bold">Fermer</button>
-                <button onclick="window.print()" class="px-4 py-2 bg-amber-800 text-white rounded-lg text-xs font-bold">Imprimer la Fiche</button>
+            <p class="text-xs sm:text-sm text-slate-700">
+                <strong>Suggestion :</strong> Permuter Abdou Laye (Fond) et Moussa Diallo (Premier rang) pour améliorer la visibilité et stimuler l'entraide de binôme.
+            </p>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closePredictiveModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">Fermer</button>
+                <button onclick="alert('Permutation appliquée avec succès !'); closePredictiveModal();" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-lg">Valider</button>
             </div>
         </div>
     </div>
 
-    <!-- Scripts JavaScript -->
+    <!-- Modal Fiche de Prep -->
+    <div id="prepModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-900">Fiche de Préparation Générée par l'IA</h3>
+                <button onclick="closePrepModal()" class="text-slate-500 hover:text-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="text-xs sm:text-sm font-mono text-slate-700 space-y-2 bg-slate-50 p-4 rounded-lg border">
+                <p><strong>Discipline :</strong> Mathématiques | <strong>Niveau :</strong> CE2</p>
+                <p><strong>Objectif :</strong> Maîtriser l'addition posée avec retenue.</p>
+                <p><strong>Méthode :</strong> Manipulation concrète d'objets puis passage à l'abstraction.</p>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button onclick="closePrepModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-lg">Fermer</button>
+                <button onclick="window.print()" class="px-4 py-2 bg-amber-800 text-white text-xs font-bold rounded-lg">Imprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
         lucide.createIcons();
-
-        function generateFichePrep() {
-            document.getElementById('prepModal').classList.remove('hidden');
-        }
-        function closePrepModal() {
-            document.getElementById('prepModal').classList.add('hidden');
-        }
+        function filterByStatus(status) { console.log("Filtre :", status); }
+        function openPredictiveModal() { document.getElementById('predictiveModal').classList.remove('hidden'); }
+        function closePredictiveModal() { document.getElementById('predictiveModal').classList.add('hidden'); }
+        function generateFichePrep() { document.getElementById('prepModal').classList.remove('hidden'); }
+        function closePrepModal() { document.getElementById('prepModal').classList.add('hidden'); }
 
         function sendChatMessage() {
             const input = document.getElementById('chatInput');
@@ -175,28 +180,12 @@
             const text = input.value.trim();
             if (!text) return;
 
-            // Message utilisateur
-            const userDiv = document.createElement('div');
-            userDiv.className = 'flex gap-3 justify-end';
-            userDiv.innerHTML = `<div class="bg-amber-900 text-amber-50 p-3 rounded-xl shadow-sm max-w-xl">${text}</div>`;
-            container.appendChild(userDiv);
+            container.innerHTML += `<div class="flex gap-2 justify-end"><div class="bg-amber-900 text-white p-2.5 rounded-lg text-xs">${text}</div></div>`;
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Réponse de l'IA (Simulation intelligente)
             setTimeout(() => {
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'flex gap-3';
-                aiDiv.innerHTML = `
-                    <div class="w-7 h-7 rounded-full bg-amber-800 text-amber-200 flex items-center justify-center shrink-0 font-bold text-xs">IA</div>
-                    <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm max-w-xl text-slate-700">
-                        Voici la proposition pédagogique pour votre demande :<br><br>
-                        <strong>1. Compétence visée :</strong> Adaptation aux besoins des élèves du CE2.<br>
-                        <strong>2. Démarche :</strong> Favoriser la manipulation concrète avant le passage à l'écrit.<br>
-                        <strong>3. Évaluation :</strong> Observation directe durant le travail individuel.
-                    </div>
-                `;
-                container.appendChild(aiDiv);
+                container.innerHTML += `<div class="flex gap-2"><div class="w-6 h-6 rounded-full bg-amber-800 text-amber-200 flex items-center justify-center font-bold text-xs shrink-0">IA</div><div class="bg-white p-2.5 rounded-lg border text-xs text-slate-700">Voici une suggestion pédagogique adaptée pour votre classe de CE2 concernant votre demande.</div></div>`;
                 container.scrollTop = container.scrollHeight;
             }, 800);
         }
