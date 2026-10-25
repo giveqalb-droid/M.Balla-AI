@@ -1150,46 +1150,48 @@
   </script>
 
     <!-- Code JavaScript Intégré -->
-    // 🔊 SYNTHÈSE VOCALE HAUTE QUALITÉ (StreamElements + Secours Navigateur Optimisé)
+    // 🔊 SYNTHÈSE VOCALE LOCALE ULTRA-NATURELLE (Forcée et optimisée)
         function speakText(text) {
             if (!text) return;
-            
-            // Arrêter tout son en cours
-            if (window.currentAudio) {
-                window.currentAudio.pause();
-            }
 
-            // Utilisation de l'API StreamElements (Voix française "Céline" très naturelle et 100% gratuite)
-            const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Celine&text=${encodeURIComponent(text)}`;
-            const audio = new Audio(audioUrl);
-            window.currentAudio = audio;
+            if ('speechSynthesis' in window) {
+                // Stopper toute parole en cours
+                window.speechSynthesis.cancel();
 
-            // Lecture audio HD
-            audio.play().catch(err => {
-                console.warn("Bascule sur la voix locale optimisée du navigateur...", err);
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.lang = 'fr-FR';
-                    utterance.rate = 0.95; // Dition pédagogique claire
-                    
-                    // Sélection automatique de la meilleure voix française disponible sur votre appareil
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.95; // Vitesse idéale pour une démo pédagogique
+                utterance.pitch = 1.0;
+
+                // Fonction pour assigner la meilleure voix française
+                const setVoiceAndSpeak = () => {
                     const voices = window.speechSynthesis.getVoices();
-                    const bestVoice = voices.find(v => v.lang.startsWith('fr') && (
-                        v.name.includes('Google') || 
-                        v.name.includes('Natural') || 
-                        v.name.includes('Céline') || 
-                        v.name.includes('Thomas') ||
-                        v.name.includes('Audrey')
-                    )) || voices.find(v => v.lang.startsWith('fr'));
                     
-                    if (bestVoice) {
-                        utterance.voice = bestVoice;
+                    // Priorité absolue aux voix naturelles/Google/Microsoft/Apple en français
+                    const preferredVoice = voices.find(v => 
+                        (v.lang === 'fr-FR' || v.lang === 'fr_FR' || v.lang.startsWith('fr')) && 
+                        (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft') || v.name.includes('Siri') || v.name.includes('Céline') || v.name.includes('Hortense'))
+                    ) || voices.find(v => v.lang.startsWith('fr'));
+
+                    if (preferredVoice) {
+                        utterance.voice = preferredVoice;
                     }
 
                     window.speechSynthesis.speak(utterance);
+                };
+
+                // Certains navigateurs chargent les voix de manière asynchrone
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    setVoiceAndSpeak();
+                } else {
+                    window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+                    // Sécurité si onvoiceschanged ne se déclenche pas
+                    setTimeout(setVoiceAndSpeak, 100);
                 }
-            });
+            } else {
+                alert("La synthèse vocale n'est pas supportée par ce navigateur.");
+            }
         }
     </script>
 </body>
