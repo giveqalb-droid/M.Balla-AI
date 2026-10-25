@@ -1,6 +1,125 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Combinateur Pro — HTML, CSS & JS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-4 sm:p-6">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- En-tête -->
+        <header class="bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 p-6 rounded-2xl shadow-xl border border-amber-600/30 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl font-extrabold flex items-center gap-2 text-amber-300">
+                    <span>🛠️</span> Le Combinateur Pro de Code
+                </h1>
+                <p class="text-xs text-slate-300 mt-1">Fusionnez proprement votre structure HTML, vos styles CSS et vos scripts JavaScript en un seul fichier <code class="bg-slate-800 text-amber-200 px-2 py-0.5 rounded font-mono">index.html</code>.</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="combineCode()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs shadow transition-all flex items-center gap-2 cursor-pointer">
+                    <span>⚡ Générer &amp; Fusionner</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Grille des zones de saisie -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 1. HTML -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-sm space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="font-bold text-xs text-amber-400 uppercase tracking-wider">1. Structure HTML</label>
+                    <span class="text-[10px] text-slate-500">Obligatoire</span>
+                </div>
+                <textarea id="htmlInput" placeholder="Collez votre code HTML ici..." class="w-full h-64 p-3 text-xs font-mono bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-amber-500 text-slate-200 resize-y"></textarea>
+            </div>
+
+            <!-- 2. CSS -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-sm space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="font-bold text-xs text-cyan-400 uppercase tracking-wider">2. Styles CSS (Optionnel)</label>
+                    <span class="text-[10px] text-slate-500">Classes &amp; Design</span>
+                </div>
+                <textarea id="cssInput" placeholder="Collez votre CSS additionnel ici..." class="w-full h-64 p-3 text-xs font-mono bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-200 resize-y"></textarea>
+            </div>
+
+            <!-- 3. JavaScript -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-sm space-y-2">
+                <div class="flex justify-between items-center">
+                    <label class="font-bold text-xs text-emerald-400 uppercase tracking-wider">3. Logique JavaScript</label>
+                    <span class="text-[10px] text-slate-500">Fonctions &amp; Voix</span>
+                </div>
+                <textarea id="jsInput" placeholder="Collez votre code JavaScript ici..." class="w-full h-64 p-3 text-xs font-mono bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200 resize-y"></textarea>
+            </div>
+
+        </div>
+
+        <!-- Boutons d'action globale -->
+        <div class="flex flex-wrap justify-center gap-3">
+            <button onclick="combineCode()" class="px-6 py-3 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs shadow transition-all flex items-center gap-2 cursor-pointer">
+                <span>⚡ Combiner Tout</span>
+            </button>
+            <button onclick="copyResult()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs shadow transition-all flex items-center gap-2 cursor-pointer">
+                <span>📋 Copier le Résultat</span>
+            </button>
+            <button onclick="downloadResult()" class="px-6 py-3 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs shadow transition-all flex items-center gap-2 cursor-pointer">
+                <span>💾 Télécharger index.html</span>
+            </button>
+        </div>
+
+        <!-- Résultat & Prévisualisation -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Code Final -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-sm space-y-2">
+                <label class="font-bold text-xs text-slate-400 uppercase tracking-wider">Code Combiné Final (`index.html`)</label>
+                <textarea id="resultOutput" readonly placeholder="Le code unifié apparaîtra ici après fusion..." class="w-full h-64 p-3 text-xs font-mono bg-slate-950 border border-slate-800 rounded-xl focus:outline-none text-slate-300 resize-y"></textarea>
+            </div>
+
+            <!-- Aperçu en Direct -->
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow-sm space-y-2 flex flex-col">
+                <label class="font-bold text-xs text-slate-400 uppercase tracking-wider">Prévisualisation en Direct (Iframe)</label>
+                <div class="flex-1 bg-white rounded-xl overflow-hidden min-h-[256px]">
+                    <iframe id="previewFrame" class="w-full h-full border-0"></iframe>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Script de l'outil -->
+    <script>
+        function combineCode() {
+            let html = document.getElementById('htmlInput').value.trim();
+            let css = document.getElementById('cssInput').value.trim();
+            let js = document.getElementById('jsInput').value.trim();
+
+            if (!html) {
+                alert("Veuillez au moins renseigner le code HTML !");
+                return;
+            }
+
+            let combined = html;
+
+            // 1. Insertion du CSS dans <head> s'il y en a
+            if (css) {
+                const styleBlock = `\n    <!-- Styles CSS Personnalisés -->\n    <style>\n${css}\n    </style>\n`;
+                if (combined.includes('</head>')) {
+                    combined = combined.replace('</head>', styleBlock + '</head>');
+                } else {
+                    combined = `<style>\n${css}\n</style>\n` + combined;
+                }
+            }
+
+            // 2. Insertion du JS avant 
+    <!-- Second Bloc HTML Intégré -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Assistant Pédagogique M. Balla - Voice Interactive AI</title>
@@ -1192,6 +1311,53 @@
             } else {
                 alert("La synthèse vocale n'est pas supportée par ce navigateur.");
             }
+        }
+    </script>
+</body>
+</html>
+</body> ou à la fin
+            if (js) {
+                const scriptBlock = `\n    <!-- Code JavaScript Intégré -->\n    <script>\n${js}\n    <\/script>\n`;
+                if (combined.includes('</body>')) {
+                    combined = combined.replace('</body>', scriptBlock + '</body>');
+                } else {
+                    combined += scriptBlock;
+                }
+            }
+
+            // Affichage dans la zone de texte
+            document.getElementById('resultOutput').value = combined;
+
+            // Mise à jour de la prévisualisation en direct
+            const iframe = document.getElementById('previewFrame');
+            iframe.srcdoc = combined;
+        }
+
+        function copyResult() {
+            const output = document.getElementById('resultOutput');
+            if (!output.value) {
+                alert("Aucun code à copier. Veuillez d'abord combiner les codes.");
+                return;
+            }
+            output.select();
+            document.execCommand('copy');
+            alert("Code combiné copié dans le presse-papier ! Prêt pour GitHub.");
+        }
+
+        function downloadResult() {
+            const output = document.getElementById('resultOutput').value;
+            if (!output) {
+                alert("Aucun code à télécharger. Veuillez d'abord combiner les codes.");
+                return;
+            }
+            const blob = new Blob([output], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
 </body>
