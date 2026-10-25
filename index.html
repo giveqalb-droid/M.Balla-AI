@@ -1147,133 +1147,35 @@
         }
       });
     }
-    <!-- MOTEUR VOCAL HD & SYNTHESIS AI INTEGRÉ -->
-
-  // Base de données contextuelle des élèves pour vos discussions
-  const studentsDB = {
-    abdou: "Abdou Laye a une moyenne de 8.5 sur 20. Il est calme mais présente un léger déficit de repérage spatial au tableau. Je suggère de le garder au premier rang et d'utiliser du matériel concret.",
-    aissatou: "Aïssatou Sow a 14 sur 20. Très attentive et rigoureuse en numération, elle fait une excellente tutrice de table.",
-    moussa: "Moussa Diallo a 9 sur 20. Énergique, ses difficultés portent sur la soustraction avec emprunt. Je recommande de manipuler des jetons.",
-    fatou: "Fatou Ndiaye a 12.5 sur 20. Très appliquée, une simple relecture active suffit pour corriger ses petites fautes d'accord."
-  };
-
-  // 1. Déclenchement du salut vocal HD au tout premier clic/toucher sur la page
-  document.addEventListener('click', function initVoiceOnFirstClick() {
-    saluerMaitreBallaHD();
-    document.removeEventListener('click', initVoiceOnFirstClick);
-  }, { once: true });
-
-  // 2. Fonction pour lire à voix haute avec une voix naturelle HD (Google Cloud TTS)
-  function speakTextHD(text) {
-    if (!text) return;
-    if (window.currentAudio) window.currentAudio.pause();
-
-    const encodedText = encodeURIComponent(text);
-    // Utilisation de la synthèse Google HD naturelle
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
-    const audio = new Audio(audioUrl);
-    window.currentAudio = audio;
-
-    audio.play().catch(() => {
-      // Voix de secours fluide si le flux est restreint par le navigateur
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'fr-FR';
-        utterance.rate = 0.90; // Débit posé et naturel
-        window.speechSynthesis.speak(utterance);
-      }
-    });
-  }
-
-  // Salut vocal de bienvenue
-  function saluerMaitreBallaHD() {
-    const message = "Bonjour Maître Balla. Bienvenue dans votre assistant pédagogique Synthesis AI. Je suis prêt à vous accompagner pour la classe de CE2.";
-    speakTextHD(message);
-    
-    const statusEl = document.getElementById('voice-status');
-    if (statusEl) statusEl.innerText = "Co-pilote actif et à votre écoute.";
-  }
-
-  // 3. Discussion libre et réponse intelligente
-  function sendTeacherReply() {
-    const input = document.getElementById('teacher-reply-input');
-    if (!input) return;
-    const query = input.value.trim();
-    if (!query) return;
-
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-      chatBox.innerHTML += `
-        <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs">
-          <strong>Maître Balla :</strong> "${query}"
-        </div>
-      `;
-    }
-    input.value = '';
-
-    setTimeout(() => {
-      let reponse = "";
-      const textLower = query.toLowerCase();
-
-      if (textLower.includes('abdou')) {
-        reponse = studentsDB.abdou;
-      } else if (textLower.includes('aïssatou') || textLower.includes('aissatou')) {
-        reponse = studentsDB.aissatou;
-      } else if (textLower.includes('moussa')) {
-        reponse = studentsDB.moussa;
-      } else if (textLower.includes('fatou')) {
-        reponse = studentsDB.fatou;
-      } else if (textLower.includes('bilan') || textLower.includes('classe') || textLower.includes('avancement')) {
-        reponse = "Le bilan global montre 8 élèves ayant acquis la maîtrise et 4 élèves en soutien prioritaire. La progression globale est constante.";
-      } else {
-        reponse = `J'ai bien noté votre remarque : "${query}". Pour optimiser la leçon du jour au tableau noir, je vous suggère un travail en binômes de soutien.`;
-      }
-
-      if (chatBox) {
-        chatBox.innerHTML += `
-          <div class="bg-amber-100/80 border border-amber-300 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
-            <strong>Synthesis AI :</strong> "${reponse}"
-          </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-      }
-
-      // Réponse vocale naturelle HD
-      speakTextHD(reponse);
-    }, 600);
-  }
-
-  // 4. Activer la reconnaissance vocale au micro (Style Siri)
-  function toggleSpeechRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Veuillez utiliser Google Chrome pour la reconnaissance vocale.");
-      return;
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'fr-FR';
-    recognition.interimResults = false;
-
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      const input = document.getElementById('teacher-reply-input');
-      if (input) {
-        input.value = transcript;
-        sendTeacherReply();
-      }
-    };
-
-    recognition.start();
-    speakTextHD("Je vous écoute Maître Balla.");
-  }
-
-  // Initialisation au chargement de la page
-  window.onload = () => {
-    console.log("Interface Synthesis AI chargée.");
-  };
-
   </script>
+
+    <!-- JavaScript Intégré -->
+    <script>
+function speakTextHD(text) {
+  if (!text) return;
+  
+  // Utilisation de la synthèse vocale native du navigateur (ultra-fiable)
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel(); // Annule toute parole précédente
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'fr-FR';
+    utterance.rate = 0.90; // Vitesse posée et naturelle
+    utterance.pitch = 1.0;
+
+    // Recherche d'une voix française de meilleure qualité si disponible
+    const voices = window.speechSynthesis.getVoices();
+    const frenchVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Siri') || v.name.includes('Céline')));
+    if (frenchVoice) {
+      utterance.voice = frenchVoice;
+    }
+
+    window.speechSynthesis.speak(utterance);
+    console.log("Synthèse vocale native lancée pour :", text);
+  } else {
+    alert("La synthèse vocale n'est pas prise en charge par votre navigateur.");
+  }
+}
+    </script>
 </body>
 </html>
