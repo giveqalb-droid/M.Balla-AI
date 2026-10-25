@@ -1149,55 +1149,85 @@
     }
   </script>
 
+    <!-- Second Bloc HTML Intégré -->
+<button onclick="demarrerAssistant()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow animate-pulse">
+    🔊 Activer la Voix & l'Assistant
+</button>
+
     <!-- JavaScript Intégré -->
     <script>
 // =========================================================================
-// ACCUEIL DOUX ET INTELLIGENT DE SYNTHESIS AI DÈS L'ARRIVÉE
+// 1. ACTIVATION DE LA SESSION VOCALE (Contourne le blocage du navigateur)
 // =========================================================================
-
-window.addEventListener('DOMContentLoaded', () => {
-    // 1. Afficher un message de bienvenue chaleureux dans le chat Synthesis AI
+function demarrerAssistant() {
+    const messageAccueil = "Bonjour Maître Balla ! Je suis votre co-pilote Synthesis AI. Je suis à votre écoute pour parler de la classe, des élèves ou de l'avancement des cours. Que souhaitez-vous aborder ?";
+    
+    // Affichage dans le chat
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
-        const welcomeText = "Bonjour Maître Balla. Bienvenue dans votre espace pédagogique intelligent. Je suis Synthesis AI, votre co-pilote. Je suis prêt à analyser la classe de CE2, à vous poser des questions ciblées et à vous donner des suggestions pour aider chaque élève.";
-        
         chatBox.innerHTML = `
-            <div class="bg-amber-100/80 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1 shadow-xs">
-                <strong>🤖 Synthesis AI (Co-Pilote) :</strong>
-                <p>"${welcomeText}"</p>
+            <div class="bg-amber-100/80 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1">
+                <strong>🤖 Synthesis AI :</strong>
+                <p>"${messageAccueil}"</p>
             </div>
         `;
     }
 
-    // 2. Déclencher la voix douce au premier clic n'importe où sur la page (pour contourner le blocage du navigateur)
-    document.addEventListener('click', function initAudioOnce() {
-        playSweetWelcome();
-        // Se désactive après le premier clic pour ne pas rejouer à chaque clic
-        document.removeEventListener('click', initAudioOnce);
-    }, { once: true });
-});
+    // Lecture vocale de bienvenue
+    speakText(messageAccueil);
+}
 
-// Fonction pour une voix douce, posée et chaleureuse
-function playSweetWelcome() {
-    const text = "Bonjour Maître Balla. Bienvenue dans votre espace pédagogique. Je suis votre co-pilote Synthesis AI, prêt à vous accompagner.";
-    
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'fr-FR';
-        utterance.rate = 0.90; // Vitesse légèrement ralentie pour un ton plus doux et bienveillant
-        utterance.pitch = 1.05; // Légère nuance chaleureuse
-        
-        // Sélection de la meilleure voix française disponible sur l'appareil
-        const voices = window.speechSynthesis.getVoices();
-        const softVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Céline'))) || voices.find(v => v.lang.startsWith('fr'));
-        
-        if (softVoice) {
-            utterance.voice = softVoice;
+// =========================================================================
+// 2. MOTEUR DE DIALOGUE LIBRE (Répond à toutes vos questions)
+// =========================================================================
+function sendTeacherReply() {
+    const input = document.getElementById('teacher-reply-input');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.innerHTML += `
+            <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs">
+                <strong>Maître Balla :</strong> "${text}"
+            </div>
+        `;
+    }
+    input.value = '';
+
+    // Simulation d'une réflexion de l'IA et réponse contextuelle libre
+    setTimeout(() => {
+        let reponseIA = "";
+        const lowerText = text.toLowerCase();
+
+        // Analyse de votre question pour un dialogue intelligent
+        if (lowerText.includes('abdou')) {
+            reponseIA = "Concernant Abdou Laye, sa moyenne est de 8.5 sur 20. Il a besoin d'un renfort en numération et d'être placé au premier rang. Je vous suggère de lui confier des exercices visuels courts.";
+        } else if (lowerText.includes('aïssatou') || lowerText.includes('aissatou')) {
+            reponseIA = "Aïssatou Sow est une élève solide avec 14 sur 20. Elle est très rigoureuse et peut parfaitement faire office de tutrice pour aider ses camarades.";
+        } else if (lowerText.includes('moussa')) {
+            reponseIA = "Pour Moussa Diallo (9 sur 20), ses difficultés se situent sur la soustraction avec emprunt. Le mieux est d'utiliser du matériel concret comme des jetons.";
+        } else if (lowerText.includes('aide') || lowerText.includes('soutien') || lowerText.includes('difficulté')) {
+            reponseIA = "Pour mieux aider les élèves en difficulté, je vous suggère de diviser la classe en binômes mixtes (un élève fort avec un élève en soutien) lors des ateliers de calcul du vendredi.";
+        } else if (lowerText.includes('programme') || lowerText.includes('avancement') || lowerText.includes('leçon')) {
+            reponseIA = "Concernant l'avancement du programme de CE2, les notions sur les grands nombres et la règle du M devant B et P sont bien engagées. Voulez-vous que l'on prépare une évaluation formative ?";
+        } else {
+            // Réponse ouverte par défaut pour converser librement sur n'importe quel sujet
+            reponseIA = `J'ai bien pris en compte votre remarque : "${text}". Pour y répondre au mieux dans le cadre du CEB, je vous conseille d'observer l'engagement des élèves et d'ajuster le rythme au tableau noir. Souhaitez-vous que l'on approfondisse ce point ?`;
         }
 
-        window.speechSynthesis.speak(utterance);
-    }
+        if (chatBox) {
+            chatBox.innerHTML += `
+                <div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
+                    <strong>Synthesis AI :</strong> "${reponseIA}"
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        speakText(reponseIA);
+    }, 700);
 }
     </script>
 </body>
