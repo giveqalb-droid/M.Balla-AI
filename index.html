@@ -58,6 +58,58 @@
       body { background: white; color: black; }
     }
   </style>
+
+    <!-- Styles CSS Personnalisés -->
+    <style>
+/* Style dynamique de la salle de classe */
+.classroom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 1.5rem;
+  border: 4px solid #b45309;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.student-desk-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  padding: 1rem;
+  border-left: 6px solid #cbd5e1;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.student-desk-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 20px -5px rgba(217, 119, 6, 0.3);
+}
+
+.student-desk-card.status-support {
+  border-left-color: #f59e0b;
+  background: linear-gradient(to right, #fffbe6, #ffffff);
+}
+
+.student-desk-card.status-mastery {
+  border-left-color: #10b981;
+  background: linear-gradient(to right, #ecfdf5, #ffffff);
+}
+
+/* Animation d'impulsion pour le co-pilote */
+.pulse-avatar {
+  animation: pulseAvatar 2s infinite;
+}
+@keyframes pulseAvatar {
+  0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(217, 119, 6, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
+}
+    </style>
 </head>
 <body class="text-slate-800 antialiased min-h-screen pb-16">
 
@@ -1150,37 +1202,87 @@
   </script>
 
     <!-- Second Bloc HTML Intégré -->
-<button onclick="saluerMaitreBallaHD()" class="p-4 bg-red-600 text-white font-bold text-lg rounded-xl shadow-lg">
-  🔊 CLIQUER ICI POUR TESTER LA VOIX
-</button>
+<script>
+  // Base de données clinique complète de la classe
+  const elevesData = {
+    abdou: {
+      nom: "Abdou Laye",
+      note: "8.5 sur 20",
+      details: "Abdou Laye a une moyenne de 8.5 sur 20. C'est un élève calme et discret qui a des difficultés en numération, notamment sur le repérage spatial et la retenue des dizaines. Je vous conseille de le maintenir au premier rang, d'utiliser le boulier et de lui proposer deux exercices ciblés."
+    },
+    aissatou: {
+      nom: "Aïssatou Sow",
+      note: "14 sur 20",
+      details: "Aïssatou Sow présente une excellente moyenne de 14 sur 20. Très attentive et structurée, elle maîtrise parfaitement la posée des opérations. Je suggère de la désigner comme tutrice pour accompagner ses camarades en soutien."
+    },
+    moussa: {
+      nom: "Moussa Diallo",
+      note: "9 sur 20",
+      details: "Moussa Diallo a une moyenne de 9 sur 20. Élève kinesthésique et très dynamique, il bute sur les soustractions à emprunt. Manipuler du matériel concret avec lui donnera de très bons résultats."
+    },
+    fatou: {
+      nom: "Fatou Ndiaye",
+      note: "12.5 sur 20",
+      details: "Fatou Ndiaye a une moyenne de 12.5 sur 20. Très appliquée et rigoureuse, elle commet seulement de légères étourderies sur les accords en grammaire."
+    }
+  };
 
-    <!-- JavaScript Intégré -->
-    <script>
-function speakTextHD(text) {
-  if (!text) return;
-  
-  // Utilisation de la synthèse vocale native du navigateur (ultra-fiable)
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel(); // Annule toute parole précédente
-    
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.90; // Vitesse posée et naturelle
-    utterance.pitch = 1.0;
+  // 1. Fonction pour parler à voix haute
+  function parler(texte) {
+    if (!texte) return;
 
-    // Recherche d'une voix française de meilleure qualité si disponible
-    const voices = window.speechSynthesis.getVoices();
-    const frenchVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Siri') || v.name.includes('Céline')));
-    if (frenchVoice) {
-      utterance.voice = frenchVoice;
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(texte);
+      utterance.lang = 'fr-FR';
+      utterance.rate = 0.92; // Ton humain et posé
+      
+      // Recherche de voix française naturelle
+      const voices = window.speechSynthesis.getVoices();
+      const frVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Céline')));
+      if (frVoice) utterance.voice = frVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  // 2. Action au clic sur un élève dans la classe dynamique
+  function interrogerEleve(id) {
+    const el = elevesData[id];
+    if (!el) return;
+
+    // Affichage dans la zone de dialogue Synthesis AI
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+      chatBox.innerHTML += `
+        <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs my-2">
+          <strong>Maître Balla :</strong> "Donne-moi le bilan pour ${el.nom}."
+        </div>
+        <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-3 rounded-xl max-w-2xl text-xs my-2 shadow-xs">
+          <strong>🤖 Synthesis AI :</strong> "${el.details}"
+        </div>
+      `;
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    window.speechSynthesis.speak(utterance);
-    console.log("Synthèse vocale native lancée pour :", text);
-  } else {
-    alert("La synthèse vocale n'est pas prise en charge par votre navigateur.");
+    // Déclenchement de la voix
+    parler(el.details);
   }
-}
-    </script>
+
+  // 3. Activation globale du Co-Pilote
+  function lancerAssistantComplet() {
+    const message = "Bonjour Maître Balla. Salle de classe de CE2 synchronisée. Cliquez sur n'importe quel bureau d'élève pour lancer l'analyse complète.";
+    parler(message);
+    
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+      chatBox.innerHTML = `
+        <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
+          <strong>🤖 Synthesis AI :</strong> "${message}"
+        </div>
+      `;
+    }
+  }
+</script>
 </body>
 </html>
