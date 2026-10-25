@@ -60,4 +60,600 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <p class="text-xs font-semibold text-slate-500 uppercase">Effectif Total</p>
-                        <h3 class="text-
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">12 Élèves</h3>
+                        <span class="text-xs text-slate-400">Classe CE2-A</span>
+                    </div>
+                    <span class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-lg font-medium">Afficher Tous</span>
+                </div>
+            </div>
+
+            <div onclick="filterStudents('soutien')" class="bg-white p-4 rounded-xl shadow-sm border-2 border-rose-200 cursor-pointer hover:border-rose-300 transition-all">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold text-rose-600 uppercase">Soutien Prioritaire</p>
+                        <h3 class="text-2xl font-bold text-rose-700 mt-1">4 Élèves</h3>
+                        <span class="text-xs text-rose-500">Moyenne &lt; 10/20</span>
+                    </div>
+                    <span class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 px-2.5 py-1 rounded-lg font-medium">Filtrer ces élèves</span>
+                </div>
+            </div>
+
+            <div onclick="filterStudents('maitrise')" class="bg-white p-4 rounded-xl shadow-sm border-2 border-emerald-200 cursor-pointer hover:border-emerald-300 transition-all">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-xs font-semibold text-emerald-600 uppercase">Maîtrise Acquise</p>
+                        <h3 class="text-2xl font-bold text-emerald-700 mt-1">8 Élèves</h3>
+                        <span class="text-xs text-emerald-500">Moyenne ≥ 10/20</span>
+                    </div>
+                    <span class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-lg font-medium">Filtrer ces élèves</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- BANDEAU DE FILTRE ACTIF -->
+        <div id="filterBanner" class="hidden justify-between items-center bg-amber-100 border border-amber-300 text-amber-900 px-4 py-2.5 rounded-xl text-xs font-medium">
+            <span id="filterBannerText">Filtre actif : Soutien Prioritaire</span>
+            <button onclick="filterStudents('all')" class="underline hover:text-amber-950 font-bold">Réinitialiser le filtre</button>
+        </div>
+
+        <!-- TABLEAU NOIR DE LA CLASSE -->
+        <section class="bg-[#1e3a2f] text-amber-50 p-6 rounded-2xl shadow-xl border-4 border-[#12241d] space-y-6">
+            <div class="flex justify-between items-center border-b border-emerald-800 pb-3 flex-wrap gap-2">
+                <h2 class="font-bold text-base tracking-wide flex items-center gap-2">
+                    <span>🟢 TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY</span>
+                </h2>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-amber-300">Date : Vendredi 16 Octobre</span>
+                    <button onclick="readTableau()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-amber-200 px-2.5 py-1 rounded-lg border border-emerald-600 transition-all">🔊 Écouter le tableau</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <!-- Zone Chiffres -->
+                <div class="bg-[#162d24] p-4 rounded-xl border border-emerald-800/60 space-y-2">
+                    <h3 class="font-bold text-amber-300 text-xs uppercase tracking-wider flex items-center gap-2">
+                        <span>Zone Chiffres & Calcul (Jaune)</span>
+                    </h3>
+                    <p class="text-xs"><strong>Opérations du Jour :</strong> 4 850 + 2 730 = 7 580</p>
+                    <ul class="text-xs text-emerald-200 space-y-1 pl-2">
+                        <li>• Propriétés des nombres : Unités, Dizaines, Centaines, Milliers</li>
+                        <li>• Problème : Calcul du prix total du mil au marché de Sandaga.</li>
+                    </ul>
+                </div>
+
+                <!-- Zone Lettres -->
+                <div class="bg-[#162d24] p-4 rounded-xl border border-emerald-800/60 space-y-2">
+                    <h3 class="font-bold text-amber-300 text-xs uppercase tracking-wider flex items-center gap-2">
+                        <span>Zone Lettres & Grammaire (Bleue)</span>
+                    </h3>
+                    <p class="text-xs"><strong>Vocabulaire :</strong> La solidarité au village (Ntekki)</p>
+                    <ul class="text-xs text-emerald-200 space-y-1 pl-2">
+                        <li>• Grammaire : Le sujet et le verbe dans la phrase complexe.</li>
+                        <li>• Règle du jour : "mb", "mp" prennent toujours M devant b et p.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- BUREAU DU MAÎTRE & PERMUTATION PREDICTIVE -->
+        <section class="bg-amber-900/10 border-2 border-amber-900/20 p-5 rounded-2xl flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <h3 class="font-bold text-sm text-amber-950 flex items-center gap-2">
+                    <span>🪵 Bureau du Maître Balla (Estrade d'observation directe)</span>
+                </h3>
+                <p class="text-xs text-amber-900 mt-0.5">Moteur Pédagogique Intelligent & Prédictif — Analyse croisée des profils attentionnels, synergies comportementales et besoins du CEB.</p>
+            </div>
+            <button onclick="openPermutationModal()" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold rounded-xl text-xs shadow-md transition-all flex items-center gap-2">
+                <span>⚡ Proposer une Permutation Intelligente</span>
+            </button>
+        </section>
+
+        <!-- DISPOSITION DES TABLES-BANCS -->
+        <section class="space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-sm text-slate-800">Disposition des Tables-Bancs (2 Élèves par Table)</h3>
+                <span class="text-xs text-slate-500">Cliquez sur un élève pour consulter son dossier pédagogique complet</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="desksGrid">
+                <!-- Généré dynamiquement en JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1 : PERMUTATION PREDICTIVE -->
+    <div id="permutationModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="bg-[#5C3A21] text-amber-50 p-4 flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-sm">Analyse Prédictive de Permutation Intelligente</h3>
+                    <p class="text-xs text-amber-200">Simulation pédagogique basée sur le modèle d'apprentissage CEB</p>
+                </div>
+                <button onclick="closePermutationModal()" class="text-amber-200 hover:text-white font-bold text-lg">✕</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 text-xs text-slate-700">
+                <!-- Permutation suggérée -->
+                <div class="bg-amber-50 border border-amber-300 p-4 rounded-xl">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded-md">Permutation Suggérée</span>
+                    <h4 class="font-bold text-sm text-amber-950 mt-1">Table-Banc 1 (Abdou L. ⇄ Moussa D.)</h4>
+                    <p class="text-xs text-slate-600 mt-0.5">Échange de position entre Abdou Laye (Rang 3 - Fond) et Moussa Diallo (Rang 1 - Face Tableau).</p>
+                </div>
+
+                <!-- 1. Raisons détaillées -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-xs border-b pb-1">1. Raisons Détaillées de la Permutation</h4>
+                    <ul class="space-y-2 text-slate-600 pl-1">
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-600 font-bold">•</span>
+                            <div><strong>Proximité Visuelle (Zone Chiffres) :</strong> Abdou Laye présente des difficultés légères de vision non corrigées. Le placer au Rang 1 directement en face de la Zone Chiffres (Jaune) réduira sa fatigue cognitive en numération.</div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-600 font-bold">•</span>
+                            <div><strong>Synergie de Pairage (Tutorat Naturel) :</strong> Placer Abdou à côté d'Aïssatou Sow (élève très méthodique et calme) crée un binôme d'entraide spontanée.</div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-amber-600 font-bold">•</span>
+                            <div><strong>Canalisation de Moussa D. :</strong> Moussa (profil Leader/Autonome mais parfois distrait en 1er rang) bénéficiera d'une autonomie accrue au Rang 3 aux côtés de Cheikh Tidiane.</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 2. Prédictions d'impact -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-xs border-b pb-1">2. Prédictions d'Impact & Évolution des Élèves</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-xs text-emerald-950">Impact sur Abdou Laye</span>
+                                <span class="text-xs font-bold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-md">+3.5 Pts Estimés</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-800 mt-1.5">Augmentation estimée des performances en numération (+3.5 pts au test hebdomadaire) grâce au repérage facilité des colonnes d'unités/dizaines sur le tableau. Gain notable en confiance.</p>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-xs text-emerald-950">Impact sur Moussa Diallo</span>
+                                <span class="text-xs font-bold bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-md">+1.5 Pts Estimés</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-800 mt-1.5">Amélioration du calme global du premier rang et responsabilisation de Moussa dans la résolution autonome de problèmes complexes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Risques identifiés -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-xs border-b pb-1">3. Risques Identifiés & Mesures de Précaution</h4>
+                    <div class="bg-rose-50 border border-rose-200 p-3.5 rounded-xl space-y-1.5">
+                        <p class="text-xs font-semibold text-rose-950">⚠️ Risque de Bavardage Discret au Rang 3 :</p>
+                        <p class="text-[11px] text-rose-800">Moussa et Cheikh Tidiane ont une affinité de jeu durant les récréations.</p>
+                        <p class="text-[11px] text-slate-700 pt-1 border-t border-rose-200"><strong>Consigne Pédagogique pour Maître Balla :</strong> Effectuer des déplacements réguliers vers l'allée droite lors des travaux individuels et désigner Cheikh comme responsable du cahier de roulement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end gap-3">
+                <button onclick="closePermutationModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-xl text-xs">Conserver le Plan Actuel</button>
+                <button onclick="applyPermutation()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-md">Valider & Appliquer le Nouveau Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2 : DOSSIER ELEVE COMPLET -->
+    <div id="studentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-h-[92vh] flex flex-col">
+            <!-- Header Élève -->
+            <div class="bg-[#5C3A21] text-amber-50 p-4 flex justify-between items-center">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-base" id="studentNameModal">Nom de l'Élève</h3>
+                        <span id="studentStatusBadgeModal" class="text-[10px] px-2 py-0.5 rounded-full font-bold">Statut</span>
+                        <button onclick="speakCurrentStudent()" class="text-xs bg-amber-700/60 hover:bg-amber-600 text-amber-100 px-2 py-0.5 rounded-md">🔊 Écouter</button>
+                    </div>
+                    <p class="text-xs text-amber-200 mt-0.5" id="studentDeskModal">Table-Banc N°-- • CE2</p>
+                </div>
+                <button onclick="closeStudentModal()" class="text-amber-200 hover:text-white font-bold text-lg">✕</button>
+            </div>
+
+            <!-- Corps du Dossier -->
+            <div class="p-6 overflow-y-auto space-y-5 text-xs text-slate-700">
+                <!-- Badges Infos -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase">Moyenne Générale</span>
+                        <p class="text-lg font-bold text-slate-800 mt-0.5" id="studentGradeModal">--/20</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase">Style d'Apprentissage</span>
+                        <p class="text-xs font-bold text-slate-800 mt-1" id="studentStyleModal">Visuel / Kinesthésique</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 col-span-2 sm:col-span-1">
+                        <span class="text-[10px] text-slate-400 font-semibold uppercase">Comportement</span>
+                        <p class="text-xs font-bold text-slate-800 mt-1" id="studentBehaviorModal">Calme & Attentif</p>
+                    </div>
+                </div>
+
+                <!-- Graphique d'Évolution -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-slate-800 text-xs">Évolution des Notes Hebdomadaires (Tests du Vendredi - 6 Semaines)</h4>
+                        <span class="text-[10px] text-slate-500 font-semibold">Moyenne classe: 11.5</span>
+                    </div>
+                    <div class="h-40 w-full">
+                        <canvas id="studentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Profil Cognitif & Climat Social -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="bg-amber-50/50 p-3.5 rounded-xl border border-amber-200/80">
+                        <h4 class="font-bold text-amber-950 text-xs mb-1">Profil Cognitif & Attentionnel</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed" id="studentCognitiveModal">-</p>
+                    </div>
+                    <div class="bg-amber-50/50 p-3.5 rounded-xl border border-amber-200/80">
+                        <h4 class="font-bold text-amber-950 text-xs mb-1">Personnalité & Climat Social</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed" id="studentSocialModal">-</p>
+                    </div>
+                </div>
+
+                <!-- Analyse OCR du Dernier Devoir -->
+                <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl space-y-2">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-rose-950 text-xs flex items-center gap-1.5">
+                            <span>📷 Analyse OCR du Dernier Devoir Scanné (Vendredi Dernier)</span>
+                        </h4>
+                        <span class="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-bold">Mathématiques - Numération</span>
+                    </div>
+
+                    <div class="bg-white p-3 rounded-lg border border-rose-100 space-y-1.5 text-xs">
+                        <p class="text-rose-900"><strong>Erreur OCR Détectée :</strong> <span class="font-mono bg-rose-100 text-rose-900 px-1.5 py-0.5 rounded" id="studentOcrError">"450 + 30 = 750" (Erreur de retenue des dizaines)</span></p>
+                        <p class="text-slate-700"><strong>Diagnostic Cognitif Automatique :</strong> <span id="studentOcrDiag">Confusion dans le report d'alignement spatial lors des additions à 3 chiffres.</span></p>
+                    </div>
+                </div>
+
+                <!-- Conseil Pédagogique -->
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl space-y-1">
+                    <h4 class="font-bold text-emerald-950 text-xs">Conseil Pédagogique Personnalisé de Maître Balla</h4>
+                    <p class="text-xs text-emerald-900 leading-relaxed" id="studentAdviceModal">
+                        Placer l'élève au premier rang près de la Zone Chiffres du tableau noir. Utiliser le boulier traditionnel et lui donner 2 exercices de consolidation ciblés avant le grand test du vendredi.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end">
+                <button onclick="closeStudentModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs">Fermer le Dossier</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT COMPLET -->
+    <script>
+        // DONNÉES DES 12 ÉLÈVES (CEB CE2)
+        let students = [
+            { id: 1, desk: 1, pos: 'Gauche', name: 'Abdou Laye', grade: 8.5, status: 'Soutien', style: 'Visuel / Kinesthésique', behavior: 'Discret & Légèrement distrait', history: [7, 8, 7.5, 9, 8, 8.5], cognitive: 'Fatigue visuelle en numération au tableau. Excellente mémoire auditive.', social: 'Très réservé, bénéficie fortement du tutorat par les pairs.', ocrError: '"450 + 30 = 750" (Erreur de retenue des dizaines)', ocrDiag: 'Confusion dans le report d\'alignement spatial lors des additions à 3 chiffres.', advice: 'Placer l\'élève au premier rang près de la Zone Chiffres du tableau noir. Utiliser le boulier traditionnel et lui donner 2 exercices de consolidation ciblés avant le grand test du vendredi.' },
+            { id: 2, desk: 1, pos: 'Droite', name: 'Aïssatou Sow', grade: 14.0, status: 'Maîtrise', style: 'Auditif / Méthodique', behavior: 'Calme, Très attentive', history: [12, 13, 13.5, 14, 13.5, 14], cognitive: 'Grande rigueur dans l\'alignement des calculs et la grammaire.', social: 'Leader naturelle, très pédagogue avec ses camarades de table.', ocrError: '"Accord du pluriel omis sur adjectif"', ocrDiag: 'Inattention ponctuelle lors de la révision finale.', advice: 'Désigner Aïssatou comme tutrice de numération pour renforcer sa propre maîtrise par l\'explication.' },
+            
+            { id: 3, desk: 2, pos: 'Gauche', name: 'Moussa Diallo', grade: 9.0, status: 'Soutien', style: 'Kinesthésique / Manipulateur', behavior: 'Leader & Dynamique', history: [8, 8.5, 9, 8.5, 9, 9], cognitive: 'Besoin de manipulation concrète pour fixer les concepts de numération.', social: 'Très apprécié des récréations, parfois distrait en 1er rang.', ocrError: '"23 x 10 = 2300" (Sur-application du zéro)', ocrDiag: 'Généralisation hâtive de la règle des multiples de 10.', advice: 'Le déplacer au Rang 3 pour canaliser son autonomie tout en lui confiant des tâches d\'animation.' },
+            { id: 4, desk: 2, pos: 'Droite', name: 'Fatou Ndiaye', grade: 12.5, status: 'Maîtrise', style: 'Visuel / Structuré', behavior: 'Appliquée & Organisée', history: [11, 11.5, 12, 12, 13, 12.5], cognitive: 'Excellente prise de notes, bonne compréhension des consignes complexes.', social: 'Travaille de manière autonome et régulière.', ocrError: '"Erreur ponctuelle de ponctuation"', ocrDiag: 'Omis le point final dans une phrase complexe.', advice: 'Maintenir la prise de notes structurée et l\'inciter aux lectures complémentaires.' },
+
+            { id: 5, desk: 3, pos: 'Gauche', name: 'Cheikh Tidiane', grade: 11.0, status: 'Maîtrise', style: 'Auditif', behavior: 'Participatif', history: [10, 10.5, 11, 10.5, 11, 11], cognitive: 'Comprend vite à l\'oral, écriture nécessitant un guidage.', social: 'Très bon esprit d\'équipe.', ocrError: '"mb/mp : ampolle avec m"', ocrDiag: 'Confusion d\'orthographe d\'usage.', advice: 'Lien d\'animation du cahier de roulement.' },
+            { id: 6, desk: 3, pos: 'Droite', name: 'Aminata Ba', grade: 15.5, status: 'Maîtrise', style: 'Réfléchi / Autonome', behavior: 'Exemplaire', history: [14, 14.5, 15, 15, 15.5, 15.5], cognitive: 'Résolution de problèmes complexes très rapide.', social: 'Référence du groupe classe.', ocrError: 'Aucune erreur majeure détectée', ocrDiag: 'Maîtrise parfaite des compétences du cycle.', advice: 'Proposer des défis mathématiques enrichis (problèmes à étapes multiples).' },
+
+            { id: 7, desk: 4, pos: 'Gauche', name: 'Ibrahima Fall', grade: 7.5, status: 'Soutien', style: 'Kinesthésique', behavior: 'Agité par moments', history: [6.5, 7, 7, 7.5, 7, 7.5], cognitive: 'Difficulté à maintenir la concentration plus de 15 min.', social: 'Besoin de valorisation régulière.', ocrError: '"Opération de soustraction inversée"', ocrDiag: 'Soustraction du plus petit nombre du plus grand sans retenue.', advice: 'Découper les activités en sous-objectifs chronométrés de 10 minutes.' },
+            { id: 8, desk: 4, pos: 'Droite', name: 'Mariama Diallo', grade: 13.0, status: 'Maîtrise', style: 'Visuel', behavior: 'Calme', history: [12, 12, 12.5, 13, 13, 13], cognitive: 'Bonne mémorisation visuelle des règles de grammaire.', social: 'Entraide spontanée.', ocrError: '"Erreur mineure de calcul mental"', ocrDiag: 'Inattention sur table de 7.', advice: 'Renforcer la rapidité du calcul mental par le jeu.' },
+
+            { id: 9, desk: 5, pos: 'Gauche', name: 'Ousmane Kane', grade: 8.0, status: 'Soutien', style: 'Auditif', behavior: 'Timide', history: [7, 7.5, 8, 7.5, 8, 8], cognitive: 'Lenteur dans l\'exécution des consignes écrites.', social: 'N\'ose pas poser de questions.', ocrError: '"Mots collés dans la dictée"', ocrDiag: 'Segmentations des mots en cours d\'acquisition.', advice: 'Utiliser la lecture à voix haute guidée et des bandes d\'apprentissage.' },
+            { id: 10, desk: 5, pos: 'Droite', name: 'Khadija Seck', grade: 14.5, status: 'Maîtrise', style: 'Méthodique', behavior: 'Sérieuse', history: [13.5, 14, 14, 14.5, 14, 14.5], cognitive: 'Excellente rédaction et compréhension de texte.', social: 'Très polie et appliquée.', ocrError: '"Omis une majuscule au nom propre"', ocrDiag: 'Erreur d\'inattention.', advice: 'Encourager la rédaction autonome de petits récits.' },
+
+            { id: 11, desk: 6, pos: 'Gauche', name: 'Modou Diop', grade: 10.5, status: 'Maîtrise', style: 'Visuel', behavior: 'Observateur', history: [9.5, 10, 10, 10.5, 10.5, 10.5], cognitive: 'Progression constante en calcul réfléchi.', social: 'S\'intègre bien au groupe.', ocrError: '"Erreur d\'alignement des colonnes"', ocrDiag: 'Report imprécis sur le cahier de roulement.', advice: 'Utiliser du papier quadrillé pour la pose des opérations.' },
+            { id: 12, desk: 6, pos: 'Droite', name: 'Sokhna Cissé', grade: 13.5, status: 'Maîtrise', style: 'Auditif', behavior: 'Attentive', history: [12.5, 13, 13, 13.5, 13, 13.5], cognitive: 'Bonne fluidité de lecture et vocabulaire riche.', social: 'Participation active.', ocrError: '"Erreur d\'accord de verbe"', ocrDiag: 'Confusion sujet éloigné.', advice: 'Proposer des exercices de repérage des sujets inversés.' }
+        ];
+
+        let currentActiveStudent = null;
+        let studentChartInstance = null;
+
+        // RENDU DE LA GRILLE DES TABLES-BANCS
+        function renderDesks(filter = 'all') {
+            const grid = document.getElementById('desksGrid');
+            grid.innerHTML = '';
+
+            let filtered = students;
+            if (filter === 'soutien') filtered = students.filter(s => s.grade < 10);
+            if (filter === 'maitrise') filtered = students.filter(s => s.grade >= 10);
+
+            // Grouper par Desk (1 à 6)
+            for (let d = 1; d <= 6; d++) {
+                const deskStudents = filtered.filter(s => s.desk === d);
+                if (deskStudents.length === 0 && filter !== 'all') continue;
+
+                const deskCard = document.createElement('div');
+                deskCard.className = "bg-white border-2 border-amber-900/20 rounded-2xl p-4 shadow-sm space-y-3 relative overflow-hidden";
+                deskCard.innerHTML = `<div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                    <span class="text-xs font-bold text-amber-950">Table-Banc N°${d}</span>
+                    <span class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-semibold">Rang ${Math.ceil(d/2)}</span>
+                </div>`;
+
+                const pairContainer = document.createElement('div');
+                pairContainer.className = "grid grid-cols-2 gap-2";
+
+                // Retrouver les 2 élèves de cette table dans la liste globale
+                const allDeskStudents = students.filter(s => s.desk === d);
+                allDeskStudents.forEach(st => {
+                    const isFilteredOut = filter !== 'all' && !filtered.includes(st);
+                    const studentBox = document.createElement('div');
+                    
+                    const isSoutien = st.grade < 10;
+                    const bgClass = isFilteredOut ? 'opacity-30 bg-slate-50 border-slate-200' : (isSoutien ? 'bg-rose-50 border-rose-200 hover:bg-rose-100' : 'bg-emerald-50 border-emerald-200 hover:bg-emerald-100');
+                    const textClass = isSoutien ? 'text-rose-950' : 'text-emerald-950';
+                    const badgeClass = isSoutien ? 'bg-rose-200 text-rose-900' : 'bg-emerald-200 text-emerald-900';
+
+                    studentBox.className = `p-2.5 rounded-xl border-2 cursor-pointer transition-all ${bgClass}`;
+                    studentBox.onclick = () => openStudentModal(st.id);
+                    studentBox.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] text-slate-400 font-semibold">${st.pos}</span>
+                            <span class="text-[9px] font-bold px-1.5 py-0.2 rounded ${badgeClass}">${st.grade}/20</span>
+                        </div>
+                        <p class="font-bold text-xs mt-1 ${textClass}">${st.name}</p>
+                        <p class="text-[9px] text-slate-500 truncate mt-0.5">${st.status}</p>
+                    `;
+                    pairContainer.appendChild(studentBox);
+                });
+
+                deskCard.appendChild(pairContainer);
+                grid.appendChild(deskCard);
+            }
+        }
+
+        // FILTRES DE LA CLASSE
+        function filterStudents(type) {
+            const banner = document.getElementById('filterBanner');
+            const text = document.getElementById('filterBannerText');
+
+            if (type === 'all') {
+                banner.classList.add('hidden');
+                renderDesks('all');
+                speakText("Affichage de l'ensemble de la classe de CE2.");
+            } else if (type === 'soutien') {
+                banner.classList.remove('hidden');
+                banner.classList.add('flex');
+                text.innerText = "Filtre actif : Soutien Prioritaire (4 élèves avec moyenne < 10/20)";
+                renderDesks('soutien');
+                speakText("Filtrage des élèves en soutien prioritaire.");
+            } else if (type === 'maitrise') {
+                banner.classList.remove('hidden');
+                banner.classList.add('flex');
+                text.innerText = "Filtre actif : Maîtrise Acquise (8 élèves avec moyenne ≥ 10/20)";
+                renderDesks('maitrise');
+                speakText("Filtrage des élèves ayant acquis la maîtrise.");
+            }
+        }
+
+        // MODAL DOSSIER ÉLÈVE
+        function openStudentModal(id) {
+            const st = students.find(s => s.id === id);
+            if (!st) return;
+            currentActiveStudent = st;
+
+            document.getElementById('studentNameModal').innerText = st.name;
+            document.getElementById('studentDeskModal').innerText = `Table-Banc N°${st.desk} (${st.pos}) • Niveau CE2`;
+            document.getElementById('studentGradeModal').innerText = `${st.grade}/20`;
+            document.getElementById('studentStyleModal').innerText = st.style;
+            document.getElementById('studentBehaviorModal').innerText = st.behavior;
+            document.getElementById('studentCognitiveModal').innerText = st.cognitive;
+            document.getElementById('studentSocialModal').innerText = st.social;
+            document.getElementById('studentOcrError').innerText = st.ocrError;
+            document.getElementById('studentOcrDiag').innerText = st.ocrDiag;
+            document.getElementById('studentAdviceModal').innerText = st.advice;
+
+            const badge = document.getElementById('studentStatusBadgeModal');
+            if (st.grade < 10) {
+                badge.className = "text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-rose-500 text-white";
+                badge.innerText = "Soutien Prioritaire";
+            } else {
+                badge.className = "text-[10px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-500 text-white";
+                badge.innerText = "Maîtrise Acquise";
+            }
+
+            // Graphique Chart.js
+            renderChart(st.history);
+
+            document.getElementById('studentModal').classList.remove('hidden');
+        }
+
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+        }
+
+        function speakCurrentStudent() {
+            if (currentActiveStudent) {
+                speakStudent(currentActiveStudent.name, currentActiveStudent.grade, currentActiveStudent.status, currentActiveStudent.advice);
+            }
+        }
+
+        function renderChart(history) {
+            const ctx = document.getElementById('studentChart').getContext('2d');
+            if (studentChartInstance) {
+                studentChartInstance.destroy();
+            }
+            studentChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6 (Dernier)'],
+                    datasets: [
+                        {
+                            label: 'Notes de l\'élève (/20)',
+                            data: history,
+                            borderColor: '#d97706',
+                            backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Moyenne Classe (11.5)',
+                            data: [11.5, 11.5, 11.5, 11.5, 11.5, 11.5],
+                            borderColor: '#94a3b8',
+                            borderDash: [5, 5],
+                            borderWidth: 1.5,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 20 }
+                    },
+                    plugins: {
+                        legend: { display: true, labels: { boxWidth: 10, font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        // MODAL PERMUTATION
+        function openPermutationModal() {
+            document.getElementById('permutationModal').classList.remove('hidden');
+            speakText("Analyse prédictive de permutation intelligente chargée. Permutation suggérée pour la Table-Banc 1.");
+        }
+
+        function closePermutationModal() {
+            document.getElementById('permutationModal').classList.add('hidden');
+        }
+
+        function applyPermutation() {
+            // Inverser Abdou Laye (Desk 1) et Moussa Diallo (Desk 2)
+            const abdou = students.find(s => s.id === 1);
+            const moussa = students.find(s => s.id === 3);
+
+            if (abdou && moussa) {
+                const tempDesk = abdou.desk;
+                const tempPos = abdou.pos;
+
+                abdou.desk = moussa.desk;
+                abdou.pos = moussa.pos;
+                abdou.grade = 12.0; // Impact +3.5 pts estimé appliqué
+
+                moussa.desk = tempDesk;
+                moussa.pos = tempPos;
+                moussa.grade = 10.5; // Impact +1.5 pts estimé appliqué
+
+                renderDesks('all');
+                closePermutationModal();
+                speakText("Nouvelle permutation appliquée avec succès ! La disposition de la classe a été mise à jour.");
+            }
+        }
+
+        // LECTURE TABLEAU NOIR
+        function readTableau() {
+            const text = "Tableau Noir de la classe de CE2. Zone Chiffres : 4 850 plus 2 730 égale 7 580. Problème : Calcul du prix total du mil au marché de Sandaga. Zone Lettres : Vocabulaire la solidarité au village Ntekki. Règle du jour : m-b et m-p prennent toujours M devant b et p.";
+            speakText(text);
+        }
+
+        // SYNTHÈSE VOCALE GOOGLE gTTS (GRATUITE ET ILLIMITÉE) + SECOURS LOCAL
+        function speakText(text) {
+            if (!text) return;
+            
+            if (window.currentAudio) {
+                window.currentAudio.pause();
+            }
+
+            const encodedText = encodeURIComponent(text);
+            const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
+
+            const audio = new Audio(audioUrl);
+            window.currentAudio = audio;
+
+            audio.play().catch(err => {
+                console.warn("Connexion réseau lente, bascule sur la voix de synthèse locale...", err);
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'fr-FR';
+                    utterance.rate = 0.95;
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
+        }
+
+        function speakStudent(name, grade, status, rem) {
+            const msg = `Fiche élève ${name}. Moyenne de ${grade} sur 20. Statut : ${status}. Conseil du Maître Balla : ${rem}.`;
+            speakText(msg);
+        }
+
+        // RECONNAISSANCE VOCALE (MICROPHONE)
+        function startVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("La reconnaissance vocale n'est pas supportée par votre navigateur. Veuillez utiliser Google Chrome.");
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'fr-FR';
+            recognition.interimResults = false;
+
+            const btn = document.getElementById('micBtn');
+            const alertBox = document.getElementById('voiceAlert');
+            const transcriptText = document.getElementById('transcriptText');
+            const aiResponseText = document.getElementById('aiResponseText');
+
+            recognition.onstart = () => {
+                btn.classList.remove('bg-amber-100', 'text-amber-950');
+                btn.classList.add('bg-rose-600', 'text-white', 'animate-pulse');
+                btn.innerText = "🎙️ Écoute active...";
+                alertBox.classList.remove('hidden');
+            };
+
+            recognition.onend = () => {
+                btn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+                btn.classList.add('bg-amber-100', 'text-amber-950');
+                btn.innerText = "🎤 Parler à l'Assistant";
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                transcriptText.innerHTML = `<strong>Vous avez dit :</strong> "${transcript}"`;
+                
+                const lower = transcript.toLowerCase();
+                let response = "";
+
+                if (lower.includes('soutien') || lower.includes('difficulté')) {
+                    filterStudents('soutien');
+                    response = "J'ai filtré la classe pour afficher uniquement les 4 élèves en soutien prioritaire.";
+                } else if (lower.includes('maîtrise') || lower.includes('maitrise')) {
+                    filterStudents('maitrise');
+                    response = "Voici les 8 élèves ayant validé la maîtrise des compétences du CEB.";
+                } else if (lower.includes('tous') || lower.includes('réinitialise') || lower.includes('reinitialise')) {
+                    filterStudents('all');
+                    response = "Affichage de la grille complète des 12 élèves.";
+                } else if (lower.includes('permutation') || lower.includes('place') || lower.includes('proposer')) {
+                    openPermutationModal();
+                    response = "J'ai ouvert l'analyse prédictive de permutation pour la Table-Banc 1.";
+                } else if (lower.includes('tableau') || lower.includes('lire')) {
+                    readTableau();
+                    return;
+                } else if (lower.includes('abdou')) {
+                    openStudentModal(1);
+                    response = "Ouverture du dossier pédagogique d'Abdou Laye.";
+                } else {
+                    response = `J'ai bien enregistré : "${transcript}". Le moteur Synthesis AI de Maître Balla analyse la demande pour la classe de CE2.`;
+                }
+
+                aiResponseText.innerHTML = `<strong>Réponse Vocale :</strong> ${response}`;
+                speakText(response);
+            };
+
+            recognition.start();
+        }
+
+        // INITIALISATION AU CHARGEMENT
+        window.onload = () => {
+            renderDesks('all');
+        };
+    </script>
+</body>
+</html>
