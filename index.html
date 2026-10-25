@@ -1149,86 +1149,114 @@
     }
   </script>
 
-    <!-- Second Bloc HTML Intégré -->
-<button onclick="demarrerAssistant()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold shadow animate-pulse">
-    🔊 Activer la Voix & l'Assistant
-</button>
-
     <!-- JavaScript Intégré -->
     <script>
 // =========================================================================
-// 1. ACTIVATION DE LA SESSION VOCALE (Contourne le blocage du navigateur)
+// ACCUEIL AUTOMATIQUE & ÉCOUTE VOCALE CONTINUE (STYLE SIRI)
 // =========================================================================
-function demarrerAssistant() {
-    const messageAccueil = "Bonjour Maître Balla ! Je suis votre co-pilote Synthesis AI. Je suis à votre écoute pour parler de la classe, des élèves ou de l'avancement des cours. Que souhaitez-vous aborder ?";
+
+// 1. Dès que la page est chargée, l'accueil s'affiche AUTOMATIQUEMENT
+window.addEventListener('DOMContentLoaded', () => {
+    afficherAccueilAutomatique();
     
-    // Affichage dans le chat
+    // Tentative de lecture vocale automatique (fonctionnera si le navigateur l'autorise ou dès le premier contact)
+    lancerVoixAutomatique("Bonjour Maître Balla. Je suis votre co-pilote Synthesis AI. Je suis à votre écoute.");
+});
+
+function afficherAccueilAutomatique() {
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
         chatBox.innerHTML = `
-            <div class="bg-amber-100/80 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1">
-                <strong>🤖 Synthesis AI :</strong>
-                <p>"${messageAccueil}"</p>
+            <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1 shadow-sm">
+                <strong>🤖 Synthesis AI (Co-Pilote Actif) :</strong>
+                <p>"Bonjour Maître Balla ! Je suis connecté et en veille. Posez-moi une question à voix haute ou parlez-moi d'un élève (ex: *Parle-moi d'Abdou Laye*)."</p>
             </div>
         `;
     }
-
-    // Lecture vocale de bienvenue
-    speakText(messageAccueil);
 }
 
-// =========================================================================
-// 2. MOTEUR DE DIALOGUE LIBRE (Répond à toutes vos questions)
-// =========================================================================
-function sendTeacherReply() {
-    const input = document.getElementById('teacher-reply-input');
-    if (!input) return;
-    const text = input.value.trim();
-    if (!text) return;
-
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs">
-                <strong>Maître Balla :</strong> "${text}"
-            </div>
-        `;
+function lancerVoixAutomatique(texte) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(texte);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.92;
+        window.speechSynthesis.speak(utterance);
     }
-    input.value = '';
-
-    // Simulation d'une réflexion de l'IA et réponse contextuelle libre
-    setTimeout(() => {
-        let reponseIA = "";
-        const lowerText = text.toLowerCase();
-
-        // Analyse de votre question pour un dialogue intelligent
-        if (lowerText.includes('abdou')) {
-            reponseIA = "Concernant Abdou Laye, sa moyenne est de 8.5 sur 20. Il a besoin d'un renfort en numération et d'être placé au premier rang. Je vous suggère de lui confier des exercices visuels courts.";
-        } else if (lowerText.includes('aïssatou') || lowerText.includes('aissatou')) {
-            reponseIA = "Aïssatou Sow est une élève solide avec 14 sur 20. Elle est très rigoureuse et peut parfaitement faire office de tutrice pour aider ses camarades.";
-        } else if (lowerText.includes('moussa')) {
-            reponseIA = "Pour Moussa Diallo (9 sur 20), ses difficultés se situent sur la soustraction avec emprunt. Le mieux est d'utiliser du matériel concret comme des jetons.";
-        } else if (lowerText.includes('aide') || lowerText.includes('soutien') || lowerText.includes('difficulté')) {
-            reponseIA = "Pour mieux aider les élèves en difficulté, je vous suggère de diviser la classe en binômes mixtes (un élève fort avec un élève en soutien) lors des ateliers de calcul du vendredi.";
-        } else if (lowerText.includes('programme') || lowerText.includes('avancement') || lowerText.includes('leçon')) {
-            reponseIA = "Concernant l'avancement du programme de CE2, les notions sur les grands nombres et la règle du M devant B et P sont bien engagées. Voulez-vous que l'on prépare une évaluation formative ?";
-        } else {
-            // Réponse ouverte par défaut pour converser librement sur n'importe quel sujet
-            reponseIA = `J'ai bien pris en compte votre remarque : "${text}". Pour y répondre au mieux dans le cadre du CEB, je vous conseille d'observer l'engagement des élèves et d'ajuster le rythme au tableau noir. Souhaitez-vous que l'on approfondisse ce point ?`;
-        }
-
-        if (chatBox) {
-            chatBox.innerHTML += `
-                <div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
-                    <strong>Synthesis AI :</strong> "${reponseIA}"
-                </div>
-            `;
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        speakText(reponseIA);
-    }, 700);
 }
+
+// =========================================================================
+// 2. DÉCLENCHEMENT VOCAL CONTINU (Style Siri / Ok Google)
+// =========================================================================
+let recognition;
+
+function demarrerEcouteVocaleContinue() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        console.log("La reconnaissance vocale n'est pas supportée par ce navigateur. Utilisez Google Chrome.");
+        return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = true; // Reste actif en arrière-plan
+    recognition.interimResults = false;
+
+    const statusEl = document.getElementById('voice-status');
+    const micBtn = document.getElementById('btn-mic');
+
+    recognition.onstart = () => {
+        if (statusEl) statusEl.innerText = "Écoute active... Parlez à l'assistant.";
+        if (micBtn) {
+            micBtn.classList.add('mic-listening', 'bg-rose-600');
+            micBtn.classList.remove('bg-amber-500');
+        }
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim();
+        console.log("Commande vocale détectée :", transcript);
+        
+        // Affichage de la transcription
+        const transcriptionEl = document.getElementById('voice-transcription');
+        if (transcriptionEl) {
+            transcriptionEl.innerHTML = `<strong>Vous avez dit :</strong> "${transcript}"`;
+        }
+
+        // Transmission directe à l'assistant
+        const inputField = document.getElementById('teacher-reply-input');
+        if (inputField) {
+            inputField.value = transcript;
+            sendTeacherReply(); // Déclenche la réponse intelligente de l'IA
+        }
+    };
+
+    recognition.onerror = (event) => {
+        console.log("Erreur vocale :", event.error);
+    };
+
+    recognition.onend = () => {
+        // Redémarrage automatique pour maintenir l'écoute active en continu (Style Siri)
+        try {
+            recognition.start();
+        } catch (e) {
+            console.log("Redémarrage de l'écoute...");
+        }
+    };
+
+    // Lancement de l'écoute
+    try {
+        recognition.start();
+    } catch (e) {
+        console.log("Lancement déjà actif.");
+    }
+}
+
+// Activer l'écoute continue dès le premier clic n'importe où sur l'écran (requis par le navigateur)
+document.addEventListener('click', () => {
+    demarrerEcouteVocaleContinue();
+}, { once: true });
     </script>
 </body>
 </html>
