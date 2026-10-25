@@ -1150,35 +1150,47 @@
   </script>
 
     <!-- Code JavaScript Intégré -->
-    <script>
-function speakText(text) {
-    if (!text) return;
-    
-    // Arrête tout son en cours
-    if (window.currentAudio) {
-        window.currentAudio.pause();
-    }
+    // 🔊 SYNTHÈSE VOCALE HAUTE QUALITÉ (StreamElements + Secours Navigateur Optimisé)
+        function speakText(text) {
+            if (!text) return;
+            
+            // Arrêter tout son en cours
+            if (window.currentAudio) {
+                window.currentAudio.pause();
+            }
 
-    // Encoder le texte pour l'URL
-    const encodedText = encodeURIComponent(text);
-    // URL directe Google TTS (Français)
-    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
+            // Utilisation de l'API StreamElements (Voix française "Céline" très naturelle et 100% gratuite)
+            const audioUrl = `https://api.streamelements.com/kappa/v2/speech?voice=Celine&text=${encodeURIComponent(text)}`;
+            const audio = new Audio(audioUrl);
+            window.currentAudio = audio;
 
-    const audio = new Audio(audioUrl);
-    window.currentAudio = audio;
+            // Lecture audio HD
+            audio.play().catch(err => {
+                console.warn("Bascule sur la voix locale optimisée du navigateur...", err);
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'fr-FR';
+                    utterance.rate = 0.95; // Dition pédagogique claire
+                    
+                    // Sélection automatique de la meilleure voix française disponible sur votre appareil
+                    const voices = window.speechSynthesis.getVoices();
+                    const bestVoice = voices.find(v => v.lang.startsWith('fr') && (
+                        v.name.includes('Google') || 
+                        v.name.includes('Natural') || 
+                        v.name.includes('Céline') || 
+                        v.name.includes('Thomas') ||
+                        v.name.includes('Audrey')
+                    )) || voices.find(v => v.lang.startsWith('fr'));
+                    
+                    if (bestVoice) {
+                        utterance.voice = bestVoice;
+                    }
 
-    // Lecture de l'audio haute qualité Google
-    audio.play().catch(err => {
-        console.warn("Remplacement par la voix locale...", err);
-        // Solution de secours sur la voix navigateur si le réseau ralentit
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fr-FR';
-            window.speechSynthesis.speak(utterance);
+                    window.speechSynthesis.speak(utterance);
+                }
+            });
         }
-    });
-}
     </script>
 </body>
 </html>
