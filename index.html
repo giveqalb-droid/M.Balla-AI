@@ -1148,5 +1148,39 @@
       });
     }
   </script>
+
+    <!-- Code JavaScript Intégré -->
+    <script>
+function getBestFrenchVoice() {
+    const voices = window.speechSynthesis.getVoices();
+    // Recherche prioritaire des voix HD / Naturelles en Français
+    return voices.find(v => v.lang.startsWith('fr') && (
+        v.name.includes('Google') || 
+        v.name.includes('Natural') || 
+        v.name.includes('Enhanced') || 
+        v.name.includes('Premium') ||
+        v.name.includes('Thomas') ||
+        v.name.includes('Audrey')
+    )) || voices.find(v => v.lang.startsWith('fr'));
+}
+
+function speakText(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        const bestVoice = getBestFrenchVoice();
+        if (bestVoice) {
+            utterance.voice = bestVoice;
+        }
+        
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.95; // Légèrement plus lent pour une diction pédagogique claire
+        utterance.pitch = 1.0;
+        
+        window.speechSynthesis.speak(utterance);
+    }
+}
+    </script>
 </body>
 </html>
