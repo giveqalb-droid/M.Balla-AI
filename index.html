@@ -1152,111 +1152,107 @@
     <!-- JavaScript Intégré -->
     <script>
 // =========================================================================
-// ACCUEIL AUTOMATIQUE & ÉCOUTE VOCALE CONTINUE (STYLE SIRI)
+// MOTEUR VOCAL ET ACCUEIL SYNTHESIS AI (CORRIGÉ & ROBUSTE)
 // =========================================================================
 
-// 1. Dès que la page est chargée, l'accueil s'affiche AUTOMATIQUEMENT
+// 1. Affichage automatique du message dans le chat dès le chargement de la page
 window.addEventListener('DOMContentLoaded', () => {
-    afficherAccueilAutomatique();
-    
-    // Tentative de lecture vocale automatique (fonctionnera si le navigateur l'autorise ou dès le premier contact)
-    lancerVoixAutomatique("Bonjour Maître Balla. Je suis votre co-pilote Synthesis AI. Je suis à votre écoute.");
-});
-
-function afficherAccueilAutomatique() {
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
         chatBox.innerHTML = `
-            <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1 shadow-sm">
-                <strong>🤖 Synthesis AI (Co-Pilote Actif) :</strong>
-                <p>"Bonjour Maître Balla ! Je suis connecté et en veille. Posez-moi une question à voix haute ou parlez-moi d'un élève (ex: *Parle-moi d'Abdou Laye*)."</p>
+            <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-4 rounded-xl max-w-2xl text-xs space-y-2 shadow-sm">
+                <strong>🤖 Synthesis AI (Co-Pilote) :</strong>
+                <p>"Bonjour Maître Balla ! Pour démarrer l'assistant vocal et lancer notre session, veuillez cliquer sur le bouton d'activation ci-dessous."</p>
+                <button onclick="lancerSessionVocale()" class="mt-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow transition-all cursor-pointer">
+                    🔊 Activer Synthesis AI & la Voix
+                </button>
             </div>
         `;
     }
+});
+
+// 2. Fonction déclenchée au clic pour autoriser l'audio et démarrer l'écoute
+function lancerSessionVocale() {
+    const messageAccueil = "Bonjour Maître Balla. Je suis votre co-pilote Synthesis AI. Je suis prêt à vous accompagner, analyser les élèves et répondre à toutes vos questions.";
+    
+    // Lecture de la voix de bienvenue
+    speakText(messageAccueil);
+
+    // Mise à jour du chat
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.innerHTML = `
+            <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1">
+                <strong>🤖 Synthesis AI (Actif) :</strong>
+                <p>"${messageAccueil}"</p>
+            </div>
+        `;
+    }
+
+    // Démarrage de la reconnaissance vocale pour converser
+    demarrerReconnaissanceVocale();
 }
 
-function lancerVoixAutomatique(texte) {
+// 3. Fonction de synthèse vocale (Voix)
+function speakText(text) {
+    if (!text) return;
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(texte);
+        const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'fr-FR';
         utterance.rate = 0.92;
+        
+        const voices = window.speechSynthesis.getVoices();
+        const voixFr = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural'))) || voices.find(v => v.lang.startsWith('fr'));
+        if (voixFr) utterance.voice = voixFr;
+
         window.speechSynthesis.speak(utterance);
     }
 }
 
-// =========================================================================
-// 2. DÉCLENCHEMENT VOCAL CONTINU (Style Siri / Ok Google)
-// =========================================================================
-let recognition;
-
-function demarrerEcouteVocaleContinue() {
+// 4. Reconnaissance vocale interactive
+function demarrerReconnaissanceVocale() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
     if (!SpeechRecognition) {
-        console.log("La reconnaissance vocale n'est pas supportée par ce navigateur. Utilisez Google Chrome.");
+        alert("La reconnaissance vocale n'est pas supportée par ce navigateur. Utilisez Google Chrome.");
         return;
     }
 
-    recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
-    recognition.continuous = true; // Reste actif en arrière-plan
     recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
 
     const statusEl = document.getElementById('voice-status');
-    const micBtn = document.getElementById('btn-mic');
-
-    recognition.onstart = () => {
-        if (statusEl) statusEl.innerText = "Écoute active... Parlez à l'assistant.";
-        if (micBtn) {
-            micBtn.classList.add('mic-listening', 'bg-rose-600');
-            micBtn.classList.remove('bg-amber-500');
-        }
-    };
+    if (statusEl) statusEl.innerText = "Écoute active... Parlez à l'assistant.";
 
     recognition.onresult = (event) => {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim();
-        console.log("Commande vocale détectée :", transcript);
-        
-        // Affichage de la transcription
-        const transcriptionEl = document.getElementById('voice-transcription');
-        if (transcriptionEl) {
-            transcriptionEl.innerHTML = `<strong>Vous avez dit :</strong> "${transcript}"`;
-        }
+        const transcript = event.results[0][0].transcript.trim();
+        console.log("Vous avez dit :", transcript);
 
-        // Transmission directe à l'assistant
         const inputField = document.getElementById('teacher-reply-input');
         if (inputField) {
             inputField.value = transcript;
-            sendTeacherReply(); // Déclenche la réponse intelligente de l'IA
+            sendTeacherReply(); // Envoie la question à l'IA
         }
     };
 
     recognition.onerror = (event) => {
         console.log("Erreur vocale :", event.error);
+        if (statusEl) statusEl.innerText = "Erreur micro. Cliquez pour réessayer.";
     };
 
     recognition.onend = () => {
-        // Redémarrage automatique pour maintenir l'écoute active en continu (Style Siri)
-        try {
-            recognition.start();
-        } catch (e) {
-            console.log("Redémarrage de l'écoute...");
-        }
+        if (statusEl) statusEl.innerText = "Micro en veille. Cliquez sur le micro pour reparler.";
     };
 
-    // Lancement de l'écoute
     try {
         recognition.start();
+        console.log("Reconnaissance vocale démarrée.");
     } catch (e) {
-        console.log("Lancement déjà actif.");
+        console.log("Erreur au démarrage de l'écoute :", e);
     }
 }
-
-// Activer l'écoute continue dès le premier clic n'importe où sur l'écran (requis par le navigateur)
-document.addEventListener('click', () => {
-    demarrerEcouteVocaleContinue();
-}, { once: true });
     </script>
 </body>
 </html>
