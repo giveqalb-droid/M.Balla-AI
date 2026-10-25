@@ -1152,169 +1152,52 @@
     <!-- JavaScript Intégré -->
     <script>
 // =========================================================================
-// MOTEUR DE DIALOGUE SYNTHESIS AI & BASE DE DONNÉES CLINIQUES ÉLÈVES
+// ACCUEIL DOUX ET INTELLIGENT DE SYNTHESIS AI DÈS L'ARRIVÉE
 // =========================================================================
 
-// Base de données détaillée des élèves pour la conversation approfondie
-const studentsDatabase = {
-  abdou: {
-    name: "Abdou Laye",
-    score: "8.5/20 (Soutien)",
-    style: "Visuel / Kinesthésique",
-    behavior: "Calme, discret, tendance à se distraire au fond de la classe.",
-    ocr: "Erreur détectée : '450 + 30 = 750' (Erreur de retenue des dizaines et alignement spatial).",
-    suggestion: "Le placer au premier rang face au tableau noir, utiliser le boulier traditionnel et lui donner 2 exercices de consolidation ciblés avant le test du vendredi."
-  },
-  aissatou: {
-    name: "Aïssatou Sow",
-    score: "14.0/20 (Maîtrise)",
-    style: "Auditif / Structuré",
-    behavior: "Très attentive, rigoureuse et calme.",
-    ocr: "Aucune erreur majeure. Maîtrise parfaite des additions posées.",
-    suggestion: "La désigner comme tutrice de table pour l'associer à un élève en soutien et renforcer sa propre autonomie."
-  },
-  moussa: {
-    name: "Moussa Diallo",
-    score: "9.0/20 (Soutien)",
-    style: "Kinesthésique",
-    behavior: "Énergique, leader dans la cour mais parfois agité en classe.",
-    ocr: "Erreur sur la soustraction avec emprunt ('120 - 45 = 85').",
-    suggestion: "Utiliser du matériel concret (jetons, abaques) et le faire manipuler pour ancrer les concepts de retenue."
-  },
-  fatou: {
-    name: "Fatou Ndiaye",
-    score: "12.5/20 (Maîtrise)",
-    style: "Visuel / Analytique",
-    behavior: "Appliquée et organisée.",
-    ocr: "Oubli occasionnel de l'accord du pluriel sur l'adjectif.",
-    suggestion: "Proposer de petits exercices de lecture active axés sur le groupe nominal."
-  },
-  cheikh: {
-    name: "Cheikh Tidiane Diop",
-    score: "11.0/20 (Maîtrise)",
-    style: "Auditif",
-    behavior: "Participatif et bon esprit d'équipe.",
-    ocr: "Confusion orthographique sur les nasales ('ampolle' avec un m au lieu de mb/mp).",
-    suggestion: "Faire répéter la règle du M devant B et P sous forme de comptine rythmée."
-  },
-  aminata: {
-    name: "Aminata Ba",
-    score: "15.5/20 (Maîtrise)",
-    style: "Synthétique / Autonome",
-    behavior: "Exemplaire, excellente capacité de raisonnement.",
-    ocr: "Aucune erreur signalée.",
-    suggestion: "Lui proposer des problèmes à étapes multiples pour nourrir sa curiosité mathématique."
-  }
-};
-
-/**
- * Présente le profil complet d'un élève sélectionné et propose des pistes pédagogiques.
- * @param {string} id - L'identifiant de l'élève (ex: 'abdou', 'aissatou', 'moussa')
- */
-function discussStudent(id) {
-  const st = studentsDatabase[id];
-  if (!st) return;
-
-  const activeBadge = document.getElementById('active-dialogue-student');
-  if (activeBadge) activeBadge.innerText = `Élève : ${st.name}`;
-
-  const chatBox = document.getElementById('chat-box');
-  if (!chatBox) return;
-
-  const messageAI = `Voici l'analyse complète pour ${st.name} : Moyenne générale de ${st.score}. Style d'apprentissage : ${st.style}. Comportement en classe : ${st.behavior} Analyse OCR récente : ${st.ocr} Recommandation de Maître Balla : ${st.suggestion}`;
-
-  chatBox.innerHTML += `
-    <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs">
-      <strong>Maître Balla :</strong> "Parle-moi de ${st.name}."
-    </div>
-    <div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-3 rounded-xl max-w-2xl text-xs space-y-1">
-      <strong>Synthesis AI :</strong>
-      <p>"${messageAI}"</p>
-    </div>
-  `;
-
-  chatBox.scrollTop = chatBox.scrollHeight;
-  speakText(messageAI);
-}
-
-/**
- * Traite les réponses textuelles ou vocales envoyées par l'enseignant.
- */
-function sendTeacherReply() {
-  const input = document.getElementById('teacher-reply-input');
-  if (!input) return;
-  const text = input.value.trim().toLowerCase();
-  if (!text) return;
-
-  const chatBox = document.getElementById('chat-box');
-  if (chatBox) {
-    chatBox.innerHTML += `
-      <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs">
-        <strong>Maître Balla :</strong> "${input.value}"
-      </div>
-    `;
-  }
-
-  input.value = '';
-
-  setTimeout(() => {
-    // Détection automatique du nom de l'élève dans la phrase
-    if (text.includes('abdou')) {
-      discussStudent('abdou');
-      return;
-    } else if (text.includes('aïssatou') || text.includes('aissatou')) {
-      discussStudent('aissatou');
-      return;
-    } else if (text.includes('moussa')) {
-      discussStudent('moussa');
-      return;
-    } else if (text.includes('fatou')) {
-      discussStudent('fatou');
-      return;
-    } else if (text.includes('cheikh')) {
-      discussStudent('cheikh');
-      return;
-    } else if (text.includes('aminata')) {
-      discussStudent('aminata');
-      return;
-    }
-
-    // Traitement général de la conversation
-    let response = "";
-    if (text.includes('bilan') || text.includes('avancement') || text.includes('classe')) {
-      response = "Bilan global de la classe de CE2 : 8 élèves ont acquis la maîtrise (moyenne ≥ 10/20) et 4 élèves restent en soutien prioritaire. La progression globale est constante ce trimestre.";
-    } else {
-      response = `Concernant "${text}", le module Synthesis AI suggère de croiser vos observations avec les exercices du tableau noir et de renforcer le travail en binômes. Souhaitez-vous faire un point précis sur un élève en particulier ?`;
-    }
-
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Afficher un message de bienvenue chaleureux dans le chat Synthesis AI
+    const chatBox = document.getElementById('chat-box');
     if (chatBox) {
-      chatBox.innerHTML += `
-        <div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
-          <strong>Synthesis AI :</strong> "${response}"
-        </div>
-      `;
-      chatBox.scrollTop = chatBox.scrollHeight;
+        const welcomeText = "Bonjour Maître Balla. Bienvenue dans votre espace pédagogique intelligent. Je suis Synthesis AI, votre co-pilote. Je suis prêt à analyser la classe de CE2, à vous poser des questions ciblées et à vous donner des suggestions pour aider chaque élève.";
+        
+        chatBox.innerHTML = `
+            <div class="bg-amber-100/80 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1 shadow-xs">
+                <strong>🤖 Synthesis AI (Co-Pilote) :</strong>
+                <p>"${welcomeText}"</p>
+            </div>
+        `;
     }
 
-    speakText(response);
-  }, 600);
-}
+    // 2. Déclencher la voix douce au premier clic n'importe où sur la page (pour contourner le blocage du navigateur)
+    document.addEventListener('click', function initAudioOnce() {
+        playSweetWelcome();
+        // Se désactive après le premier clic pour ne pas rejouer à chaque clic
+        document.removeEventListener('click', initAudioOnce);
+    }, { once: true });
+});
 
-/**
- * Réinitialise la boîte de dialogue contextuelle
- */
-function resetDialogue() {
-  const activeBadge = document.getElementById('active-dialogue-student');
-  if (activeBadge) activeBadge.innerText = "Mode Général";
+// Fonction pour une voix douce, posée et chaleureuse
+function playSweetWelcome() {
+    const text = "Bonjour Maître Balla. Bienvenue dans votre espace pédagogique. Je suis votre co-pilote Synthesis AI, prêt à vous accompagner.";
+    
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'fr-FR';
+        utterance.rate = 0.90; // Vitesse légèrement ralentie pour un ton plus doux et bienveillant
+        utterance.pitch = 1.05; // Légère nuance chaleureuse
+        
+        // Sélection de la meilleure voix française disponible sur l'appareil
+        const voices = window.speechSynthesis.getVoices();
+        const softVoice = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Céline'))) || voices.find(v => v.lang.startsWith('fr'));
+        
+        if (softVoice) {
+            utterance.voice = softVoice;
+        }
 
-  const chatBox = document.getElementById('chat-box');
-  if (chatBox) {
-    chatBox.innerHTML = `
-      <div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
-        <strong>Synthesis AI :</strong> "Échange réinitialisé. Posez-moi une question sur la classe ou sélectionnez un élève."
-      </div>
-    `;
-  }
+        window.speechSynthesis.speak(utterance);
+    }
 }
     </script>
 </body>
