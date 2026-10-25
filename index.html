@@ -3,6 +3,335 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistant Pédagogique M. Balla - CEB Sénégal & Quiz AI</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    .font-chalk { font-family: 'Caveat', cursive; }
+    .chalkboard-bg {
+      background: radial-gradient(circle, #1e3a29 0%, #0f2317 100%);
+      border: 10px solid #78350f;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 25px rgba(0,0,0,0.25);
+    }
+    .mic-listening { animation: micPulse 1.5s infinite; box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
+    @keyframes micPulse {
+      0% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0.7); }
+      70% { box-shadow: 0 0 0 15px rgba(225, 29, 72, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+    }
+    @media print { .no-print { display: none !important; } body { background: white; color: black; } }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen pb-16">
+
+  <!-- TOP HEADER -->
+  <header class="bg-slate-900 text-white shadow-xl sticky top-0 z-30 no-print border-b border-amber-600/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-amber-600 to-amber-400 flex items-center justify-center text-slate-900 font-bold text-xl shadow-lg shadow-amber-500/20">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight bg-gradient-to-r from-amber-200 via-white to-amber-400 bg-clip-text text-transparent">
+              Assistant Pédagogique CEB Sénégal
+            </h1>
+            <p class="text-xs text-amber-300/80 font-medium">
+              Maître Balla • Synthesis AI, Quiz Generator & Doubt Solver
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <select id="niveau-select" onchange="updateContext()" class="bg-slate-800 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700">
+            <option value="CI">CI</option>
+            <option value="CP">CP</option>
+            <option value="CE2" selected>CE2</option>
+            <option value="CM2">CM2</option>
+          </select>
+
+          <select id="discipline-select" onchange="updateContext()" class="bg-slate-800 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-700">
+            <option value="math" selected>Maths / Numération</option>
+            <option value="francais">Français / Grammaire</option>
+            <option value="eveil">Éveil / ESVS</option>
+          </select>
+
+          <!-- NOUVEAU BOUTON : GÉNÉRATEUR DE QUIZ (Inspiré de sam-vish) -->
+          <button onclick="openQuizModal()" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 shadow">
+            <i class="fa-solid fa-list-check"></i>
+            <span>Générer un Quiz CEB</span>
+          </button>
+
+          <button onclick="window.print()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs">
+            <i class="fa-solid fa-print"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
+
+    <!-- BARRE ASSISTANCE VOCALE & DOUGHT SOLVER -->
+    <section class="bg-gradient-to-r from-slate-900 via-slate-800 to-amber-950 text-white rounded-2xl p-5 shadow-lg border border-amber-500/30 no-print">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+        
+        <div class="flex items-center gap-4 w-full lg:w-auto">
+          <button id="btn-mic" onclick="toggleSpeechRecognition()" class="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 text-white text-2xl font-bold shadow-lg hover:scale-105 transition-all focus:outline-none cursor-pointer flex-shrink-0">
+            <i id="mic-icon" class="fa-solid fa-microphone"></i>
+          </button>
+          
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <h3 class="text-sm font-extrabold uppercase tracking-wider text-amber-300">Co-Pilote & Doubt Solver</h3>
+            </div>
+            <p id="voice-status" class="text-xs text-slate-300 mt-0.5">
+              Posez une question pédagogique ou dites : <span class="text-amber-200 italic font-medium">"Comment expliquer la retenue à Abdou ?"</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex-1 w-full bg-slate-950/60 border border-slate-700/60 rounded-xl p-3 min-h-[50px] flex items-center gap-3">
+          <i class="fa-solid fa-quote-left text-amber-500/50 text-xl"></i>
+          <p id="voice-transcription" class="text-xs sm:text-sm text-slate-200 italic">
+            Bienvenue Maître Balla. Posez une question sur le cours du jour ou sélectionnez un élève.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button onclick="readTableauOutLoud()" title="Lire le Tableau Noir" class="px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 rounded-xl transition-colors text-xs font-semibold flex items-center gap-2">
+            <i class="fa-solid fa-volume-high"></i>
+            <span>Lire Tableau</span>
+          </button>
+          <button onclick="stopAudio()" title="Stopper l'Assistant Vocal" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl transition-colors text-xs">
+            <i class="fa-solid fa-circle-stop text-lg"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MODULE DE DIALOGUE SYNTHESIS AI & RESOLUTION DE DOUBTES -->
+    <section id="synthesis-chat-section" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🤖</span>
+          <h2 class="font-extrabold text-base text-slate-900">Synthesis AI — Dialogue & Résolution de Doutes Pédagogiques</h2>
+          <span id="active-dialogue-student" class="text-xs bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-bold">Élève sélectionné : Aucun</span>
+        </div>
+        <button onclick="resetDialogue()" class="text-xs text-slate-500 hover:text-slate-800 underline">Réinitialiser l'échange</button>
+      </div>
+
+      <div id="chat-box" class="bg-slate-50 border border-slate-200 rounded-xl p-4 h-56 overflow-y-auto space-y-3 text-xs">
+        <div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-3 rounded-xl max-w-2xl">
+          <strong>Synthesis AI :</strong> "Bonjour Maître Balla. Posez-moi une question sur une notion complexe du CEB (ex: les retenues, la règle du mb/mp, le calcul du prix au marché) ou sélectionnez un élève pour analyser son dossier."
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <input type="text" id="teacher-reply-input" placeholder="Posez une question ou saisissez une consigne pédagogique..." class="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-amber-600">
+        <button onclick="sendTeacherReply()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow transition-all">
+          Envoyer
+        </button>
+      </div>
+    </section>
+
+    <!-- TABLEAU NOIR -->
+    <section class="chalkboard-bg rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+      <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-emerald-700/50 pb-4 mb-6 gap-2">
+        <div>
+          <span class="text-xs font-semibold tracking-widest text-emerald-400 uppercase">CEB Sénégal • Inspection de Mbour</span>
+          <h2 class="text-lg sm:text-2xl font-bold tracking-tight text-emerald-100">
+            TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY
+          </h2>
+        </div>
+        <div class="bg-emerald-900/60 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-emerald-200 text-sm font-chalk text-xl">
+          Vendredi 16 Octobre
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-900/40 backdrop-blur-sm rounded-xl p-5 border-l-4 border-yellow-400">
+          <h3 class="text-lg font-bold text-yellow-300 mb-2">Zone Chiffres &amp; Calcul (Jaune)</h3>
+          <p class="font-chalk text-xl text-yellow-100">4 850 + 2 730 = 7 580</p>
+          <ul class="font-chalk text-lg text-yellow-100/80 list-disc list-inside mt-2">
+            <li>Unités, Dizaines, Centaines, Milliers</li>
+            <li>Problème du mil au marché de Sandaga</li>
+          </ul>
+        </div>
+        <div class="bg-slate-900/40 backdrop-blur-sm rounded-xl p-5 border-l-4 border-cyan-400">
+          <h3 class="text-lg font-bold text-cyan-300 mb-2">Zone Lettres &amp; Grammaire (Bleue)</h3>
+          <p class="font-chalk text-xl text-cyan-100">Vocabulaire : La solidarité au village (Ntekki)</p>
+          <ul class="font-chalk text-lg text-cyan-100/80 list-disc list-inside mt-2">
+            <li>Sujet et verbe dans la phrase complexe</li>
+            <li>Règle : "mb", "mp" prennent toujours M devant b et p</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- DISPOSITION DES TABLES-BANCS -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+      <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-6">
+        <div>
+          <h2 class="text-xl font-black text-slate-800">Bureau du Maître Balla (12 Élèves CE2)</h2>
+          <p class="text-xs text-slate-500">Cliquez sur un élève pour ouvrir son dossier et générer un quiz personnalisé</p>
+        </div>
+        <button onclick="openPermutationModal()" class="px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-bold shadow">
+          ⚡ Permutation Intelligente
+        </button>
+      </div>
+
+      <div id="seating-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    </section>
+
+  </main>
+
+  <!-- NOUVEAU MODAL : GÉNÉRATEUR DE QUIZ CEB (Inspiré de sam-vish AI-teaching-assistant) -->
+  <div id="quiz-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden my-8">
+      <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-square-poll-vertical text-amber-400 text-xl"></i>
+          <div>
+            <h3 class="font-black text-base">Générateur Automatique de Quiz CEB</h3>
+            <p class="text-xs text-slate-300">Évaluation basée sur la leçon du Tableau Noir</p>
+          </div>
+        </div>
+        <button onclick="closeQuizModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+
+      <div class="p-6 space-y-4 text-xs">
+        <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-amber-950">
+          <p class="font-bold">📋 Quiz Généré Automatiquement pour la classe de CE2 :</p>
+          <p class="text-[11px] text-amber-900 mt-1">Sujets : Addition posée avec retenue &amp; Orthographe (mb/mp).</p>
+        </div>
+
+        <div id="quiz-container" class="space-y-4 text-slate-800">
+          <!-- Questions de Quiz générées dynamiquement -->
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <p class="font-bold text-xs text-slate-900">1. Dans l'opération 4 850 + 2 730, quel est le chiffre des dizaines du résultat (7 580) ?</p>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="A"> A) 5</label>
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="B"> B) 8 (*Correct)</label>
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="C"> C) 7</label>
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q1" value="D"> D) 0</label>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+            <p class="font-bold text-xs text-slate-900">2. Quelle est la règle d'orthographe correcte devant les lettres 'b' et 'p' ?</p>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="A"> A) On met toujours N</label>
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="B"> B) On met toujours M (*Correct)</label>
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="C"> C) On met deux N</label>
+              <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2 cursor-pointer"><input type="radio" name="q2" value="D"> D) Aucune règle spécifique</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-between items-center">
+        <button onclick="speakText('Quiz de deux questions généré pour la classe de CE2.')" class="px-3 py-1.5 bg-amber-100 text-amber-900 rounded-lg text-xs font-bold">🔊 Écouter les questions</button>
+        <button onclick="closeQuizModal()" class="px-5 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    let students = [
+      { id: "abdou", name: "Abdou Laye", desk: 1, position: "left", score: 8.5, status: "soutien", style: "Visuel / Kinesthésique", behavior: "Calme", cognitive: "Fatigue visuelle en numération.", social: "Réservé.", ocrErr: '"450 + 30 = 750"', ocrDiag: "Confusion retenue.", advice: "Placer au 1er rang près de la Zone Chiffres.", history: [7, 8, 7.5, 9, 8, 8.5] },
+      { id: "aissatou", name: "Aïssatou Sow", desk: 1, position: "right", score: 14.0, status: "maitrise", style: "Auditif", behavior: "Attentive", cognitive: "Excellente en calcul.", social: "Tutrice.", ocrErr: "Aucune", ocrDiag: "Parfait.", advice: "Désigner tutrice.", history: [12, 13, 13.5, 14, 13.5, 14.0] },
+      { id: "moussa", name: "Moussa Diallo", desk: 2, position: "left", score: 9.0, status: "soutien", style: "Kinesthésique", behavior: "Dynamique", cognitive: "Manipulation.", social: "Popularité.", ocrErr: '"120 - 45 = 85"', ocrDiag: "Emprunt.", advice: "Matériel multibase.", history: [8, 8.5, 9, 8.5, 9, 9.0] },
+      { id: "fatou", name: "Fatou Ndiaye", desk: 2, position: "right", score: 12.5, status: "maitrise", style: "Visuel", behavior: "Organisée", cognitive: "Bonne compréhension.", social: "Autonome.", ocrErr: "Accord", ocrDiag: "Inattention.", advice: "Lecture active.", history: [11, 11.5, 12, 12, 12, 12.5] }
+    ];
+
+    function renderSeatingGrid() {
+      const grid = document.getElementById('seating-grid');
+      grid.innerHTML = '';
+      students.forEach(st => {
+        const div = document.createElement('div');
+        div.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-amber-50";
+        div.onclick = () => speakText(`Élève ${st.name}, moyenne ${st.score} sur 20.`);
+        div.innerHTML = `<p class="font-bold text-xs">${st.name}</p><p class="text-[10px] text-slate-500">${st.status} • ${st.score}/20</p>`;
+        grid.appendChild(div);
+      });
+    }
+
+    function openQuizModal() {
+      document.getElementById('quiz-modal').classList.remove('hidden');
+      speakText("Générateur de Quiz IA activé. Deux questions créées basées sur la leçon du jour.");
+    }
+    function closeQuizModal() {
+      document.getElementById('quiz-modal').classList.add('hidden');
+    }
+
+    function sendTeacherReply() {
+      const input = document.getElementById('teacher-reply-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML += `<div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right"><strong>Maître Balla :</strong> "${text}"</div>`;
+      input.value = '';
+
+      setTimeout(() => {
+        let response = `En ce qui concerne "${text}", le moteur Synthesis AI recommande d'utiliser des exemples concrets du milieu (comme le marché de Sandaga) et de faire répéter la règle à voix haute par la classe.`;
+        chatBox.innerHTML += `<div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-2.5 rounded-xl"><strong>Synthesis AI :</strong> "${response}"</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+        speakText(response);
+      }, 600);
+    }
+
+    function speakText(text) {
+      if (!text) return;
+      if (window.currentAudio) window.currentAudio.pause();
+      const encodedText = encodeURIComponent(text);
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
+      const audio = new Audio(audioUrl);
+      window.currentAudio = audio;
+      audio.play().catch(() => {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'fr-FR';
+          window.speechSynthesis.speak(utterance);
+        }
+      });
+    }
+
+    function toggleSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return alert("Utilisez Google Chrome pour la voix.");
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'fr-FR';
+      recognition.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        document.getElementById('teacher-reply-input').value = text;
+        sendTeacherReply();
+      };
+      recognition.start();
+    }
+
+    window.onload = () => renderSeatingGrid();
+  </script>
+
+    <!-- Second Bloc HTML Intégré -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Assistant Pédagogique M. Balla - Voice Interactive AI</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -1983,6 +2312,8 @@
       renderSeatingGrid();
     };
   </script>
+</body>
+</html>
 </body>
 </html>
 </body>
