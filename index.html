@@ -292,4 +292,219 @@
 
     <!-- TABLEAU NOIR (no-print) -->
     <section class="chalkboard-bg rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden no-print">
-      <div class="flex flex-col md:flex-row md:items-center justify-between
+      <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-emerald-700/50 pb-4 mb-6 gap-2">
+        <div>
+          <span class="text-xs font-semibold tracking-widest text-emerald-400 uppercase">CEB Sénégal • Inspection de Mbour</span>
+          <h2 class="text-lg sm:text-2xl font-bold tracking-tight text-emerald-100">
+            TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY
+          </h2>
+        </div>
+        <div class="bg-emerald-900/60 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-emerald-200 text-sm font-chalk text-xl self-start md:self-auto">
+          <i class="fa-regular fa-calendar-days mr-2 text-emerald-400"></i>Date: Vendredi 16 Octobre
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-900/40 backdrop-blur-sm rounded-xl p-5 border-l-4 border-yellow-400">
+          <h3 class="text-lg font-bold text-yellow-300 mb-2 flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Zone Chiffres (Jaune)</h3>
+          <p class="font-chalk text-xl text-yellow-100 tracking-wide bg-yellow-950/30 p-2.5 rounded">4 850 + 2 730 = <span class="underline underline-offset-4 decoration-yellow-400 font-bold">7 580</span></p>
+          <ul class="font-chalk text-lg text-yellow-100/80 list-disc list-inside mt-2 space-y-1">
+            <li>Nombres : Unités, Dizaines, Centaines, Milliers</li>
+            <li>Problème du mil au marché de Sandaga</li>
+          </ul>
+        </div>
+        <div class="bg-slate-900/40 backdrop-blur-sm rounded-xl p-5 border-l-4 border-cyan-400">
+          <h3 class="text-lg font-bold text-cyan-300 mb-2 flex items-center gap-2"><i class="fa-solid fa-book-open"></i> Zone Lettres (Bleue)</h3>
+          <p class="font-chalk text-xl text-cyan-100 tracking-wide bg-cyan-950/30 p-2.5 rounded">Vocabulaire : La solidarité au village (Ntekki)</p>
+          <ul class="font-chalk text-lg text-cyan-100/80 list-disc list-inside mt-2 space-y-1">
+            <li>Sujet et verbe dans la phrase complexe</li>
+            <li>Règle : "mb", "mp" prennent toujours M devant b et p</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- === INTERFACE VISUELLE IMMERSIVE : PLAN DE CLASSE SUR PHOTO === -->
+    <section id="classroom-section-visual" class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-200 pb-5 mb-6 gap-4">
+        <div>
+          <div class="flex items-center gap-2 text-amber-700 font-bold text-sm uppercase tracking-wider">
+            <i class="fa-solid fa-brain"></i> Moteur Intelligent &amp; Plan Interactif
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-800 mt-0.5">
+            Bureau du Maître Balla <span class="text-sm font-normal text-slate-500">(Vue de l'Estrade)</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            Analyse croisée des profils attentionnels et synergies comportementales.
+          </p>
+        </div>
+
+        <button onclick="openPermutationModal()" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-xl text-xs font-bold shadow flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Permutation Intelligente</span>
+        </button>
+      </div>
+
+      <!-- Subtitle -->
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          Disposition des Tables-Bancs (Vue de l'Estrade)
+        </span>
+        <span class="text-xs text-slate-500 flex items-center gap-1 no-print">
+          <i class="fa-solid fa-hand-pointer text-amber-600"></i> Cliquez sur un pupitre pour engager le dialogue Synthesis AI
+        </span>
+      </div>
+
+      <!-- IMAGE DE CLASSE IMMERSIVE AVEC SUPERPOSITIONS INTERACTIVES -->
+      <div class="classroom-immersion-container">
+        <!-- Grille de superposition invisible pour les zones interactives (pupitres d'élèves) -->
+        <div id="seating-image-grid" class="desk-overlay-interaction-grid">
+          
+          <!-- Ces pupitres seront peuplés par JavaScript sur la base du code JS fourni, mais la structure ci-dessous est donnée à titre d'exemple visuel factice pour que l'interface s'affiche === -->
+          
+          <!-- Pupitre 1 (G, devant) -->
+          <div class="student-desk-hotspot student-hotspot-1" id="hotspot-abdou" onclick="speakText('Ouverture du dossier d\'Abdou Laye')">
+            <div class="desk-hotspot-header">
+              <span class="desk-hotspot-position-tag">Dev/G</span>
+              <span class="desk-hotspot-score">8.5/20</span>
+            </div>
+            <p class="desk-hotspot-name">Abdou Laye</p>
+            <div class="desk-hotspot-status">Soutien</div>
+          </div>
+
+          <!-- Pupitre 2 (D, devant) -->
+          <div class="student-desk-hotspot student-hotspot-2" id="hotspot-aissatou" onclick="speakText('Ouverture du dossier d\'Aïssatou Sow')">
+            <div class="desk-hotspot-header">
+              <span class="desk-hotspot-position-tag">Dev/D</span>
+              <span class="desk-hotspot-score">14.0/20</span>
+            </div>
+            <p class="desk-hotspot-name">Aïssatou Sow</p>
+            <div class="desk-hotspot-status">Maîtrise</div>
+          </div>
+
+          <!-- Pupitre 3 (G, milieu) - Accessoire sac vert visuel sur la photo -->
+          <div class="student-desk-hotspot student-hotspot-3" id="hotspot-moussa" onclick="speakText('Ouverture du dossier de Moussa Diallo')">
+            <div class="desk-hotspot-header">
+              <span class="desk-hotspot-position-tag">Mil/G</span>
+              <span class="desk-hotspot-score">9.0/20</span>
+            </div>
+            <p class="desk-hotspot-name">Moussa Diallo</p>
+            <div class="desk-hotspot-status">Soutien</div>
+          </div>
+
+          <!-- Pupitre 4 (D, milieu) - Accessoire livre bleu visuel sur la photo -->
+          <div class="student-desk-hotspot student-hotspot-4" id="hotspot-fatou" onclick="speakText('Ouverture du dossier de Fatou Ndiaye')">
+            <div class="desk-hotspot-header">
+              <span class="desk-hotspot-position-tag">Mil/D</span>
+              <span class="desk-hotspot-score">12.5/20</span>
+            </div>
+            <p class="desk-hotspot-name">Fatou Ndiaye</p>
+            <div class="desk-hotspot-status">Maîtrise</div>
+          </div>
+
+          <!-- Pupitre 5 (G, arrière) -->
+          <div class="student-desk-hotspot student-hotspot-5" id="hotspot-cheikh" onclick="speakText('Ouverture du dossier de Cheikh Tidiane')">
+            <div class="desk-hotspot-header">
+              <span class="desk-hotspot-position-tag">Arr/G</span>
+              <span class="desk-hotspot-score">11.0/20</span>
+            </div>
+            <p class="desk-hotspot-name">Cheikh T. Diop</p>
+            <div class="desk-hotspot-status">Maîtrise</div>
+          </div>
+
+          <!-- Pupitre 6 (D, arrière) - Accessoires livre/sac visuels sur la photo -->
+          <div class="student-desk-hotspot student-hotspot-6" id="hotspot-aminata" onclick="speakText('Ouverture du dossier d\'Aminata Ba')">
+            <div class="desk-hotspot-header">
+              <span class="desk-hotspot-position-tag">Arr/D</span>
+              <span class="desk-hotspot-score">15.5/20</span>
+            </div>
+            <p class="desk-hotspot-name">Aminata Ba</p>
+            <div class="desk-hotspot-status">Maîtrise</div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODALS (no-print) -->
+  <div id="quiz-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto no-print">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-100 overflow-hidden my-8">
+      <div class="bg-slate-900 p-5 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2"><i class="fa-solid fa-square-poll-vertical text-amber-400 text-xl"></i><div><h3 class="font-black text-base">Quiz Automatique CEB</h3><p class="text-xs text-slate-300">Évaluation basée sur la leçon du Tableau Noir</p></div></div>
+        <button onclick="closeQuizModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <div class="p-6 text-xs text-slate-800 space-y-4">
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <p class="font-bold text-slate-900">1. Quelle est la règle d'orthographe correcte devant les lettres 'b' et 'p' ?</p>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2"><input type="radio" name="q1"> A) On met toujours N</label>
+            <label class="p-2 bg-white rounded border border-slate-200 flex items-center gap-2"><input type="radio" name="q1"> B) On met toujours M (Correct)</label>
+          </div>
+        </div>
+      </div>
+      <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end"><button onclick="closeQuizModal()" class="px-5 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl">Fermer</button></div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC (no-print) -->
+  <script class="no-print">
+    // Données factices simplifiées pour l'affichage factice des hotspots de l'image
+    const studentDataList = [
+      { id: "abdou", name: "Abdou Laye", score: 8.5, status: "soutien", advice: "Placer au 1er rang près de la Zone Chiffres." },
+      { id: "aissatou", name: "Aïssatou Sow", score: 14.0, status: "maitrise", advice: "Désigner tutrice de table." },
+      { id: "moussa", name: "Moussa Diallo", score: 9.0, status: "soutien", advice: "Utiliser matériel multibase (jetons)." },
+      { id: "fatou", name: "Fatou Ndiaye", score: 12.5, status: "maitrise", advice: "Proposer lectures active ciblée." },
+      { id: "cheikh", name: "Cheikh Tidiane Diop", score: 11.0, status: "maitrise", advice: "Rappeler règle du M devant B/P." },
+      { id: "aminata", name: "Aminata Ba", score: 15.5, status: "maitrise", advice: "Proposer défis mathématiques enrichis." }
+    ];
+
+    function openQuizModal() { document.getElementById('quiz-modal').classList.remove('hidden'); speakText("Ouverture du générateur de quiz."); }
+    function closeQuizModal() { document.getElementById('quiz-modal').classList.add('hidden'); }
+
+    function sendTeacherReply() {
+      const input = document.getElementById('teacher-reply-input');
+      const text = input.value.trim();
+      if (!text) return;
+      document.getElementById('chat-box').innerHTML += `<div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs"><strong>Maître Balla :</strong> "${text}"</div>`;
+      input.value = '';
+      setTimeout(() => {
+        let response = `Merci pour cette précision Maître Balla. Le moteur Synthesis AI intègre votre observation sur "${text}". Pour un profil comme Abdou, la résolveuse de doutes suggère de fractionner les exercices.`;
+        document.getElementById('chat-box').innerHTML += `<div class="bg-amber-100/70 border border-amber-200 text-amber-950 p-2.5 rounded-xl max-w-2xl text-xs"><strong>Synthesis AI :</strong> "${response}"</div>`;
+        document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+        speakText(response);
+      }, 700);
+    }
+
+    function speakText(text) {
+      if (!text) return;
+      if (window.currentAudio) window.currentAudio.pause();
+      const encodedText = encodeURIComponent(text);
+      const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
+      const audio = new Audio(audioUrl);
+      window.currentAudio = audio;
+      audio.play().catch(() => { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = 'fr-FR'; window.speechSynthesis.speak(utterance); } });
+    }
+
+    function toggleSpeechRecognition() {
+      const btnMic = document.getElementById('btn-mic');
+      const micIcon = document.getElementById('mic-icon');
+      btnMic.classList.toggle('mic-listening');
+      btnMic.classList.toggle('bg-rose-600');
+      if (btnMic.classList.contains('mic-listening')) { micIcon.className = "fa-solid fa-microphone-lines animate-bounce"; speakText("Maitre Balla, je vous écoute."); } else { micIcon.className = "fa-solid fa-microphone"; speakText("Assistance vocale mise en pause."); }
+    }
+
+    function readTableauOutLoud() {
+      speakText("Tableau Noir. Zone Chiffres : Addition décimale 4850 plus 2730 égale 7580. Zone Lettres : Vocabulaire la solidarité au village Ntekki.");
+    }
+    function stopAudio() { if (window.currentAudio) window.currentAudio.pause(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+    
+    // Initialisation
+    window.onload = () => { speakText("Bonjour Maître Balla. Votre interface immersive CEB est chargée."); };
+  </script>
+</body>
+</html>
