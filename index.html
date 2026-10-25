@@ -1151,108 +1151,133 @@
 
     <!-- JavaScript Intégré -->
     <script>
-// =========================================================================
-// MOTEUR VOCAL ET ACCUEIL SYNTHESIS AI (CORRIGÉ & ROBUSTE)
-// =========================================================================
+<!-- MOTEUR VOCAL HD & SYNTHESIS AI INTEGRÉ -->
+<script>
+  // Base de données contextuelle des élèves pour vos discussions
+  const studentsDB = {
+    abdou: "Abdou Laye a une moyenne de 8.5 sur 20. Il est calme mais présente un léger déficit de repérage spatial au tableau. Je suggère de le garder au premier rang et d'utiliser du matériel concret.",
+    aissatou: "Aïssatou Sow a 14 sur 20. Très attentive et rigoureuse en numération, elle fait une excellente tutrice de table.",
+    moussa: "Moussa Diallo a 9 sur 20. Énergique, ses difficultés portent sur la soustraction avec emprunt. Je recommande de manipuler des jetons.",
+    fatou: "Fatou Ndiaye a 12.5 sur 20. Très appliquée, une simple relecture active suffit pour corriger ses petites fautes d'accord."
+  };
 
-// 1. Affichage automatique du message dans le chat dès le chargement de la page
-window.addEventListener('DOMContentLoaded', () => {
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML = `
-            <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-4 rounded-xl max-w-2xl text-xs space-y-2 shadow-sm">
-                <strong>🤖 Synthesis AI (Co-Pilote) :</strong>
-                <p>"Bonjour Maître Balla ! Pour démarrer l'assistant vocal et lancer notre session, veuillez cliquer sur le bouton d'activation ci-dessous."</p>
-                <button onclick="lancerSessionVocale()" class="mt-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs shadow transition-all cursor-pointer">
-                    🔊 Activer Synthesis AI & la Voix
-                </button>
-            </div>
-        `;
-    }
-});
+  // 1. Déclenchement du salut vocal HD au tout premier clic/toucher sur la page
+  document.addEventListener('click', function initVoiceOnFirstClick() {
+    saluerMaitreBallaHD();
+    document.removeEventListener('click', initVoiceOnFirstClick);
+  }, { once: true });
 
-// 2. Fonction déclenchée au clic pour autoriser l'audio et démarrer l'écoute
-function lancerSessionVocale() {
-    const messageAccueil = "Bonjour Maître Balla. Je suis votre co-pilote Synthesis AI. Je suis prêt à vous accompagner, analyser les élèves et répondre à toutes vos questions.";
-    
-    // Lecture de la voix de bienvenue
-    speakText(messageAccueil);
-
-    // Mise à jour du chat
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML = `
-            <div class="bg-amber-100/90 border border-amber-300 text-amber-950 p-3.5 rounded-xl max-w-2xl text-xs space-y-1">
-                <strong>🤖 Synthesis AI (Actif) :</strong>
-                <p>"${messageAccueil}"</p>
-            </div>
-        `;
-    }
-
-    // Démarrage de la reconnaissance vocale pour converser
-    demarrerReconnaissanceVocale();
-}
-
-// 3. Fonction de synthèse vocale (Voix)
-function speakText(text) {
+  // 2. Fonction pour lire à voix haute avec une voix naturelle HD (Google Cloud TTS)
+  function speakTextHD(text) {
     if (!text) return;
-    if ('speechSynthesis' in window) {
+    if (window.currentAudio) window.currentAudio.pause();
+
+    const encodedText = encodeURIComponent(text);
+    // Utilisation de la synthèse Google HD naturelle
+    const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=fr&client=tw-ob`;
+    const audio = new Audio(audioUrl);
+    window.currentAudio = audio;
+
+    audio.play().catch(() => {
+      // Voix de secours fluide si le flux est restreint par le navigateur
+      if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'fr-FR';
-        utterance.rate = 0.92;
-        
-        const voices = window.speechSynthesis.getVoices();
-        const voixFr = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural'))) || voices.find(v => v.lang.startsWith('fr'));
-        if (voixFr) utterance.voice = voixFr;
-
+        utterance.rate = 0.90; // Débit posé et naturel
         window.speechSynthesis.speak(utterance);
-    }
-}
+      }
+    });
+  }
 
-// 4. Reconnaissance vocale interactive
-function demarrerReconnaissanceVocale() {
+  // Salut vocal de bienvenue
+  function saluerMaitreBallaHD() {
+    const message = "Bonjour Maître Balla. Bienvenue dans votre assistant pédagogique Synthesis AI. Je suis prêt à vous accompagner pour la classe de CE2.";
+    speakTextHD(message);
+    
+    const statusEl = document.getElementById('voice-status');
+    if (statusEl) statusEl.innerText = "Co-pilote actif et à votre écoute.";
+  }
+
+  // 3. Discussion libre et réponse intelligente
+  function sendTeacherReply() {
+    const input = document.getElementById('teacher-reply-input');
+    if (!input) return;
+    const query = input.value.trim();
+    if (!query) return;
+
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+      chatBox.innerHTML += `
+        <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-xl text-xs">
+          <strong>Maître Balla :</strong> "${query}"
+        </div>
+      `;
+    }
+    input.value = '';
+
+    setTimeout(() => {
+      let reponse = "";
+      const textLower = query.toLowerCase();
+
+      if (textLower.includes('abdou')) {
+        reponse = studentsDB.abdou;
+      } else if (textLower.includes('aïssatou') || textLower.includes('aissatou')) {
+        reponse = studentsDB.aissatou;
+      } else if (textLower.includes('moussa')) {
+        reponse = studentsDB.moussa;
+      } else if (textLower.includes('fatou')) {
+        reponse = studentsDB.fatou;
+      } else if (textLower.includes('bilan') || textLower.includes('classe') || textLower.includes('avancement')) {
+        reponse = "Le bilan global montre 8 élèves ayant acquis la maîtrise et 4 élèves en soutien prioritaire. La progression globale est constante.";
+      } else {
+        reponse = `J'ai bien noté votre remarque : "${query}". Pour optimiser la leçon du jour au tableau noir, je vous suggère un travail en binômes de soutien.`;
+      }
+
+      if (chatBox) {
+        chatBox.innerHTML += `
+          <div class="bg-amber-100/80 border border-amber-300 text-amber-950 p-3 rounded-xl max-w-2xl text-xs">
+            <strong>Synthesis AI :</strong> "${reponse}"
+          </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      // Réponse vocale naturelle HD
+      speakTextHD(reponse);
+    }, 600);
+  }
+
+  // 4. Activer la reconnaissance vocale au micro (Style Siri)
+  function toggleSpeechRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        alert("La reconnaissance vocale n'est pas supportée par ce navigateur. Utilisez Google Chrome.");
-        return;
+      alert("Veuillez utiliser Google Chrome pour la reconnaissance vocale.");
+      return;
     }
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    const statusEl = document.getElementById('voice-status');
-    if (statusEl) statusEl.innerText = "Écoute active... Parlez à l'assistant.";
 
     recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.trim();
-        console.log("Vous avez dit :", transcript);
-
-        const inputField = document.getElementById('teacher-reply-input');
-        if (inputField) {
-            inputField.value = transcript;
-            sendTeacherReply(); // Envoie la question à l'IA
-        }
+      const transcript = event.results[0][0].transcript;
+      const input = document.getElementById('teacher-reply-input');
+      if (input) {
+        input.value = transcript;
+        sendTeacherReply();
+      }
     };
 
-    recognition.onerror = (event) => {
-        console.log("Erreur vocale :", event.error);
-        if (statusEl) statusEl.innerText = "Erreur micro. Cliquez pour réessayer.";
-    };
+    recognition.start();
+    speakTextHD("Je vous écoute Maître Balla.");
+  }
 
-    recognition.onend = () => {
-        if (statusEl) statusEl.innerText = "Micro en veille. Cliquez sur le micro pour reparler.";
-    };
-
-    try {
-        recognition.start();
-        console.log("Reconnaissance vocale démarrée.");
-    } catch (e) {
-        console.log("Erreur au démarrage de l'écoute :", e);
-    }
-}
+  // Initialisation au chargement de la page
+  window.onload = () => {
+    console.log("Interface Synthesis AI chargée.");
+  };
+</script>
     </script>
 </body>
 </html>
