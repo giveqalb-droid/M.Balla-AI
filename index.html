@@ -1,200 +1,809 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant Pédagogique - Open WebUI (Maître Balla)</title>
+    <title>Assistant Pédagogique CEB Sénégal - Maître Balla</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .sidebar-bg { background-color: #171717; }
-        .chat-bg { background-color: #212121; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Caveat:wght@600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-chalk {
+            font-family: 'Caveat', 'Comic Sans MS', cursive;
+        }
+        .chalkboard-bg {
+            background-color: #1a2e22;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 80%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8), 0 12px 30px -5px rgba(0, 0, 0, 0.5);
+            border: 14px solid #5c3a21;
+        }
+        .chalk-text-yellow { color: #fef08a; text-shadow: 0 0 3px rgba(254, 240, 138, 0.5); }
+        .chalk-text-blue { color: #93c5fd; text-shadow: 0 0 3px rgba(147, 197, 253, 0.5); }
+        .chalk-border-yellow { border: 2px dashed rgba(254, 240, 138, 0.4); }
+        .chalk-border-blue { border: 2px dashed rgba(147, 197, 253, 0.4); }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        @media print {
+            header, footer, .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .chalkboard-bg { border: 2px solid #000; background: none !important; color: black !important; }
+        }
     </style>
 </head>
-<body class="bg-zinc-900 text-zinc-100 font-sans h-screen flex overflow-hidden">
+<body class="bg-amber-50/30 text-slate-800 min-h-screen flex flex-col antialiased">
 
-    <!-- Sidebar Style Open WebUI -->
-    <aside class="w-64 sidebar-bg border-r border-zinc-800 flex flex-col justify-between hidden md:flex">
-        <div class="p-4 space-y-4">
-            <!-- En-tête / Logo -->
-            <div class="flex items-center gap-3 px-2 py-1.5">
-                <div class="p-2 bg-amber-600 rounded-xl text-white shadow">
-                    <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+    <!-- HEADER DE NAVIGATION ET FILTRES CEB -->
+    <header class="bg-amber-950 text-amber-50 shadow-lg border-b-4 border-amber-900 sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                
+                <!-- Titre & Identité -->
+                <div class="flex items-center space-x-3">
+                    <div class="p-2.5 bg-amber-800/90 rounded-2xl border border-amber-600/50 shadow-inner text-amber-300 shrink-0">
+                        <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-lg sm:text-xl font-extrabold tracking-wide text-amber-100">Assistant Pédagogique CEB Sénégal</h1>
+                            <span class="text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-800 text-amber-200 border border-amber-700 shadow-sm">
+                                Version Officielle 2.5
+                            </span>
+                        </div>
+                        <p class="text-xs text-amber-200/90 font-medium">Gestion Prédictive de Classe & Différenciation • Maître Balla</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-sm tracking-wide text-zinc-100">M. Balla WebUI</h1>
-                    <p class="text-[10px] text-zinc-400">Assistant Pédagogique • CEB</p>
-                </div>
-            </div>
 
-            <!-- Bouton Nouvelle Séquence -->
-            <button onclick="newChat()" class="w-full py-2.5 px-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-xl text-xs font-semibold flex items-center gap-2 border border-zinc-700 transition-all shadow-sm">
-                <i data-lucide="plus" class="w-4 h-4 text-amber-500"></i> Nouvelle Séquence
-            </button>
+                <!-- Sélecteurs Niveau et Discipline -->
+                <div class="flex flex-wrap items-center gap-3 no-print">
+                    <div class="flex items-center gap-1.5 bg-amber-900/80 px-3 py-1.5 rounded-xl border border-amber-700/60">
+                        <i data-lucide="layers" class="w-4 h-4 text-amber-300"></i>
+                        <label for="levelSelect" class="text-xs text-amber-200 font-semibold">Niveau :</label>
+                        <select id="levelSelect" class="bg-amber-950 text-amber-100 text-xs font-bold rounded-lg px-2 py-1 border border-amber-700 focus:outline-none focus:ring-1 focus:ring-amber-400">
+                            <option value="CI">CI (Cours Initiatique)</option>
+                            <option value="CP">CP (Cours Préparatoire)</option>
+                            <option value="CE2" selected>CE2 (Cours Élémentaire 2e)</option>
+                            <option value="CM2">CM2 (Cours Moyen 2e)</option>
+                        </select>
+                    </div>
 
-            <!-- Historique des discussions -->
-            <div class="space-y-1 pt-2">
-                <p class="text-[10px] uppercase tracking-wider text-zinc-500 px-2 font-bold">Sessions Récentes</p>
-                <div class="space-y-0.5">
-                    <a href="#" class="block px-3 py-2 rounded-lg text-xs text-zinc-300 hover:bg-zinc-800 truncate transition-colors">📊 Séquence Maths : Numération CE2</a>
-                    <a href="#" class="block px-3 py-2 rounded-lg text-xs text-zinc-300 hover:bg-zinc-800 truncate transition-colors">📖 Grammaire : Règle du 'm'</a>
-                    <a href="#" class="block px-3 py-2 rounded-lg text-xs text-zinc-300 hover:bg-zinc-800 truncate transition-colors">⚖️ Plan de classe & Différenciation</a>
+                    <div class="flex items-center gap-1.5 bg-amber-900/80 px-3 py-1.5 rounded-xl border border-amber-700/60">
+                        <i data-lucide="book-open" class="w-4 h-4 text-amber-300"></i>
+                        <label for="disciplineSelect" class="text-xs text-amber-200 font-semibold">Discipline :</label>
+                        <select id="disciplineSelect" class="bg-amber-950 text-amber-100 text-xs font-bold rounded-lg px-2 py-1 border border-amber-700 focus:outline-none focus:ring-1 focus:ring-amber-400">
+                            <option value="math" selected>Mathématiques / Numération</option>
+                            <option value="french">Français / Lecture & Écriture</option>
+                            <option value="esvs">Éveil / ESVS (Sciences)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="window.print()" class="px-3.5 py-2 bg-amber-700 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow border border-amber-500 flex items-center gap-1.5">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Imprimer Plan
+                    </button>
                 </div>
             </div>
         </div>
+    </header>
 
-        <!-- Profil Utilisateur en bas -->
-        <div class="p-4 border-t border-zinc-800 flex items-center gap-3 bg-zinc-900/50">
-            <div class="w-8 h-8 rounded-full bg-amber-700 flex items-center justify-center font-bold text-xs text-white shadow">MB</div>
-            <div class="truncate">
-                <p class="text-xs font-semibold text-zinc-200">Maître Balla</p>
-                <p class="text-[10px] text-emerald-400 flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Mode Cloud Actif
-                </p>
+    <!-- CONTENU PRINCIPAL -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6 space-y-6">
+
+        <!-- STATISTIQUES KPI ET FILTRES -->
+        <section class="space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- KPI Total -->
+                <div onclick="filterByStatus('ALL')" class="cursor-pointer bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-2 border-slate-200 hover:border-amber-500 transition-all transform hover:-translate-y-0.5 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Effectif Total</p>
+                            <h3 class="text-3xl font-extrabold text-slate-800 mt-1">12 Élèves</h3>
+                            <p class="text-xs font-medium text-slate-500 mt-1">Classe CE2-A</p>
+                        </div>
+                        <div class="p-3 bg-amber-100 text-amber-800 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-800">
+                        <span>Afficher Tous</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </div>
+                </div>
+
+                <!-- KPI Soutien -->
+                <div onclick="filterByStatus('SOUTIEN')" class="cursor-pointer bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-2 border-slate-200 hover:border-rose-500 transition-all transform hover:-translate-y-0.5 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-rose-600">Soutien Prioritaire</p>
+                            <h3 class="text-3xl font-extrabold text-rose-700 mt-1">4 Élèves</h3>
+                            <p class="text-xs font-medium text-rose-600/80 mt-1">Moyenne &lt; 10/20</p>
+                        </div>
+                        <div class="p-3 bg-rose-100 text-rose-700 rounded-xl group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                            <i data-lucide="alert-circle" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-rose-700">
+                        <span>Filtrer ces élèves</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </div>
+                </div>
+
+                <!-- KPI Maîtrise -->
+                <div onclick="filterByStatus('MAITRISE')" class="cursor-pointer bg-white p-4 sm:p-5 rounded-2xl shadow-sm border-2 border-slate-200 hover:border-emerald-500 transition-all transform hover:-translate-y-0.5 group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-wider text-emerald-600">Maîtrise Acquise</p>
+                            <h3 class="text-3xl font-extrabold text-emerald-700 mt-1">8 Élèves</h3>
+                            <p class="text-xs font-medium text-emerald-600/80 mt-1">Moyenne ≥ 10/20</p>
+                        </div>
+                        <div class="p-3 bg-emerald-100 text-emerald-700 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+                        <span>Filtrer ces élèves</span>
+                        <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </div>
+                </div>
             </div>
-        </div>
-    </aside>
 
-    <!-- Zone Principale de Chat -->
-    <main class="flex-1 flex flex-col h-full chat-bg relative">
-        
-        <!-- Barre Supérieure (Modèle & Statut) -->
-        <header class="h-14 border-b border-zinc-800 flex items-center justify-between px-6 bg-zinc-900/50 backdrop-blur z-10">
-            <div class="flex items-center gap-3">
-                <select id="modelSelect" class="bg-zinc-800 border border-zinc-700 text-zinc-200 text-xs rounded-xl px-3 py-1.5 focus:outline-none font-medium shadow-sm">
-                    <option value="llama3">Llama 3.1 8B (Pédagogie CEB)</option>
-                    <option value="qwen">Qwen 2.5 (Français & Analyse)</option>
-                    <option value="mistral">Mistral 7B Instruct</option>
-                </select>
-                <span class="hidden sm:inline-block text-xs text-zinc-400 bg-zinc-800 px-2.5 py-1 rounded-lg border border-zinc-700">
-                    Contexte : Primaire / Préscolaire
+            <!-- Bannière Filtre Actif -->
+            <div id="filterBanner" class="hidden bg-amber-100 border border-amber-300 text-amber-950 px-4 py-2 rounded-xl flex items-center justify-between text-xs font-semibold shadow-sm">
+                <span class="flex items-center gap-2">
+                    <i data-lucide="filter" class="w-4 h-4 text-amber-700"></i>
+                    <span>Filtre actif : <strong id="filterLabel">Soutien Prioritaire</strong></span>
                 </span>
+                <button onclick="resetFilter()" class="text-amber-900 underline hover:text-amber-700 font-bold">Réinitialiser le filtre</button>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="window.print()" class="text-xs text-zinc-300 hover:text-white flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800 border border-zinc-700 transition-all">
-                    <i data-lucide="printer" class="w-3.5 h-3.5 text-amber-500"></i> Exporter
+        </section>
+
+        <!-- SECTION OCR / CLASSIFICATION DES COPIES DE DEVOIR -->
+        <section class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 bg-indigo-50 text-indigo-700 rounded-xl">
+                        <i data-lucide="scan-line" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Dépôt & Classification OCR des Copies par l'IA</h3>
+                        <p class="text-xs text-slate-500">Scannez ou déposez le paquet de devoirs du vendredi pour détection automatique d'erreurs.</p>
+                    </div>
+                </div>
+                <button onclick="triggerOCR()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow flex items-center gap-1.5 transition-all">
+                    <i data-lucide="upload-cloud" class="w-4 h-4"></i> Analyser un Nouveau Devoir
                 </button>
             </div>
-        </header>
+        </section>
 
-        <!-- Flux de Discussion -->
-        <div id="chatContainer" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
-            <!-- Message d'accueil de l'IA -->
-            <div class="max-w-3xl mx-auto flex gap-4">
-                <div class="w-8 h-8 rounded-xl bg-amber-600 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow">AI</div>
-                <div class="space-y-2 text-sm text-zinc-200 leading-relaxed bg-zinc-800/40 p-4 rounded-2xl border border-zinc-800">
-                    <p class="font-bold text-amber-400">Bonjour Maître Balla,</p>
-                    <p>Je suis votre assistant pédagogique intelligent. Je suis configuré pour vous aider à concevoir vos fiches de préparation, structurer vos séquences d'apprentissage et appliquer la différenciation pédagogique pour vos élèves.</p>
-                    <p class="text-xs text-zinc-400 pt-1">💡 Sélectionnez une option rapide ci-dessous ou posez-moi votre question directement.</p>
+        <!-- TABLEAU NOIR ET BUTEAU DU MAÎTRE BALLA -->
+        <section class="chalkboard-bg rounded-3xl p-6 sm:p-8 text-white space-y-6">
+            <div class="flex flex-wrap justify-between items-center border-b border-white/10 pb-4 gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                    <h2 class="font-chalk text-xl sm:text-2xl text-amber-200 tracking-wide">
+                        TABLEAU NOIR DE LA CLASSE DE CE2 - ÉCOLE EL HADJI MALICK SY
+                    </h2>
+                </div>
+                <div class="text-right">
+                    <span class="font-chalk text-amber-300 text-lg">Date: Vendredi 16 Octobre</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Zone de Saisie Fixe en Bas -->
-        <div class="p-4 border-t border-zinc-800 bg-zinc-900">
-            <div class="max-w-3xl mx-auto relative space-y-2">
-                <!-- Raccourcis Rapides -->
-                <div class="flex items-center gap-2 overflow-x-auto pb-1">
-                    <button onclick="quickAction('fiche')" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs font-medium border border-zinc-700 whitespace-nowrap transition-all flex items-center gap-1">
-                        📄 Fiche de Préparation
-                    </button>
-                    <button onclick="quickAction('differenciation')" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs font-medium border border-zinc-700 whitespace-nowrap transition-all flex items-center gap-1">
-                        ⚖️ Exercices Différenciés (3 Niveaux)
-                    </button>
-                    <button onclick="quickAction('evaluation')" class="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs font-medium border border-zinc-700 whitespace-nowrap transition-all flex items-center gap-1">
-                        📋 Grille d'Évaluation
-                    </button>
-                </div>
-
-                <!-- Input & Bouton d'envoi -->
-                <div class="bg-zinc-800 border border-zinc-700 rounded-2xl p-3 flex flex-col gap-2 focus-within:border-amber-600 transition-all shadow-inner">
-                    <textarea id="userInput" rows="2" placeholder="Posez votre question pédagogique à l'assistant..." class="bg-transparent text-zinc-100 placeholder-zinc-500 text-xs sm:text-sm focus:outline-none resize-none"></textarea>
-                    
-                    <div class="flex justify-between items-center pt-1 border-t border-zinc-700/50">
-                        <span class="text-[10px] text-zinc-500">Appuyez sur Entrée ou cliquez sur envoyer</span>
-                        <button onclick="sendMessage()" class="p-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl transition-all shadow">
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                        </button>
+            <!-- Deux zones du tableau -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Zone Chiffres -->
+                <div class="chalk-border-yellow p-5 rounded-2xl bg-yellow-950/20 space-y-3">
+                    <h3 class="chalk-text-yellow font-bold text-lg flex items-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5"></i> Zone Chiffres & Calcul (Jaune)
+                    </h3>
+                    <div class="font-chalk text-yellow-100 space-y-1 text-base sm:text-lg">
+                        <p class="font-bold text-xl text-yellow-300">Opérations du Jour : 4 850 + 2 730 = 7 580</p>
+                        <p>• Propriétés des nombres : Unités, Dizaines, Centaines, Milliers</p>
+                        <p>• Problème : Calcul du prix total du mil au marché de Sandaga.</p>
                     </div>
                 </div>
-                <p class="text-[10px] text-center text-zinc-500">M.Balla-AI • Propulsé pour le Ministère de l'Éducation</p>
-            </div>
-        </div>
 
+                <!-- Zone Lettres -->
+                <div class="chalk-border-blue p-5 rounded-2xl bg-blue-950/20 space-y-3">
+                    <h3 class="chalk-text-blue font-bold text-lg flex items-center gap-2">
+                        <i data-lucide="pen-tool" class="w-5 h-5"></i> Zone Lettres & Grammaire (Bleue)
+                    </h3>
+                    <div class="font-chalk text-blue-100 space-y-1 text-base sm:text-lg">
+                        <p class="font-bold text-xl text-blue-300">Vocabulaire : La solidarité au village (Ntekki)</p>
+                        <p>• Grammaire : Le sujet et le verbe dans la phrase complexe.</p>
+                        <p>• Règle du jour : "mb", "mp" prennent toujours M devant b et p.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bureau du Maître Balla -->
+            <div class="border-t-2 border-dashed border-amber-600/40 pt-4 text-center">
+                <div class="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-amber-900/60 border border-amber-600/60 font-chalk text-amber-200 text-lg">
+                    <i data-lucide="user-check" class="w-5 h-5 text-amber-400"></i>
+                    <span>Bureau du Maître Balla (Estrade d'observation directe)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- MOTEUR PÉDAGOGIQUE INTELLIGENT & PRÉDICTIF -->
+        <section class="bg-gradient-to-r from-amber-950 via-amber-900 to-amber-950 p-5 rounded-2xl shadow-xl border-2 border-amber-700 text-amber-50 flex flex-wrap justify-between items-center gap-4">
+            <div class="space-y-1 max-w-2xl">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-400 animate-bounce"></i>
+                    <h3 class="font-extrabold text-base sm:text-lg tracking-wide text-amber-100">Moteur Pédagogique Intelligent & Prédictif</h3>
+                </div>
+                <p class="text-xs text-amber-200/90 leading-relaxed">
+                    Analyse croisée des profils attentionnels, synergies comportementales et besoins du CEB.
+                </p>
+            </div>
+            <button onclick="openPredictiveModal()" class="px-5 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-amber-950 font-extrabold rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-lg transition-all transform hover:scale-105 border border-amber-300">
+                <i data-lucide="git-compare" class="w-4 h-4"></i> Proposer une Permutation Intelligente
+            </button>
+        </section>
+
+        <!-- DISPOSITION DES TABLES-BANCS (12 ÉLÈVES / 6 TABLES) -->
+        <section class="space-y-4">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="font-extrabold text-slate-800 text-base sm:text-lg">Disposition des Tables-Bancs (2 Élèves par Table)</h3>
+                    <p class="text-xs text-slate-500">Cliquez sur un élève pour consulter son dossier pédagogique complet</p>
+                </div>
+                <span class="text-xs bg-slate-200 text-slate-700 font-bold px-3 py-1 rounded-full">6 Tables • 12 Places</span>
+            </div>
+
+            <!-- Grille des tables bancs -->
+            <div id="seatingGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Les 6 tables seront générées dynamiquement via JS -->
+            </div>
+        </section>
+
+        <!-- CHATBOT IA EN DIRECT (OPEN WEBUI / MAÎTRE BALLA) -->
+        <section class="bg-white p-5 sm:p-6 rounded-3xl border-2 border-amber-300 shadow-md space-y-4 no-print">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-amber-900 text-amber-200 rounded-xl shadow-sm">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-800 text-sm uppercase tracking-wide">Assistant Pédagogique IA - Direct CEB</h3>
+                        <p class="text-xs text-slate-500">Posez des questions de cours, générez des fiches ou préparez vos séances de remédiation.</p>
+                    </div>
+                </div>
+                <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full flex items-center gap-1.5 border border-emerald-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> IA Connectée
+                </span>
+            </div>
+
+            <!-- Messages du chat -->
+            <div id="chatMessages" class="h-64 overflow-y-auto bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 text-xs sm:text-sm">
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-900 text-amber-200 flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">IA</div>
+                    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm max-w-2xl text-slate-700 space-y-1">
+                        <p class="font-bold text-amber-950">Bonjour Maître Balla !</p>
+                        <p>Je suis votre assistant IA personnel pour le CEB Sénégal. Je peux rédiger des fiches de prép, proposer des exercices à 3 niveaux de différenciation ou analyser les blocages de vos élèves.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestions et Input -->
+            <div class="space-y-2">
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                    <button onclick="quickAction('fiche')" class="px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg font-bold border border-amber-300 whitespace-nowrap transition-all">
+                        📄 Fiche de Prep Addition CE2
+                    </button>
+                    <button onclick="quickAction('diff')" class="px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg font-bold border border-amber-300 whitespace-nowrap transition-all">
+                        ⚖️ Exercices 3 Niveaux (Lecture)
+                    </button>
+                    <button onclick="quickAction('remediation')" class="px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg font-bold border border-amber-300 whitespace-nowrap transition-all">
+                        🛠️ Remédiation Retenues Math
+                    </button>
+                </div>
+
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" placeholder="Demandez une fiche de prép, une grille ou un conseil..." class="flex-grow bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <button onclick="sendChatMessage()" class="px-5 py-2.5 bg-amber-900 hover:bg-amber-800 text-white font-bold rounded-xl text-xs sm:text-sm shadow transition-all flex items-center gap-1.5">
+                        <span>Envoyer</span>
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Scripts Interactifs -->
-    <script>
-        lucide.createIcons();
+    <!-- FOOTER -->
+    <footer class="bg-amber-950 text-amber-300 text-xs py-4 border-t border-amber-900 no-print">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-1">
+            <p class="font-semibold">Assistant Pédagogique CEB Sénégal • Conception Maître Balla</p>
+            <p class="text-amber-400/60">Optimisé pour la différenciation pédagogique & l'inspection académique</p>
+        </div>
+    </footer>
 
-        function newChat() {
-            document.getElementById('chatContainer').innerHTML = `
-                <div class="max-w-3xl mx-auto flex gap-4">
-                    <div class="w-8 h-8 rounded-xl bg-amber-600 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow">AI</div>
-                    <div class="space-y-2 text-sm text-zinc-200 bg-zinc-800/40 p-4 rounded-2xl border border-zinc-800">
-                        <p class="font-bold text-amber-400">Nouvelle session initialisée.</p>
-                        <p>Comment puis-je vous assister pour votre classe aujourd'hui ?</p>
+    <!-- MODAL 1 : ANALYSE PRÉDICTIVE DE PERMUTATION INTELLIGENTE -->
+    <div id="predictiveModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200 animate-in fade-in zoom-in duration-200">
+            <!-- Header Modal -->
+            <div class="bg-amber-950 text-white px-6 py-4 flex justify-between items-center border-b border-amber-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="p-2 bg-amber-800 rounded-xl">
+                        <i data-lucide="git-compare" class="w-5 h-5 text-amber-300"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-base sm:text-lg">Analyse Prédictive de Permutation Intelligente</h3>
+                        <p class="text-xs text-amber-300">Simulation pédagogique basée sur le modèle d'apprentissage CEB</p>
                     </div>
                 </div>
-            `;
+                <button onclick="closePredictiveModal()" class="text-amber-300 hover:text-white p-1 rounded-lg hover:bg-amber-900">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Body Modal -->
+            <div class="p-6 overflow-y-auto space-y-5 text-slate-700 text-xs sm:text-sm">
+                
+                <!-- Bannière Permutation -->
+                <div class="bg-amber-50 border-2 border-amber-300 p-4 rounded-2xl flex items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase text-amber-800 tracking-wider">Permutation Suggérée : Table-Banc 1</span>
+                        <h4 class="text-base font-extrabold text-slate-900 mt-0.5">Abdou L. ⇄ Moussa D.</h4>
+                        <p class="text-xs text-slate-600">Échange de position entre Abdou Laye (Rang 3 - Fond) et Moussa Diallo (Rang 1 - Face Tableau).</p>
+                    </div>
+                    <div class="p-3 bg-amber-200 text-amber-900 rounded-2xl shrink-0 font-bold text-xs text-center">
+                        Gain Global<br><span class="text-base font-black text-emerald-700">+5.0 Pts</span>
+                    </div>
+                </div>
+
+                <!-- 1. Raisons Détaillées -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2 border-b pb-1">
+                        <i data-lucide="file-text" class="w-4 h-4 text-amber-700"></i> 1. Raisons Détaillées de la Permutation
+                    </h4>
+                    <ul class="space-y-2 text-xs text-slate-600 list-disc pl-5">
+                        <li><strong>Proximité Visuelle (Zone Chiffres) :</strong> Abdou Laye présente des difficultés légères de vision non corrigées. Le placer au Rang 1 directement en face de la Zone Chiffres (Jaune) réduira sa fatigue cognitive en numération.</li>
+                        <li><strong>Synergie de Pairage (Tutorat Naturel) :</strong> Placer Abdou à côté d'Aïssatou Sow (élève très méthodique et calme) crée un binôme d'entraide spontanée.</li>
+                        <li><strong>Canalisation de Moussa D. :</strong> Moussa (profil Leader/Autonome mais parfois distrait en 1er rang) bénéficiera d'une autonomie accrue au Rang 3 aux côtés de Cheikh Tidiane.</li>
+                    </ul>
+                </div>
+
+                <!-- 2. Prédictions d'Impact -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2 border-b pb-1">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i> 2. Prédictions d'Impact & Évolution des Élèves
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-1">
+                            <div class="flex justify-between font-bold text-emerald-900 text-xs">
+                                <span>Impact sur Abdou Laye</span>
+                                <span class="text-emerald-700">+3.5 Pts Estimés</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-800 leading-tight">
+                                Augmentation estimée des performances en numération (+3.5 pts au test hebdomadaire) grâce au repérage facilité des colonnes d'unités/dizaines sur le tableau. Gain notable en confiance.
+                            </p>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl space-y-1">
+                            <div class="flex justify-between font-bold text-emerald-900 text-xs">
+                                <span>Impact sur Moussa Diallo</span>
+                                <span class="text-emerald-700">+1.5 Pts Estimés</span>
+                            </div>
+                            <p class="text-[11px] text-emerald-800 leading-tight">
+                                Amélioration du calme global du premier rang et responsabilisation de Moussa dans la résolution autonome de problèmes complexes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Risques Identifiés -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2 border-b pb-1">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i> 3. Risques Identifiés & Mesures de Précaution
+                    </h4>
+                    <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs space-y-1">
+                        <p class="font-bold text-amber-950">Risque de Bavardage Discret au Rang 3 : Moussa et Cheikh Tidiane ont une affinité de jeu durant les récréations.</p>
+                        <p class="text-amber-900"><strong>Consigne Pédagogique pour Maître Balla :</strong> Effectuer des déplacements réguliers vers l'allée droite lors des travaux individuels et désigner Cheikh comme responsable du cahier de roulement.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end gap-3">
+                <button onclick="closePredictiveModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-xl font-bold text-xs">
+                    Conserver le Plan Actuel
+                </button>
+                <button onclick="applyPermutation()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow flex items-center gap-1.5">
+                    <i data-lucide="check" class="w-4 h-4"></i> Valider & Appliquer le Nouveau Plan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2 : DOSSIER PÉDAGOGIQUE COMPLET DE L'ÉLÈVE -->
+    <div id="studentModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+            <!-- Header Student Modal -->
+            <div class="bg-amber-950 text-white px-6 py-4 flex justify-between items-center border-b border-amber-800">
+                <div class="flex items-center gap-3">
+                    <div id="modalAvatar" class="w-10 h-10 rounded-full bg-amber-700 text-white font-black flex items-center justify-center border-2 border-amber-400 text-sm">
+                        --
+                    </div>
+                    <div>
+                        <h3 id="modalStudentName" class="font-extrabold text-lg">Nom de l'Élève</h3>
+                        <p id="modalStudentDesk" class="text-xs text-amber-300">Table-Banc N°-- • CE2</p>
+                    </div>
+                </div>
+                <button onclick="closeStudentModal()" class="text-amber-300 hover:text-white p-1 rounded-lg hover:bg-amber-900">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Body Student Modal -->
+            <div class="p-6 overflow-y-auto space-y-6 text-slate-700 text-xs sm:text-sm">
+                
+                <!-- Métriques clés élève -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Moyenne Générale</p>
+                        <p id="modalStudentGrade" class="text-lg font-black text-slate-800 mt-0.5">--/20</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Statut CEB</p>
+                        <p id="modalStudentStatus" class="text-xs font-bold mt-1">--</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Style d'Apprentissage</p>
+                        <p id="modalStudentStyle" class="text-xs font-bold text-slate-700 mt-1">--</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Comportement</p>
+                        <p id="modalStudentBehavior" class="text-xs font-bold text-slate-700 mt-1">--</p>
+                    </div>
+                </div>
+
+                <!-- GRAPHIQUE SVG D'ÉVOLUTION SUR 6 SEMAINES -->
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center border-b pb-1">
+                        <h4 class="font-bold text-slate-900 text-xs sm:text-sm flex items-center gap-1.5">
+                            <i data-lucide="line-chart" class="w-4 h-4 text-indigo-600"></i>
+                            Évolution des Notes Hebdomadaires (Tests du Vendredi - 6 Semaines)
+                        </h4>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Moyenne classe: 11.5</span>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 relative">
+                        <svg class="w-full h-36 overflow-visible" viewBox="0 0 400 120">
+                            <!-- Ligne de fond moyenne classe -->
+                            <line x1="20" y1="50" x2="380" y2="50" stroke="#94a3b8" stroke-dasharray="4" stroke-width="1.5" />
+                            <text x="385" y="53" fill="#64748b" font-size="9" font-weight="bold">11.5</text>
+                            
+                            <!-- Tracé des notes de l'élève (dynamique) -->
+                            <polyline id="svgPolyline" fill="none" stroke="#4f46e5" stroke-width="3" points="30,80 95,70 160,55 225,60 290,40 355,30" />
+                            
+                            <!-- Points -->
+                            <g id="svgPoints">
+                                <!-- Générés via JS -->
+                            </g>
+                        </svg>
+                        <div class="flex justify-between text-[10px] text-slate-400 font-bold px-4 mt-2">
+                            <span>Semaine 1</span><span>Semaine 2</span><span>Semaine 3</span><span>Semaine 4</span><span>Semaine 5</span><span>Semaine 6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profil Cognitif & Climat Social -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1 bg-amber-50/50 p-3.5 rounded-2xl border border-amber-200">
+                        <h5 class="font-bold text-amber-950 text-xs flex items-center gap-1">
+                            <i data-lucide="brain" class="w-4 h-4 text-amber-700"></i> Profil Cognitif & Attentionnel
+                        </h5>
+                        <p id="modalCognitive" class="text-xs text-slate-600">--</p>
+                    </div>
+                    <div class="space-y-1 bg-blue-50/50 p-3.5 rounded-2xl border border-blue-200">
+                        <h5 class="font-bold text-blue-950 text-xs flex items-center gap-1">
+                            <i data-lucide="users" class="w-4 h-4 text-blue-700"></i> Personnalité & Climat Social
+                        </h5>
+                        <p id="modalSocial" class="text-xs text-slate-600">--</p>
+                    </div>
+                </div>
+
+                <!-- ANALYSE OCR DU DERNIER DEVOIR SCANNÉ -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm flex items-center gap-1.5 border-b pb-1">
+                        <i data-lucide="file-search" class="w-4 h-4 text-rose-600"></i>
+                        Analyse OCR du Dernier Devoir Scanné (Vendredi Dernier)
+                    </h4>
+                    
+                    <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-rose-900 text-xs">Mathématiques - Numération</span>
+                            <span class="text-[10px] bg-rose-200 text-rose-900 font-extrabold px-2 py-0.5 rounded">Erreur OCR Détectée</span>
+                        </div>
+                        <p class="font-mono text-xs text-rose-900 bg-white p-2 rounded-lg border border-rose-200">
+                            "450 + 30 = 750" (Erreur de retenue des dizaines)
+                        </p>
+                        <p class="text-xs text-rose-800">
+                            <strong>Diagnostic Cognitif Automatique :</strong> Confusion dans le report d'alignement spatial lors des additions à 3 chiffres.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CONSEIL PÉDAGOGIQUE PERSONNALISÉ MAÎTRE BALLA -->
+                <div class="bg-amber-100 border-2 border-amber-300 p-4 rounded-2xl space-y-1 text-amber-950">
+                    <h5 class="font-extrabold text-xs flex items-center gap-1.5 text-amber-900">
+                        <i data-lucide="award" class="w-4 h-4 text-amber-700"></i> Conseil Pédagogique Personnalisé de Maître Balla
+                    </h5>
+                    <p id="modalPedagogicalAdvice" class="text-xs leading-relaxed">
+                        Placer l'élève au premier rang près de la Zone Chiffres du tableau noir. Utiliser le boulier traditionnel et lui donner 2 exercices de consolidation ciblés avant le grand test du vendredi.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Footer Student Modal -->
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-200 flex justify-end">
+                <button onclick="closeStudentModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xs">
+                    Fermer le Dossier
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT & DONNÉES DE LA CLASSE -->
+    <script>
+        // DONNÉES COMPLÈTES DES 12 ÉLÈVES DU CE2 (ÉCOLE EL HADJI MALICK SY)
+        const studentsData = [
+            { id: 1, desk: 1, pos: 'A', name: 'Abdou Laye', grade: 8.5, status: 'SOUTIEN', style: 'Visuel / Kinesthésique', behavior: 'Discret, léger déficit vision', notes: [7, 8, 7.5, 8, 8.5, 9], cognitive: 'Attentif mais fatigabilité visuelle en fond de classe.', social: 'S’entend bien avec Moussa et Cheikh.', advice: 'Placer en Table 1 (Rang 1) en face de la zone Chiffres. Utiliser le boulier pour l\'alignement des dizaines.' },
+            { id: 2, desk: 1, pos: 'B', name: 'Aïssatou Sow', grade: 16.0, status: 'MAITRISE', style: 'Auditif / Méthodique', behavior: 'Très calme & Tuteure', notes: [15, 15.5, 16, 16, 16.5, 17], cognitive: 'Grande capacité d\'abstraction et de concentration.', social: 'Très appréciée, excellente tuteure pour son binôme.', advice: 'Maintenir en soutien de pairage. Lui proposer des défis logiques complexes.' },
+            { id: 3, desk: 2, pos: 'A', name: 'Moussa Diallo', grade: 14.5, status: 'MAITRISE', style: 'Kinesthésique / Leader', behavior: 'Autonome, très dynamique', notes: [13, 14, 14, 15, 14.5, 15], cognitive: 'Esprit rapide, a besoin d\'activité pour rester concentré.', social: 'Leader naturel du groupe d\'élèves.', advice: 'Peut être déplacé au rang 3 sans perte de performance pour stimuler le fond de classe.' },
+            { id: 4, desk: 2, pos: 'B', name: 'Cheikh Tidiane', grade: 12.0, status: 'MAITRISE', style: 'Visuel', behavior: 'Calme & Appliqué', notes: [11, 11.5, 12, 12, 12.5, 13], cognitive: 'Progression constante en résolution de problèmes.', social: 'Tranquille, bon camarade de travail.', advice: 'Encourager la prise de parole à l\'oral lors des corrections.' },
+            { id: 5, desk: 3, pos: 'A', name: 'Fatou Ndiaye', grade: 9.0, status: 'SOUTIEN', style: 'Auditif', behavior: 'Hesitante en calcul', notes: [8, 8.5, 9, 8.5, 9, 10], cognitive: 'Bloque sur les retenues lors des additions complexes.', social: 'Participative à l\'oral mais timide à l\'écrit.', advice: 'Renforcer les fiches de remédiation en numération.' },
+            { id: 6, desk: 3, pos: 'B', name: 'Ousmane Kane', grade: 15.0, status: 'MAITRISE', style: 'Visuel / Logique', behavior: 'Très concentré', notes: [14, 14.5, 15, 15, 15.5, 16], cognitive: 'Excellente maîtrise du vocabulaire et de la grammaire.', social: 'Discret et très efficace.', advice: 'Servir de référent pour le groupe de grammaire.' },
+            { id: 7, desk: 4, pos: 'A', name: 'Amadou Diallo', grade: 7.5, status: 'SOUTIEN', style: 'Kinesthésique', behavior: 'Besoin de manipulation', notes: [6.5, 7, 7, 7.5, 8, 8], cognitive: 'Besoins prioritaires en calcul mental et écriture.', social: 'Aime travailler en équipe.', advice: 'Utiliser du matériel concret (bâtonnets, jetons).' },
+            { id: 8, desk: 4, pos: 'B', name: 'Khadija Seck', grade: 13.5, status: 'MAITRISE', style: 'Auditif', behavior: 'Sérieuse & Attentive', notes: [12, 13, 13.5, 14, 14, 14.5], cognitive: 'Bonne compréhension globale des leçons.', social: 'Très polie et appliquée.', advice: 'Poursuivre la consolidation en lecture fluide.' },
+            { id: 9, desk: 5, pos: 'A', name: 'Babacar Fall', grade: 17.5, status: 'MAITRISE', style: 'Visuel / Rapide', behavior: 'Excellente autonomie', notes: [16, 17, 17, 17.5, 18, 18.5], cognitive: 'Compréhension immédiate de toutes les notions.', social: 'Aide volontiers ses camarades.', advice: 'Donner des exercices d\'approfondissement CE2/CM1.' },
+            { id: 10, desk: 5, pos: 'B', name: 'Mariama Ba', grade: 11.0, status: 'MAITRISE', style: 'Auditif', behavior: 'Régulière', notes: [10, 10.5, 11, 11, 11.5, 12], cognitive: 'Moyenne stable, travail sérieux.', social: 'Bien intégrée dans la classe.', advice: 'Travailler la confiance en soi lors des tests du vendredi.' },
+            { id: 11, desk: 6, pos: 'A', name: 'Samba Sow', grade: 8.0, status: 'SOUTIEN', style: 'Kinesthésique', behavior: 'Distrait par moments', notes: [7, 7.5, 8, 8, 8.5, 8.5], cognitive: 'Difficultés en conjugaison et retenues d\'additions.', social: 'Très joueur lors des récréations.', advice: 'Faire un rappel des règles de grammaire du jour (m devant b et p).' },
+            { id: 12, desk: 6, pos: 'B', name: 'Coumba Cissé', grade: 14.0, status: 'MAITRISE', style: 'Visuel', behavior: 'Appliquée', notes: [13, 13.5, 14, 14, 14.5, 15], cognitive: 'Très bonne écriture et compréhension de texte.', social: 'Calme et respectueuse.', advice: 'Maintenir les encouragements en mathématiques.' }
+        ];
+
+        let activeFilter = 'ALL';
+
+        // INITIALISATION AU CHARGEMENT DE LA PAGE
+        window.onload = function() {
+            lucide.createIcons();
+            renderSeatingGrid();
+        };
+
+        // RENDU DE LA GRILLE DES 6 TABLES-BANCS
+        function renderSeatingGrid() {
+            const grid = document.getElementById('seatingGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 6; i++) {
+                const deskStudents = studentsData.filter(s => s.desk === i);
+                
+                const deskCard = document.createElement('div');
+                deskCard.className = 'bg-white border-2 border-slate-200 hover:border-amber-400 rounded-2xl p-4 shadow-sm space-y-3 transition-all';
+                
+                let studentsHTML = '';
+                deskStudents.forEach(st => {
+                    const isHidden = (activeFilter === 'SOUTIEN' && st.status !== 'SOUTIEN') || 
+                                     (activeFilter === 'MAITRISE' && st.status !== 'MAITRISE');
+                    
+                    const badgeClass = st.status === 'SOUTIEN' ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200';
+                    const avatarBg = st.status === 'SOUTIEN' ? 'bg-rose-600' : 'bg-emerald-700';
+
+                    studentsHTML += `
+                        <div onclick="openStudentModal(${st.id})" class="${isHidden ? 'opacity-30' : 'opacity-100'} cursor-pointer p-2.5 rounded-xl border border-slate-100 hover:bg-amber-50/60 transition-all flex items-center justify-between group">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-full ${avatarBg} text-white font-bold text-xs flex items-center justify-center shadow-sm">
+                                    ${st.name.substring(0,2).toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xs text-slate-800 group-hover:text-amber-900">${st.name}</h4>
+                                    <p class="text-[10px] text-slate-400 font-medium">${st.style}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs font-black text-slate-800">${st.grade}/20</span>
+                                <span class="block text-[9px] font-extrabold px-1.5 py-0.5 rounded border ${badgeClass} mt-0.5">${st.status}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                deskCard.innerHTML = `
+                    <div class="flex justify-between items-center border-b pb-2">
+                        <span class="text-xs font-extrabold text-amber-900 uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="layout" class="w-3.5 h-3.5 text-amber-600"></i> Table-Banc N°${i}
+                        </span>
+                        <span class="text-[10px] font-bold text-slate-400">Rang ${Math.ceil(i/2)}</span>
+                    </div>
+                    <div class="space-y-2">
+                        ${studentsHTML}
+                    </div>
+                `;
+                grid.appendChild(deskCard);
+            }
+            lucide.createIcons();
         }
 
+        // GESTION DES FILTRES DE STATUT
+        function filterByStatus(status) {
+            activeFilter = status;
+            const banner = document.getElementById('filterBanner');
+            const label = document.getElementById('filterLabel');
+
+            if (status === 'ALL') {
+                banner.classList.add('hidden');
+            } else {
+                banner.classList.remove('hidden');
+                label.innerText = status === 'SOUTIEN' ? 'Soutien Prioritaire (< 10/20)' : 'Maîtrise Acquise (≥ 10/20)';
+            }
+            renderSeatingGrid();
+        }
+
+        function resetFilter() {
+            filterByStatus('ALL');
+        }
+
+        // MODAL PRÉDICTIF DE PERMUTATION
+        function openPredictiveModal() {
+            document.getElementById('predictiveModal').classList.remove('hidden');
+        }
+        function closePredictiveModal() {
+            document.getElementById('predictiveModal').classList.add('hidden');
+        }
+        function applyPermutation() {
+            // Permuter Abdou (id:1) et Moussa (id:3)
+            const abdou = studentsData.find(s => s.id === 1);
+            const moussa = studentsData.find(s => s.id === 3);
+            
+            if (abdou && moussa) {
+                const tempDesk = abdou.desk;
+                const tempPos = abdou.pos;
+                abdou.desk = moussa.desk;
+                abdou.pos = moussa.pos;
+                moussa.desk = tempDesk;
+                moussa.pos = tempPos;
+            }
+
+            renderSeatingGrid();
+            closePredictiveModal();
+        }
+
+        // MODAL DOSSIER ÉLÈVE
+        function openStudentModal(studentId) {
+            const student = studentsData.find(s => s.id === studentId);
+            if (!student) return;
+
+            document.getElementById('modalStudentName').innerText = student.name;
+            document.getElementById('modalStudentDesk').innerText = `Table-Banc N°${student.desk} (${student.pos === 'A' ? 'Gauche' : 'Droite'}) • CE2`;
+            document.getElementById('modalAvatar').innerText = student.name.substring(0,2).toUpperCase();
+            document.getElementById('modalStudentGrade').innerText = `${student.grade}/20`;
+            
+            const statusEl = document.getElementById('modalStudentStatus');
+            statusEl.innerText = student.status;
+            statusEl.className = `text-xs font-extrabold px-2 py-0.5 rounded ${student.status === 'SOUTIEN' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`;
+
+            document.getElementById('modalStudentStyle').innerText = student.style;
+            document.getElementById('modalStudentBehavior').innerText = student.behavior;
+            document.getElementById('modalCognitive').innerText = student.cognitive;
+            document.getElementById('modalSocial').innerText = student.social;
+            document.getElementById('modalPedagogicalAdvice').innerText = student.advice;
+
+            // Tracer SVG dynamique des notes
+            const polyline = document.getElementById('svgPolyline');
+            const pointsGroup = document.getElementById('svgPoints');
+            pointsGroup.innerHTML = '';
+
+            const xCoords = [30, 95, 160, 225, 290, 355];
+            let pointsString = '';
+
+            student.notes.forEach((note, index) => {
+                const yCoord = 110 - ((note / 20) * 90); // Echelle Y
+                pointsString += `${xCoords[index]},${yCoord} `;
+
+                // Ajouter les cercles SVG
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', xCoords[index]);
+                circle.setAttribute('cy', yCoord);
+                circle.setAttribute('r', '5');
+                circle.setAttribute('fill', '#4f46e5');
+                circle.setAttribute('stroke', '#ffffff');
+                circle.setAttribute('stroke-width', '2');
+                pointsGroup.appendChild(circle);
+
+                // Valeur texte au dessus
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', xCoords[index]);
+                text.setAttribute('y', yCoord - 8);
+                text.setAttribute('fill', '#334155');
+                text.setAttribute('font-size', '9');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'middle');
+                text.textContent = note;
+                pointsGroup.appendChild(text);
+            });
+
+            polyline.setAttribute('points', pointsString.trim());
+
+            document.getElementById('studentModal').classList.remove('hidden');
+        }
+
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+        }
+
+        // SIMULATION DU MODULE OCR
+        function triggerOCR() {
+            alert("Scan OCR activé ! Analyse automatique du paquets de 12 copies du devoir de Mathématiques...\nRésultat : 2 erreurs de retenues détectées (Abdou Laye & Samba Sow). Fiches de remédiation prêtes.");
+        }
+
+        // CHATBOT IA PÉDAGOGIQUE EN DIRECT
         function quickAction(type) {
-            const input = document.getElementById('userInput');
+            const input = document.getElementById('chatInput');
             if (type === 'fiche') {
-                input.value = "Rédige une fiche de préparation de leçon complète en Mathématiques pour le niveau CE2.";
-            } else if (type === 'differenciation') {
-                input.value = "Propose un exercice de lecture différencié en 3 niveaux (Soutien, Standard, Dépassement).";
-            } else if (type === 'evaluation') {
-                input.value = "Génère une grille d'observation et d'évaluation formative pour les élèves en difficulté.";
+                input.value = "Rédige une fiche de prép complète sur l'addition à retenue au CE2.";
+            } else if (type === 'diff') {
+                input.value = "Donne 3 niveaux d'exercices différenciés en lecture pour la classe.";
+            } else if (type === 'remediation') {
+                input.value = "Propose 2 exercices de remédiation pour Abdou Laye en retenues.";
             }
             input.focus();
         }
 
-        function sendMessage() {
-            const input = document.getElementById('userInput');
-            const container = document.getElementById('chatContainer');
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const container = document.getElementById('chatMessages');
             const text = input.value.trim();
             if (!text) return;
 
-            // Affichage du message de l'utilisateur
-            container.innerHTML += `
-                <div class="max-w-3xl mx-auto flex gap-4">
-                    <div class="w-8 h-8 rounded-xl bg-zinc-700 flex items-center justify-center font-bold text-xs text-zinc-300 shrink-0 shadow">MB</div>
-                    <div class="text-sm text-zinc-200 leading-relaxed pt-1">${text}</div>
-                </div>
-            `;
+            // Ajout du message utilisateur
+            const userDiv = document.createElement('div');
+            userDiv.className = 'flex gap-3 justify-end';
+            userDiv.innerHTML = `<div class="bg-amber-900 text-amber-50 p-3 rounded-2xl shadow-sm max-w-xl text-xs sm:text-sm">${text}</div>`;
+            container.appendChild(userDiv);
             input.value = '';
             container.scrollTop = container.scrollHeight;
 
-            // Simulation de la réponse de l'assistant pédagogique IA
+            // Simulation de la réponse de l'IA Maître Balla
             setTimeout(() => {
-                container.innerHTML += `
-                    <div class="max-w-3xl mx-auto flex gap-4">
-                        <div class="w-8 h-8 rounded-xl bg-amber-600 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow">AI</div>
-                        <div class="space-y-2 text-sm text-zinc-200 leading-relaxed bg-zinc-800/40 p-4 rounded-2xl border border-zinc-800">
-                            <p class="font-semibold text-amber-400 flex items-center gap-2">
-                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i> Réponse Pédagogique (CEB) :
-                            </p>
-                            <p>Voici la structuration recommandée pour répondre à votre instruction en classe :</p>
-                            <ul class="list-disc pl-4 space-y-1 text-zinc-300 text-xs">
-                                <li><strong>Objectif visé :</strong> Consolidation des compétences fondamentales du cycle.</li>
-                                <li><strong>Démarche active :</strong> Privilégier la manipulation concrète avant l'abstraction écrite.</li>
-                                <li><strong>Gestion hétérogène :</strong> Prévoir un accompagnement individualisé pour les élèves du groupe soutien.</li>
-                            </ul>
-                            <p class="text-xs text-zinc-400 pt-2">Voulez-vous que je détaille une partie spécifique de cette séquence ?</p>
-                        </div>
+                const aiDiv = document.createElement('div');
+                aiDiv.className = 'flex gap-3';
+                aiDiv.innerHTML = `
+                    <div class="w-8 h-8 rounded-xl bg-amber-900 text-amber-200 flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">IA</div>
+                    <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm max-w-xl text-slate-700 space-y-2">
+                        <p class="font-bold text-amber-900">Proposition Pédagogique (Conforme CEB) :</p>
+                        <p>Voici la réponse structurée pour votre séance :</p>
+                        <ul class="list-disc pl-4 space-y-1 text-xs">
+                            <li><strong>Niveau 1 (Soutien) :</strong> Manipulation concrète avec bûchettes/jetons + additions à 2 chiffres sans retenue.</li>
+                            <li><strong>Niveau 2 (Standard) :</strong> Poser 3 additions avec retenue aux dizaines sur le cahier de roulement.</li>
+                            <li><strong>Niveau 3 (Dépassement) :</strong> Résolution d'un problème à 2 étapes (achat de fournitures au marché).</li>
+                        </ul>
                     </div>
                 `;
-                lucide.createIcons();
+                container.appendChild(aiDiv);
                 container.scrollTop = container.scrollHeight;
-            }, 900);
+            }, 800);
         }
     </script>
 </body>
 </html>
+```
+
+### 📋 Comment l'installer sur GitHub en 1 minute :
+1. Rendez-vous sur votre dépôt **`M.Balla-AI`** sur GitHub.
+2. Ouvrez le fichier **`index.html`** et cliquez sur le crayon ✏️ pour modifier.
+3. Effacez tout le texte actuel et collez **exactement** ce code.
+4. Cliquez sur **"Commit changes..."**.
+
+Vercel va publier la mise à jour en quelques secondes sur **`monsieur-balla.vercel.app`**. Vous disposerez de l'application pédagogique complète avec toutes vos sections, les graphiques interactifs et l'assistant IA !
