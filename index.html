@@ -15,11 +15,6 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         chalk: ['Patrick Hand', 'cursive'],
-                    },
-                    colors: {
-                        chalkYellow: '#fef08a',
-                        chalkBlue: '#93c5fd',
-                        boardGreen: '#062c1e',
                     }
                 }
             }
@@ -27,26 +22,26 @@
     </script>
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
-    <!-- Header -->
+    <!-- Header principal -->
     <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col lg:flex-row items-center justify-between gap-4">
-            <!-- Institutional Info -->
+            <!-- Information de la classe & Enseignant -->
             <div class="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-lg shadow-amber-500/20">
-                        <i class="fa-solid fa-graduation-cap"></i>
+                        <i class="fa-solid fa-chalkboard-user"></i>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">CEB Sénégal • Inspection Mbour</span>
-                            <span class="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">CE2-A</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Classe : CE2-A</span>
                         </div>
-                        <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Assistant Pédagogique M. Balla </h1>
-                        <p class="text-xs text-slate-400 hidden sm:block">École El Hadji Malick Sy — Suivi individualisé & Co-pilote vocal Malado</p>
+                        <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Maître Balla </h1>
+                        <p class="text-xs text-slate-400">École El Hadji Malick Sy — Co-pilote vocal Malado</p>
                     </div>
                 </div>
             </div>
-            <!-- Quick Audio Activation & Voice Status -->
+            <!-- Bouton d'activation vocale -->
             <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
                 <div id="voice-status-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300">
                     <span class="w-2.5 h-2.5 rounded-full bg-slate-500" id="voice-indicator-dot"></span>
@@ -60,9 +55,9 @@
         </div>
     </header>
 
-    <!-- Main Dashboard Content -->
+    <!-- Contenu Principal -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
-        <!-- KPI STATS SUMMARY BAR (12 STUDENTS) -->
+        <!-- STATISTIQUES RÉSUMÉES (12 ÉLÈVES) -->
         <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Effectif Total</p>
@@ -82,30 +77,7 @@
             </div>
         </section>
 
-        <!-- SECTION 1: BLACKBOARD (TABLEAU NOIR DYNAMIQUE) -->
-        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-chalkboard"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Tableau Noir de la Classe (CE2-A)</h2>
-                        <p class="text-xs text-slate-400">Visualisation dynamique des zones de cours — Cliquez sur le bouton pour lire le tableau</p>
-                    </div>
-                </div>
-                <button onclick="readFullBoard()" class="text-xs font-bold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl border border-slate-700 flex items-center gap-2 transition-all cursor-pointer">
-                    <i class="fa-solid fa-play"></i> Lire le tableau à la classe
-                </button>
-            </div>
-            <!-- THE BOARD -->
-            <div class="blackboard-bg rounded-2xl p-6 border-4 border-amber-900/40 shadow-inner">
-                <p class="font-chalk text-lg text-chalkYellow">Maître Balla • École El Hadji Malick Sy (Mbour)</p>
-                <p class="font-chalk text-sm text-chalkBlue mt-1" id="board-curriculum-status">Objectif du jour : Calcul mental, numération et application de l'Effet Vygotsky.</p>
-            </div>
-        </section>
-
-        <!-- NOUVELLE SECTION : UPLOAD DU PROGRAMME ÉDUCATIF NATIONAL -->
+        <!-- SECTION : UPLOAD DU PROGRAMME ÉDUCATIF NATIONAL -->
         <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -114,7 +86,7 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-white">Programme Éducatif National (Sénégal)</h2>
-                        <p class="text-xs text-slate-400">Importez le document officiel du programme (PDF ou Texte) pour guider Malado</p>
+                        <p class="text-xs text-slate-400">Importez le document officiel du programme (PDF ou Texte) pour Malado</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -127,15 +99,15 @@
             </div>
         </section>
 
-        <!-- SECTION: Disposition de la Classe -->
+        <!-- SECTION : Disposition des Pupitres de la Classe -->
         <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
                     <i class="fa-solid fa-chair"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-white">Disposition de la Classe</h2>
-                    <p class="text-xs text-slate-400">Cliquez sur un pupitre pour afficher la fiche détaillée de l'élève et écouter Malado</p>
+                    <h2 class="text-lg font-bold text-white">Plan de Classe CE2-A</h2>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour afficher sa fiche et écouter son profil vocal</p>
                 </div>
             </div>
             <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -143,7 +115,7 @@
             </div>
         </section>
 
-        <!-- SECTION 2: CO-PILOTE DIALOGUE MALADO -->
+        <!-- SECTION : CO-PILOTE DIALOGUE MALADO -->
         <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-9 h-9 rounded-xl bg-amber-950 border border-amber-600/40 text-amber-400 flex items-center justify-center text-base">
@@ -171,48 +143,6 @@
             </div>
         </section>
     </main>
-
-    <!-- MODAL FICHE ÉLÈVE -->
-    <div id="student-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl modal-content space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-3">
-                    <div id="modal-avatar" class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center font-bold text-base">
-                        <i class="fa-solid fa-user-graduate"></i>
-                    </div>
-                    <div>
-                        <h3 id="modal-student-name" class="text-base font-bold text-white">Nom de l'élève</h3>
-                        <p class="text-xs text-slate-400">Fiche de suivi individualisé - CE2-A</p>
-                    </div>
-                </div>
-                <button onclick="closeStudentModal()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition-all cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                    <span class="text-slate-400">Évaluation actuelle :</span>
-                    <span id="modal-student-score" class="font-black text-amber-400 text-sm">14 / 20</span>
-                </div>
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-                    <span class="text-slate-400">Statut Pédagogique :</span>
-                    <span id="modal-student-status" class="font-bold text-emerald-400">Maîtrise Acquise</span>
-                </div>
-                <div>
-                    <p class="text-slate-400 font-semibold mb-1">Analyse & Recommandation Vygotsky :</p>
-                    <p id="modal-student-info" class="text-slate-200 bg-slate-950 p-3 rounded-xl border border-slate-800 leading-relaxed">Détails de l'élève...</p>
-                </div>
-            </div>
-            <div class="pt-2 flex justify-end gap-2">
-                <button onclick="speakCurrentStudentInfo()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer">
-                    <i class="fa-solid fa-volume-high"></i> Écouter le profil
-                </button>
-                <button onclick="closeStudentModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-all cursor-pointer">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Liaison du fichier JavaScript externe -->
     <script src="script.js"></script>
