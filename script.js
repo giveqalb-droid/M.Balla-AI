@@ -53,7 +53,7 @@ function showStudentDetails(studentId) {
     if (chatBox) {
         chatBox.innerHTML += `
             <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Synthesis AI :</strong> "${message}"
+                <strong>🤖 Malado :</strong> "${message}"
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -84,7 +84,7 @@ function activateSynthesisAI() {
         return;
     }
     updateVoiceStatus('active');
-    const introMsg = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote intelligent pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête.";
+    const introMsg = "Bonjour Maître Balla. C'est Malado, votre co-pédagogue pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête à vous accompagner.";
     speakText(introMsg);
 }
 
@@ -120,7 +120,7 @@ function updateVoiceStatus(status) {
     if (status === 'active') {
         badge.classList.add('active');
         dot.classList.add('active');
-        text.textContent = 'Synthesis AI Active';
+        text.textContent = 'Malado Active';
     } else {
         badge.classList.remove('active');
         dot.classList.remove('active');
@@ -133,22 +133,22 @@ function handleCommand(command) {
     let reponse = "";
 
     if (q.includes('bonjour') || q.includes('salut')) {
-        reponse = "Bonjour Maître Balla. La classe de CE2 A est prête.";
+        reponse = "Bonjour Maître Balla. C'est Malado. La classe de CE2 A est prête.";
     } else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-        reponse = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs.";
+        reponse = "Bonjour Maître Balla. Je m'appelle Malado, votre assistante pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs, afin de faire progresser toute la classe.";
     } else if (q.includes('élèves') || q.includes('liste')) {
-        reponse = "Les 12 élèves de la classe sont : " + studentsDatabase.map(s => s.name).join(', ');
+        reponse = "Les 12 élèves de la classe suivis par Malado sont : " + studentsDatabase.map(s => s.name).join(', ');
     } else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-        reponse = "L'Effet Vygotsky consiste à placer un élève en soutien à côté d'un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
+        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort. En tant que Malado, je vous aide à structurer ces binômes dans leur zone proximale de développement.";
     } else {
-        reponse = `J'ai bien reçu votre consigne : "${command}". La classe progresse harmonieusement.`;
+        reponse = `J'ai bien noté votre consigne Maître Balla : "${command}". Je veille sur la classe.`;
     }
 
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
         chatBox.innerHTML += `
             <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Synthesis AI :</strong> "${reponse}"
+                <strong>🤖 Malado :</strong> "${reponse}"
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -157,7 +157,7 @@ function handleCommand(command) {
 }
 
 function readFullBoard() {
-    const msg = "Tableau noir de la classe de CE2 A. Objectif du jour : calcul mental, numération et application de l'Effet Vygotsky.";
+    const msg = "Tableau noir de la classe de CE2 A. C'est Malado. Objectif du jour : calcul mental, numération et application de l'Effet Vygotsky.";
     speakText(msg);
 }
 
