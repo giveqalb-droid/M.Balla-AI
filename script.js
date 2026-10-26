@@ -1,4 +1,4 @@
-// Base de données initiale ou chargée depuis la mémoire locale de l'école
+// Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal)
 let studentsDatabase = JSON.parse(localStorage.getItem('malado_students_db')) || [
     { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Excellente et rigoureuse. Idéale comme tutrice." },
     { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "En difficulté en calcul. À jumeler avec un tuteur (Effet Vygotsky)." },
@@ -19,7 +19,13 @@ let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
 let isManualMode = false;
-let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé pour le moment.";
+let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
+
+// MÉMOIRE DES RÈGLES DE COMPORTEMENT (Malado apprend de vos conseils en direct)
+let maladoRules = JSON.parse(localStorage.getItem('malado_dynamic_rules')) || {
+    requireWakeWord: true,     // Si true, demande "Assistante". Si false, répond directement à tout.
+    directAnswersOnly: true    // Si true, va droit au but sans bavardage
+};
 
 function chargerVoix() {
     if (!synth) return;
@@ -88,8 +94,7 @@ function showStudentDetails(studentId) {
 
     speakText(message);
     
-    // Possibilité d'évoluer : Demander si on veut modifier la note de l'élève en direct
-    let nouvelleNote = prompt(`Fiche de ${student.name}\nNote actuelle : ${student.score}/20\n\nEntrez une nouvelle note pour mettre à jour la base de données locale (ou laissez vide) :`, student.score);
+    let nouvelleNote = prompt(`Fiche de ${student.name}\nNote actuelle : ${student.score}/20\n\nEntrez une nouvelle note (ou laissez vide) :`, student.score);
     if (nouvelleNote !== null && nouvelleNote.trim() !== "") {
         let noteNum = parseFloat(nouvelleNote);
         if (!isNaN(noteNum) && noteNum >= 0 && noteNum <= 20) {
@@ -98,25 +103,23 @@ function showStudentDetails(studentId) {
             localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
             renderClassroomDesks();
             updateKPISummary();
-            speakText(`Note de ${student.name} mise à jour à ${noteNum} sur 20.`);
+            speakText(`Note de ${student.name} mise à jour à ${noteNum}.`);
         }
     }
 }
 
-// Apprentissage par l'importation de documents (Base de données locale de l'école)
 function handleCurriculumUpload(event) {
     stopSpeaking();
     const file = event.target.files[0];
     if (!file) return;
 
     document.getElementById('upload-file-label').textContent = file.name;
-
     const reader = new FileReader();
     reader.onload = function(e) {
         schoolKnowledgeBase = e.target.result;
         localStorage.setItem('malado_custom_knowledge', schoolKnowledgeBase);
+        const msg = ` Programme ${file.name} intégré et mémorisé.`;
         
-        const msg = `Programme ${file.name} intégré et mémorisé dans la base locale de l'école. J'ai appris de nouveaux contenus.`;
         const chatBox = document.getElementById('chat-box');
         if (chatBox) {
             chatBox.innerHTML += `
@@ -148,7 +151,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Intelligence évolutive et génération dynamique basée sur les données réelles de la classe
+// Cerveau intelligent de Malado avec Auto-Apprentissage de vos conseils
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -164,52 +167,59 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    if (isManualMode || maladoModeAwake || q.includes('assistante')) {
+    // 1. APPRENTISSAGE AUTonome : Si vous lui donnez un conseil ou modifiez une règle en direct
+    if (q.includes('plus besoin de dire assistante') || q.includes('ne dis plus assistante') || q.includes('réponds directement')) {
+        maladoRules.requireWakeWord = false;
+        localStorage.setItem('malado_dynamic_rules', JSON.stringify(maladoRules));
+        reponse = "C'est compris. Je réponds désormais directement à toutes vos phrases sans exiger le mot 'Assistante'.";
+    }
+    else if (q.includes('exige assistante') || q.includes('remets le mot assistante')) {
+        maladoRules.requireWakeWord = true;
+        localStorage.setItem('malado_dynamic_rules', JSON.stringify(maladoRules));
+        reponse = "Entendu. Je passe en mode d'écoute avec le mot-clé 'Assistante'.";
+    }
+    // 2. Traitement des commandes pédagogiques habituelles
+    else if (isManualMode || !maladoRules.requireWakeWord || maladoModeAwake || q.includes('assistante')) {
         
-        // Génération dynamique des binômes Vygotsky basée sur les vraies notes actuelles
-        if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme') || q.includes('soutien')) {
+        // Si le mot 'assistante' a été prononcé alors que requireWakeWord était actif, on le retire de la phrase analysée
+        let cleanQ = q.replace('assistante', '').trim();
+
+        if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('soutien')) {
             let forts = studentsDatabase.filter(s => s.mastery).sort((a,b) => b.score - a.score);
             let faibles = studentsDatabase.filter(s => !s.mastery).sort((a,b) => a.score - b.score);
             
-            reponse = "Binômes Vygotsky dynamiques (selon la base actuelle) :\n";
+            reponse = "Binômes Vygotsky :\n";
             for(let i = 0; i < Math.min(forts.length, faibles.length); i++) {
-                reponse += `• ${forts[i].name} (${forts[i].score}) coache ${faibles[i].name} (${faibles[i].score})\n`;
+                reponse += `• ${forts[i].name} (${forts[i].score}) + ${faibles[i].name} (${faibles[i].score})\n`;
             }
         }
-        else if (q.includes('pédagogie') || q.includes('classe') || q.includes('bilan')) {
+        else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan')) {
             let avg = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1);
             let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
-            reponse = `Bilan de la base locale : Moyenne de ${avg}/20. ${faiblesCount} élèves nécessitent un soutien rapproché.`;
+            reponse = `Moyenne : ${avg}/20. ${faiblesCount} élèves en soutien.`;
         }
-        else if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu')) {
-            reponse = "Je suis Malado, assistante pédagogique évolutive pour la classe de CE2-A.";
+        else if (cleanQ.includes('présente-toi') || cleanQ.includes('presente toi') || cleanQ.includes('qui es-tu')) {
+            reponse = "Malado, assistante pédagogique de la CE2-A à El Hadji Malick Sy.";
         } 
-        else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu')) {
-            reponse = "Je m'adapte aux données locales, j'analyse les notes enregistrées, j'organise le tutorat Vygotsky et j'intègre vos programmes importés.";
+        else if (cleanQ.includes('capable') || cleanQ.includes('capacités')) {
+            reponse = "Suivi des 12 élèves, binômes Vygotsky, stats et programmes locaux.";
         } 
-        else if (q.includes('élèves') || q.includes('liste')) {
-            reponse = "Effectif actuel en mémoire : " + studentsDatabase.map(s => `${s.name} (${s.score}/20)`).join(', ') + ".";
+        else if (cleanQ.includes('élèves') || cleanQ.includes('liste')) {
+            reponse = "Effectif : " + studentsDatabase.map(s => `${s.name} (${s.score})`).join(', ') + ".";
         } 
-        // Recherche intelligente dans le contenu du fichier importé
-        else if (q.includes('programme') || q.includes('leçon') || q.includes('cours')) {
-            if (schoolKnowledgeBase !== "Aucun programme spécifique importé pour le moment.") {
-                reponse = `Extrait de la base documentaire locale : "${schoolKnowledgeBase.substring(0, 150)}..."`;
-            } else {
-                reponse = "Aucun programme n'a encore été importé dans la base locale de l'école.";
-            }
-        }
         else {
-            reponse = `Donnée enregistrée. Je m'adapte à votre consigne : "${command}".`;
+            reponse = `C'est noté.`;
         }
         
         maladoModeAwake = false;
     } 
     else {
+        // Mode Écoute Auto avec exigence du mot-clé
         if (q.includes('assistante')) {
             maladoModeAwake = true;
             reponse = "Oui ?";
         } else {
-            reponse = ""; 
+            reponse = ""; // Silence radio si le mot-clé n'est pas dit
         }
     }
 
@@ -239,7 +249,7 @@ function toggleVoiceMode() {
         modeText.textContent = "Mode : Manuel (Micro requis)";
         modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
     } else {
-        modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
+        modeText.textContent = "Mode : Écoute Auto";
         modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
     }
@@ -248,10 +258,7 @@ function toggleVoiceMode() {
 function startManualListening() {
     stopSpeaking(); 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Reconnaissance vocale non supportée par ce navigateur.");
-        return;
-    }
+    if (!SpeechRecognition) return;
 
     const manualRec = new SpeechRecognition();
     manualRec.lang = 'fr-FR';
@@ -277,9 +284,7 @@ function initVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
-    if (recognition) {
-        try { recognition.stop(); } catch(e) {}
-    }
+    if (recognition) { try { recognition.stop(); } catch(e) {} }
 
     recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
@@ -294,9 +299,7 @@ function initVoiceRecognition() {
 
     recognition.onend = function() {
         if (!isManualMode) {
-            setTimeout(() => { 
-                try { recognition.start(); } catch(e) {} 
-            }, 500);
+            setTimeout(() => { try { recognition.start(); } catch(e) {} }, 500);
         }
     };
 
