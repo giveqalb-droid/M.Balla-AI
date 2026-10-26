@@ -18,7 +18,7 @@ let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false; // Par défaut : Mode Écoute Auto ("Assistante")
+let isManualMode = false; // Faux par défaut (Mode Auto actif)
 
 // Charger les voix du navigateur
 function chargerVoix() {
@@ -145,7 +145,7 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // SI ON EST EN MODE MANUEL (Déclenché par le bouton micro) OU QUE L'ASSISTANTE A ÉTÉ RÉVEILLÉE
+    // SI EN MODE MANUEL OU QUE L'ASSISTANTE A ÉTÉ RÉVEILLÉE EN MODE AUTO
     if (isManualMode || maladoModeAwake) {
         if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
             reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
@@ -162,7 +162,7 @@ function handleCommand(command) {
         else {
             reponse = `J'ai bien noté : "${command}". Je veille sur la classe.`;
         }
-        maladoModeAwake = false; // Réinitialiser le réveil auto
+        maladoModeAwake = false; 
     } 
     // EN MODE AUTO : Vérifier le mot-clé "Assistante"
     else if (q.includes('assistante')) {
@@ -185,20 +185,28 @@ function handleCommand(command) {
     speakText(reponse);
 }
 
-// Bouton Switch Mode (Auto / Manuel)
+// Bouton Switch Mode (Auto / Manuel) corrigé et direct
 function toggleVoiceMode() {
-    isManualMode = !isManualMode;
+    isManualMode = !isManualMode; // Inverse l'état (true <-> false)
     const modeText = document.getElementById('mode-text');
     const modeIcon = document.getElementById('mode-icon');
 
     if (isManualMode) {
-        if (recognition) { try { recognition.stop(); } catch(e) {} }
+        // Mode Manuel : On stoppe complètement l'écoute auto en arrière-plan
+        if (recognition) {
+            try { recognition.stop(); } catch(e) {}
+            recognition = null;
+        }
+        maladoModeAwake = false;
         modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
         modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
+        console.log("Basculé en Mode Manuel : Écoute auto désactivée.");
     } else {
+        // Mode Auto : On relance la veille vocale
         modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
         modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
+        console.log("Basculé en Mode Auto : Écoute auto activée.");
     }
 }
 
@@ -241,7 +249,7 @@ function startManualListening() {
 
 // Initialisation de la veille vocale (Mode Auto)
 function initVoiceRecognition() {
-    if (isManualMode) return;
+    if (isManualMode) return; // Sécurité : Ne démarre pas si on est en mode manuel
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
@@ -259,6 +267,7 @@ function initVoiceRecognition() {
     recognition.onerror = function(event) {};
 
     recognition.onend = function() {
+        // Redémarrage uniquement si on est toujours en mode auto
         if (!isManualMode) {
             setTimeout(() => {
                 try { recognition.start(); } catch(e) {}
