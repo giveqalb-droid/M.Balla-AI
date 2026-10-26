@@ -95,17 +95,32 @@
 
 /* Student Desks */
 .desk {
-    @apply bg-slate-800/50 border border-slate-700 rounded-xl p-4 cursor-pointer transition-all hover:bg-slate-700/50 hover:border-slate-600;
+    background-color: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(51, 65, 85, 0.7);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.desk:hover {
+    background-color: rgba(30, 41, 59, 0.7);
+    border-color: rgba(71, 85, 105, 0.6);
 }
 .desk.mastery {
-    @apply border-emerald-500/30 bg-emerald-950/20;
+    border-color: rgba(16, 185, 129, 0.3);
+    background-color: rgba(6, 78, 59, 0.2);
 }
 .desk.support {
-    @apply border-rose-500/30 bg-rose-950/20;
+    border-color: rgba(239, 68, 68, 0.3);
+    background-color: rgba(127, 29, 29, 0.2);
 }
 .desk .student-name {
-    @apply text-sm font-medium text-white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
 }
 .desk .student-score {
-    @apply text-xs text-slate-400 mt-1;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.7);
+    margin-top: 0.25rem;
 }
