@@ -1,138 +1,169 @@
-// Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal)
-const studentsDatabase = [
-    { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Awa Diop excelle avec 14 sur 20. Très rigoureuse, elle est idéale pour faire office de tutrice." },
-    { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "Oumar Sarr est à 9 sur 20. En difficulté sur le calcul, il bénéficie de l'Effet Vygotsky en étant jumelé avec un tuteur." },
-    { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, info: "Fatou Ndiaye totalise 12 sur 20. Bonne élève, attentive aux consignes grammaticales." },
-    { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, info: "Moussa Fall est à 7 sur 20. Nécessite un accompagnement renforcé en numération." },
-    { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, info: "Aïcha Mbaye est en tête avec 15 sur 20. Excellente en expression écrite." },
-    { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, info: "Ibrahima Traoré a 10 sur 20. Proche du seuil de maîtrise, il progresse régulièrement." },
-    { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, info: "Mariama Camara obtient 13 sur 20. Très à l'aise en géométrie et logique." },
-    { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, info: "Cheikh Diallo a 8 sur 20. En soutien prioritaire sur les résolutions de problèmes." },
-    { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, info: "Léona Mendy est à 11 sur 20. Elle acquiert peu à peu les notions fondamentales." },
-    { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, info: "Karim Sow est l'un des plus forts avec 16 sur 20. Il stimule son entourage par son dynamisme." },
-    { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, info: "Diana Gaye a 6 sur 20. Demande un suivi individualisé et un tutorat de proximité." },
-    { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Amadou Bocoum obtient 14 sur 20. Très bon niveau général et participation active." }
-];
-
-let synth = window.speechSynthesis;
-let voicesList = [];
-
-function chargerVoix() {
-    if (!synth) return;
-    voicesList = synth.getVoices();
-}
-
-chargerVoix();
-if (synth && synth.onvoiceschanged !== undefined) {
-    synth.onvoiceschanged = chargerVoix;
-}
-
-// Rendu dynamique des pupitres
-function renderClassroomDesks() {
-    const container = document.getElementById('classroom-container');
-    if (!container) return;
-    container.innerHTML = '';
-    studentsDatabase.forEach(student => {
-        const desk = document.createElement('div');
-        desk.className = `desk ${student.mastery ? 'mastery' : 'support'}`;
-        desk.innerHTML = `
-            <div class="student-name">${student.name}</div>
-            <div class="student-score">${student.score}/20 — ${student.mastery ? 'Maîtrise' : 'Soutien'}</div>
-        `;
-        desk.onclick = () => showStudentDetails(student.id);
-        container.appendChild(desk);
-    });
-}
-
-// Affichage direct de la Fiche Élève
-function showStudentDetails(studentId) {
-    const student = studentsDatabase.find(s => s.id === studentId);
-    if (!student) return;
-
-    const statutStr = student.mastery ? 'Maîtrise Acquise' : 'Soutien & Vygotsky';
-    const message = `Élève : ${student.name}\nNote : ${student.score}/20 (${statutStr})\n\nAnalyse : ${student.info}`;
-
-    // Affichage dans le Chat Malado
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Malado :</strong> "Fiche de ${student.name} : Note ${student.score}/20. ${student.info}"
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-950 text-slate-100 font-sans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Pédagogique M. Balla — CE2-A</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        chalk: ['Patrick Hand', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
+    <!-- Header principal épuré -->
+    <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col lg:flex-row items-center justify-between gap-4">
+            <!-- Information de la classe & Enseignant -->
+            <div class="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">CEB Sénégal • Inspection Mbour</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Classe : CE2-A</span>
+                        </div>
+                        <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Maître Balla </h1>
+                        <p class="text-xs text-slate-400">École El Hadji Malick Sy — Co-pilote vocal Malado</p>
+                    </div>
+                </div>
             </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    // Pop-up d'affichage de la fiche
-    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\n${message}`);
-}
-
-// Gestion de l'upload du programme
-function handleCurriculumUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    document.getElementById('upload-file-label').textContent = file.name;
-
-    const confirmationMsg = `Programme officiel ${file.name} chargé avec succès pour la classe de CE2-A de Maître Balla.`;
-    
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Malado :</strong> "${confirmationMsg}"
+            <!-- Statut vocal discret -->
+            <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-emerald-400">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                    <span>Malado active</span>
+                </div>
             </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-}
+        </div>
+    </header>
 
-function updateKPISummary() {
-    const total = studentsDatabase.length;
-    const avgScore = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / total).toFixed(1);
-    const masteryCount = studentsDatabase.filter(s => s.mastery).length;
-    const supportCount = total - masteryCount;
-    
-    const kpiTotal = document.getElementById('kpi-total-students');
-    const kpiAvg = document.getElementById('kpi-avg-score');
-    const kpiMastery = document.getElementById('kpi-mastery-count');
-    const kpiSupport = document.getElementById('kpi-support-count');
-
-    if (kpiTotal) kpiTotal.innerHTML = `${total} <span class="text-xs font-normal text-slate-400">Élèves suivis</span>`;
-    if (kpiAvg) kpiAvg.innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
-    if (kpiMastery) kpiMastery.innerHTML = `${masteryCount} <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span>`;
-    if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
-}
-
-function handleCommand(command) {
-    const q = command.toLowerCase();
-    let reponse = "";
-
-    if (q.includes('bonjour') || q.includes('salut')) {
-        reponse = "Bonjour Maître Balla. C'est Malado. La classe de CE2 A est prête.";
-    } else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-        reponse = "Je m'appelle Malado, votre assistante pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky.";
-    } else if (q.includes('élèves') || q.includes('liste')) {
-        reponse = "Les 12 élèves de la classe suivis par Malado sont : " + studentsDatabase.map(s => s.name).join(', ');
-    } else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
-    } else {
-        reponse = `J'ai bien noté votre consigne Maître Balla : "${command}". Je veille sur la classe.`;
-    }
-
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Malado :</strong> "${reponse}"
+    <!-- Contenu Principal -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
+        <!-- STATISTIQUES RÉSUMÉES (12 ÉLÈVES) -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Effectif Total</p>
+                <p class="text-2xl font-black text-white mt-1" id="kpi-total-students">12 <span class="text-xs font-normal text-slate-400">Élèves suivis</span></p>
             </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-}
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Moyenne Classe</p>
+                <p class="text-2xl font-black text-amber-400 mt-1" id="kpi-avg-score">11.6 <span class="text-xs font-normal text-slate-400">/ 20</span></p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Maîtrise Acquise</p>
+                <p class="text-2xl font-black text-emerald-400 mt-1" id="kpi-mastery-count">5 <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span></p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Soutien & Progrès</p>
+                <p class="text-2xl font-black text-rose-400 mt-1" id="kpi-support-count">7 <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span></p>
+            </div>
+        </section>
 
-// Lancement au chargement de la page
-window.addEventListener('DOMContentLoaded', () => {
-    renderClassroomDesks();
-    updateKPISummary();
-});
+        <!-- SECTION : UPLOAD DU PROGRAMME ÉDUCATIF NATIONAL -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-blue-950 border border-blue-600/40 text-blue-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Programme Éducatif National (Sénégal)</h2>
+                        <p class="text-xs text-slate-400">Importez le document officiel du programme (PDF ou Texte) pour Malado</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 w-full sm:w-auto">
+                    <label class="flex-1 sm:flex-initial px-4 py-2 bg-slate-800 hover:bg-slate-700 text-blue-300 rounded-xl border border-slate-700 text-xs font-bold cursor-pointer flex items-center justify-center gap-2 transition-all">
+                        <i class="fa-solid fa-upload"></i>
+                        <span id="upload-file-label">Importer le programme</span>
+                        <input type="file" id="curriculum-file-input" accept=".txt,.pdf,.doc,.docx" class="hidden" onchange="handleCurriculumUpload(event)">
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION : Disposition des Pupitres de la Classe -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-chair"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Plan de Classe CE2-A</h2>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour afficher sa fiche détaillée</p>
+                </div>
+            </div>
+            <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Les bureaux des élèves seront générés ici par JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECTION : CO-PILOTE DIALOGUE MALADO -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-amber-950 border border-amber-600/40 text-amber-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Co-Pilote Intelligent Malado</h2>
+                    <p class="text-xs text-slate-400">Posez vos questions ou demandez à Malado de se présenter</p>
+                </div>
+            </div>
+            
+            <!-- Boîte de Chat -->
+            <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 mb-4 text-xs">
+                <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl">
+                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Cliquez sur un élève pour voir sa fiche détaillée ou écrivez-moi vos consignes ci-dessous."
+                </div>
+            </div>
+
+            <!-- Zone de Saisie -->
+            <div class="flex gap-2">
+                <input type="text" id="teacher-reply-input" placeholder="Ex: Présente-toi, qui est Awa Diop, bilan de la classe..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                <button onclick="handleTeacherInput()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all cursor-pointer">
+                    Envoyer <i class="fa-solid fa-paper-plane ml-1"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Liaison du fichier JavaScript externe -->
+    <script src="script.js"></script>
+    <script>
+        function handleTeacherInput() {
+            const input = document.getElementById('teacher-reply-input');
+            if (!input) return;
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatBox = document.getElementById('chat-box');
+            if (chatBox) {
+                chatBox.innerHTML += `
+                    <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
+                        <strong>Maître Balla :</strong> "${query}"
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            input.value = '';
+
+            if (typeof handleCommand === 'function') {
+                handleCommand(query);
+            }
+        }
+    </script>
+</body>
+</html>
