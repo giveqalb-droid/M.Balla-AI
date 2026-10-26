@@ -16,6 +16,7 @@ const studentsDatabase = [
 
 let synth = window.speechSynthesis;
 let voicesList = [];
+let uploadedCurriculumText = "";
 
 function chargerVoix() {
     if (!synth) return;
@@ -44,21 +45,51 @@ function renderClassroomDesks() {
     });
 }
 
+// Affichage direct de la Fiche Élève et Vocalisation
 function showStudentDetails(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
-    const message = `Élève ${student.name}. Note de ${student.score} sur 20. ${student.info}`;
+
+    const statutStr = student.mastery ? 'Maîtrise Acquise' : 'Soutien & Vygotsky';
+    const message = `Élève : ${student.name}\nNote : ${student.score}/20 (${statutStr})\n\nAnalyse : ${student.info}`;
+
+    // Affichage dans le Chat Malado
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.innerHTML += `
+            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
+                <strong>🤖 Malado :</strong> "Fiche de ${student.name} : Note ${student.score}/20. ${student.info}"
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Parole de Malado
+    speakText(`Élève ${student.name}. Note de ${student.score} sur 20. ${student.info}`);
+
+    // Pop-up d'affichage simple
+    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\n${message}`);
+}
+
+// Gestion de l'upload du programme
+function handleCurriculumUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    document.getElementById('upload-file-label').textContent = file.name;
+
+    const confirmationMsg = `Programme officiel ${file.name} chargé avec succès pour la classe de CE2-A de Maître Balla.`;
     
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
         chatBox.innerHTML += `
             <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Malado :</strong> "${message}"
+                <strong>🤖 Malado :</strong> "${confirmationMsg}"
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-    speakText(message);
+    speakText(confirmationMsg);
 }
 
 function updateKPISummary() {
@@ -84,7 +115,7 @@ function activateSynthesisAI() {
         return;
     }
     updateVoiceStatus('active');
-    const introMsg = "Bonjour Maître Balla. C'est Malado, votre co-pédagogue pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête à vous accompagner.";
+    const introMsg = "Bonjour Maître Balla. C'est Malado, votre co-pédagogue pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête.";
     speakText(introMsg);
 }
 
@@ -135,11 +166,11 @@ function handleCommand(command) {
     if (q.includes('bonjour') || q.includes('salut')) {
         reponse = "Bonjour Maître Balla. C'est Malado. La classe de CE2 A est prête.";
     } else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-        reponse = "Bonjour Maître Balla. Je m'appelle Malado, votre assistante pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs, afin de faire progresser toute la classe.";
+        reponse = "Je m'appelle Malado, votre assistante pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky.";
     } else if (q.includes('élèves') || q.includes('liste')) {
         reponse = "Les 12 élèves de la classe suivis par Malado sont : " + studentsDatabase.map(s => s.name).join(', ');
     } else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort. En tant que Malado, je vous aide à structurer ces binômes dans leur zone proximale de développement.";
+        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
     } else {
         reponse = `J'ai bien noté votre consigne Maître Balla : "${command}". Je veille sur la classe.`;
     }
@@ -154,11 +185,6 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
     speakText(reponse);
-}
-
-function readFullBoard() {
-    const msg = "Tableau noir de la classe de CE2 A. C'est Malado. Objectif du jour : calcul mental, numération et application de l'Effet Vygotsky.";
-    speakText(msg);
 }
 
 // Lancement au chargement de la page
