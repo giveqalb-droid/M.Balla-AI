@@ -36,6 +36,14 @@ function renderClassroomDesks() {
     });
 }
 
+function showStudentDetails(studentId) {
+    const student = studentsDatabase.find(s => s.id === studentId);
+    if (!student) return;
+    
+    alert(`Délèves: ${student.name}\nNote: ${student.score}/20\nStatut: ${student.mastery ? 'Maîtrise' : 'Soutien'}`);
+    // Tu peux remplacer l'alert par un modal plus joli
+}
+
 function updateKPISummary() {
     const total = studentsDatabase.length;
     const avgScore = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / total).toFixed(1);
