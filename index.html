@@ -90,11 +90,11 @@
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-white">Disposition de la Classe</h2>
-                    <p class="text-xs text-slate-400">Cliquez sur un élève pour voir ses détails</p>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour voir ses détails et écouter son profil vocal</p>
                 </div>
             </div>
             <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Les bureaux des élèves seront générés ici -->
+                <!-- Les bureaux des élèves seront générés ici par JavaScript -->
             </div>
         </section>
 
@@ -107,7 +107,7 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold text-white">Tableau Noir de la Classe (CE2-A)</h2>
-                        <p class="text-xs text-slate-400">Visualisation dynamique des zones de cours — Cliquez sur une section pour la faire lire à la classe</p>
+                        <p class="text-xs text-slate-400">Visualisation dynamique des zones de cours — Cliquez sur le bouton pour lire le tableau</p>
                     </div>
                 </div>
                 <button onclick="readFullBoard()" class="text-xs font-bold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl border border-slate-700 flex items-center gap-2 transition-all cursor-pointer">
@@ -115,5 +115,65 @@
                 </button>
             </div>
             <!-- THE BOARD -->
-            <div class="blackboard-bg rounded-2xl p-6 border-8 border-amber
-```
+            <div class="blackboard-bg rounded-2xl p-6 border-4 border-amber-900/40 shadow-inner">
+                <p class="font-chalk text-lg text-chalkYellow">Maître Balla • École El Hadji Malick Sy (Mbour)</p>
+                <p class="font-chalk text-sm text-chalkBlue mt-1">Objectif du jour : Calcul mental, numération et application de l'Effet Vygotsky.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: CO-PILOTE DIALOGUE SYNTHESIS AI -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-amber-950 border border-amber-600/40 text-amber-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Co-Pilote Intelligent Synthesis AI</h2>
+                    <p class="text-xs text-slate-400">Posez vos questions ou demandez à l'assistant de se présenter</p>
+                </div>
+            </div>
+            
+            <!-- Boîte de Chat -->
+            <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 mb-4 text-xs">
+                <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl">
+                    <strong>🤖 Synthesis AI :</strong> "Bonjour Maître Balla. Cliquez sur <strong>'Activer Synthesis AI'</strong> en haut, puis demandez-moi de me présenter ou cliquez sur un élève."
+                </div>
+            </div>
+
+            <!-- Zone de Saisie -->
+            <div class="flex gap-2">
+                <input type="text" id="teacher-reply-input" placeholder="Ex: Présente-toi, qui est Awa Diop, bilan de la classe..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                <button onclick="handleTeacherInput()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all cursor-pointer">
+                    Envoyer <i class="fa-solid fa-paper-plane ml-1"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Script de liaison pour le Chat -->
+    <script>
+        function handleTeacherInput() {
+            const input = document.getElementById('teacher-reply-input');
+            if (!input) return;
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatBox = document.getElementById('chat-box');
+            if (chatBox) {
+                chatBox.innerHTML += `
+                    <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
+                        <strong>Maître Balla :</strong> "${query}"
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            input.value = '';
+
+            // Utilise la fonction handleCommand du script JavaScript principal
+            if (typeof handleCommand === 'function') {
+                handleCommand(query);
+            }
+        }
+    </script>
+</body>
+</html>
