@@ -22,7 +22,7 @@
     </script>
 </head>
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
-    <!-- Header principal épuré (Sans bouton d'activation) -->
+    <!-- Header principal épuré -->
     <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col lg:flex-row items-center justify-between gap-4">
             <!-- Information de la classe & Enseignant -->
@@ -41,12 +41,12 @@
                     </div>
                 </div>
             </div>
-            <!-- Statut vocal de Malado -->
+            <!-- Bouton pour switcher entre Mode Automatique et Manuel -->
             <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-emerald-400">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Malado à l'écoute (Micro actif)</span>
-                </div>
+                <button id="btn-toggle-mode" onclick="toggleVoiceMode()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 flex items-center gap-2 transition-all cursor-pointer">
+                    <i id="mode-icon" class="fa-solid fa-microphone text-emerald-400"></i>
+                    <span id="mode-text">Mode : Écoute Auto ("Assistante")</span>
+                </button>
             </div>
         </div>
     </header>
@@ -119,20 +119,23 @@
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-white">Co-Pilote Intelligent Malado</h2>
-                    <p class="text-xs text-slate-400">Parlez au micro (ex: "Ya Malado", "Présente-toi") ou écrivez ci-dessous</p>
+                    <p class="text-xs text-slate-400">Mode automatique ("Assistante") ou mode manuel avec le petit micro</p>
                 </div>
             </div>
             
             <!-- Boîte de Chat -->
             <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 mb-4 text-xs">
                 <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl">
-                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Je vous écoute. Dites <strong>'Ya Malado'</strong> puis demandez-moi de me présenter ou cliquez sur un élève."
+                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Le mode écoute auto est actif (dites 'Assistante'). Vous pouvez aussi basculer en mode manuel en haut pour cliquer sur le micro."
                 </div>
             </div>
 
-            <!-- Zone de Saisie -->
+            <!-- Zone de Saisie avec Bouton Micro Manuel -->
             <div class="flex gap-2">
-                <input type="text" id="teacher-reply-input" placeholder="Ex: Présente-toi, De quoi es-tu capable ?, qui est Awa Diop..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                <input type="text" id="teacher-reply-input" placeholder="Écrivez votre consigne ou utilisez le micro..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                <button id="btn-manual-mic" onclick="startManualListening()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs transition-all cursor-pointer" title="Parler au micro (Mode Manuel)">
+                    <i class="fa-solid fa-microphone text-amber-400"></i>
+                </button>
                 <button onclick="handleTeacherInput()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all cursor-pointer">
                     Envoyer <i class="fa-solid fa-paper-plane ml-1"></i>
                 </button>
