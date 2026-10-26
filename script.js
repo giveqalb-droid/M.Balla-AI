@@ -16,7 +16,6 @@ const studentsDatabase = [
 
 let synth = window.speechSynthesis;
 let voicesList = [];
-let uploadedCurriculumText = "";
 
 function chargerVoix() {
     if (!synth) return;
@@ -45,7 +44,7 @@ function renderClassroomDesks() {
     });
 }
 
-// Affichage direct de la Fiche Élève et Vocalisation
+// Affichage direct de la Fiche Élève
 function showStudentDetails(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
@@ -64,10 +63,7 @@ function showStudentDetails(studentId) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Parole de Malado
-    speakText(`Élève ${student.name}. Note de ${student.score} sur 20. ${student.info}`);
-
-    // Pop-up d'affichage simple
+    // Pop-up d'affichage de la fiche
     alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\n${message}`);
 }
 
@@ -89,7 +85,6 @@ function handleCurriculumUpload(event) {
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-    speakText(confirmationMsg);
 }
 
 function updateKPISummary() {
@@ -107,56 +102,6 @@ function updateKPISummary() {
     if (kpiAvg) kpiAvg.innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
     if (kpiMastery) kpiMastery.innerHTML = `${masteryCount} <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span>`;
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
-}
-
-function activateSynthesisAI() {
-    if (!synth) {
-        alert("La synthèse vocale n'est pas supportée par votre navigateur.");
-        return;
-    }
-    updateVoiceStatus('active');
-    const introMsg = "Bonjour Maître Balla. C'est Malado, votre co-pédagogue pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête.";
-    speakText(introMsg);
-}
-
-function speakText(text) {
-    if (!synth) return;
-    synth.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'fr-FR';
-    utterance.rate = 0.92;
-    utterance.pitch = 1.1;
-
-    if (voicesList.length === 0) {
-        voicesList = synth.getVoices();
-    }
-
-    const voixFeminine = voicesList.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Hortense') || v.name.includes('Julie') || v.name.includes('Amélie'))) 
-                      || voicesList.find(v => v.lang.startsWith('fr'));
-
-    if (voixFeminine) {
-        utterance.voice = voixFeminine;
-    }
-
-    synth.speak(utterance);
-}
-
-function updateVoiceStatus(status) {
-    const badge = document.getElementById('voice-status-badge');
-    const dot = document.getElementById('voice-indicator-dot');
-    const text = document.getElementById('voice-status-text');
-    if (!badge || !dot || !text) return;
-
-    if (status === 'active') {
-        badge.classList.add('active');
-        dot.classList.add('active');
-        text.textContent = 'Malado Active';
-    } else {
-        badge.classList.remove('active');
-        dot.classList.remove('active');
-        text.textContent = 'Synthèse vocale en attente';
-    }
 }
 
 function handleCommand(command) {
@@ -184,7 +129,6 @@ function handleCommand(command) {
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-    speakText(reponse);
 }
 
 // Lancement au chargement de la page
