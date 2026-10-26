@@ -17,7 +17,6 @@ const studentsDatabase = [
 let synth = window.speechSynthesis;
 let voicesList = [];
 
-// Chargement sécurisé des voix du navigateur
 function chargerVoix() {
     if (!synth) return;
     voicesList = synth.getVoices();
@@ -28,7 +27,7 @@ if (synth && synth.onvoiceschanged !== undefined) {
     synth.onvoiceschanged = chargerVoix;
 }
 
-// Rendu des pupitres des élèves
+// Rendu dynamique des pupitres
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
@@ -45,28 +44,40 @@ function renderClassroomDesks() {
     });
 }
 
-// Affichage et vocalisation des détails d'un élève
 function showStudentDetails(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
     const message = `Élève ${student.name}. Note de ${student.score} sur 20. ${student.info}`;
+    
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.innerHTML += `
+            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
+                <strong>🤖 Synthesis AI :</strong> "${message}"
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
     speakText(message);
 }
 
-// Mise à jour des KPIs
 function updateKPISummary() {
     const total = studentsDatabase.length;
     const avgScore = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / total).toFixed(1);
     const masteryCount = studentsDatabase.filter(s => s.mastery).length;
     const supportCount = total - masteryCount;
     
-    document.getElementById('kpi-total-students').innerHTML = `${total} <span class="text-xs font-normal text-slate-400">Élèves suivis</span>`;
-    document.getElementById('kpi-avg-score').innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
-    document.getElementById('kpi-mastery-count').innerHTML = `${masteryCount} <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span>`;
-    document.getElementById('kpi-support-count').innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
+    const kpiTotal = document.getElementById('kpi-total-students');
+    const kpiAvg = document.getElementById('kpi-avg-score');
+    const kpiMastery = document.getElementById('kpi-mastery-count');
+    const kpiSupport = document.getElementById('kpi-support-count');
+
+    if (kpiTotal) kpiTotal.innerHTML = `${total} <span class="text-xs font-normal text-slate-400">Élèves suivis</span>`;
+    if (kpiAvg) kpiAvg.innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
+    if (kpiMastery) kpiMastery.innerHTML = `${masteryCount} <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span>`;
+    if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Bouton principal d'activation (déclenche obligatoirement le son)
 function activateSynthesisAI() {
     if (!synth) {
         alert("La synthèse vocale n'est pas supportée par votre navigateur.");
@@ -77,11 +88,8 @@ function activateSynthesisAI() {
     speakText(introMsg);
 }
 
-// Fonction centrale de synthèse vocale (Voix féminine fluide)
 function speakText(text) {
     if (!synth) return;
-    
-    // Annule la parole précédente pour éviter les files d'attente bloquées
     synth.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -89,7 +97,6 @@ function speakText(text) {
     utterance.rate = 0.92;
     utterance.pitch = 1.1;
 
-    // Recherche d'une voix féminine en français
     if (voicesList.length === 0) {
         voicesList = synth.getVoices();
     }
@@ -121,22 +128,41 @@ function updateVoiceStatus(status) {
     }
 }
 
-// Présentation vocale et explication de l'Effet Vygotsky
-function presentSelf() {
-    const presentation = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. " +
-                         "J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs, " +
-                         "permettant aux élèves en difficulté de progresser au contact de leurs camarades plus avancés.";
-    speakText(presentation);
+function handleCommand(command) {
+    const q = command.toLowerCase();
+    let reponse = "";
+
+    if (q.includes('bonjour') || q.includes('salut')) {
+        reponse = "Bonjour Maître Balla. La classe de CE2 A est prête.";
+    } else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
+        reponse = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs.";
+    } else if (q.includes('élèves') || q.includes('liste')) {
+        reponse = "Les 12 élèves de la classe sont : " + studentsDatabase.map(s => s.name).join(', ');
+    } else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
+        reponse = "L'Effet Vygotsky consiste à placer un élève en soutien à côté d'un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
+    } else {
+        reponse = `J'ai bien reçu votre consigne : "${command}". La classe progresse harmonieusement.`;
+    }
+
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.innerHTML += `
+            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
+                <strong>🤖 Synthesis AI :</strong> "${reponse}"
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    speakText(reponse);
 }
 
-// Lecture globale du tableau
 function readFullBoard() {
-    speakText("Tableau noir de la classe de CE2 A. Activités du jour : calcul mental, numération et lecture active.");
+    const msg = "Tableau noir de la classe de CE2 A. Objectif du jour : calcul mental, numération et application de l'Effet Vygotsky.";
+    speakText(msg);
 }
 
-// Initialisation ultra-sécurisée au chargement complet de la page
+// Lancement au chargement de la page
 window.addEventListener('DOMContentLoaded', () => {
-    console.log("Initialisation de la classe de CE2-A...");
     renderClassroomDesks();
     updateKPISummary();
 });
