@@ -19,9 +19,13 @@ let synthesisActive = false;
 let currentUtterance = null;
 const synth = window.speechSynthesis;
 
+// Fonctions principales
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
-    if (!container) return;
+    if (!container) {
+        console.error("Element #classroom-container introuvable !");
+        return;
+    }
     
     container.innerHTML = '';
     studentsDatabase.forEach(student => {
@@ -40,8 +44,8 @@ function showStudentDetails(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
     
-    alert(`Délèves: ${student.name}\nNote: ${student.score}/20\nStatut: ${student.mastery ? 'Maîtrise' : 'Soutien'}`);
-    // Tu peux remplacer l'alert par un modal plus joli
+    // Utilise un modal au lieu d'alert
+    alert(`Élèves: ${student.name}\nNote: ${student.score}/20\nStatut: ${student.mastery ? 'Maîtrise' : 'Soutien'}`);
 }
 
 function updateKPISummary() {
@@ -102,4 +106,12 @@ function updateVoiceStatus(status) {
 window.addEventListener('DOMContentLoaded', () => {
     renderClassroomDesks();
     updateKPISummary();
+    
+    // Ajout d'un écouteur pour les erreurs de synthèse vocale
+    if (synth) {
+        synth.onerror = (event) => {
+            console.error("Erreur de synthèse vocale :", event);
+            updateVoiceStatus('inactive');
+        };
+    }
 });
