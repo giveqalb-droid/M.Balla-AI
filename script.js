@@ -19,7 +19,6 @@ let synthesisActive = false;
 let currentUtterance = null;
 const synth = window.speechSynthesis;
 
-// Fonctions principales
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
