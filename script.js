@@ -18,7 +18,7 @@ let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false;
+let isManualMode = false; // Faux par défaut (Mode Auto actif)
 
 function chargerVoix() {
     if (!synth) return;
@@ -74,7 +74,7 @@ function showStudentDetails(studentId) {
     if (!student) return;
 
     const statutStr = student.mastery ? 'Maîtrise' : 'Soutien';
-    const message = `${student.name}, ${student.score sur 20}. Statut : ${statutStr}. ${student.info}`;
+    const message = `${student.name}, ${student.score}/20. Statut : ${statutStr}. ${student.info}`;
 
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
@@ -127,9 +127,9 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Réponses ultra-directes et sans fioritures
+// Réponses directes et sans bavardage
 function handleCommand(command) {
-    stopSpeaking(); // COUPE LA PAROLE NET DÈS QUE TU PARLES
+    stopSpeaking(); // Se tait immédiatement dès que tu parles
     const q = command.toLowerCase().trim();
     let reponse = "";
 
@@ -146,7 +146,7 @@ function handleCommand(command) {
     if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         
         if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme') || q.includes('soutien')) {
-            reponse = "Binômes de tutorat Vygotsky :\n• Awa (14) + Oumar (9)\n• Aïcha (15) + Moussa (7)\n• Karim (16) + Diana (6).";
+            reponse = "Binômes Vygotsky :\n• Awa (14) + Oumar (9)\n• Aïcha (15) + Moussa (7)\n• Karim (16) + Diana (6).";
         }
         else if (q.includes('pédagogie') || q.includes('classe') || q.includes('bilan')) {
             reponse = "Moyenne 11.6/20. 7 élèves en soutien prioritaires sur le calcul et la lecture.";
@@ -171,7 +171,7 @@ function handleCommand(command) {
             maladoModeAwake = true;
             reponse = "Oui ?";
         } else {
-            reponse = ""; // Ne répond rien si le mot clé n'est pas dit pour garder le silence absolu en veille
+            reponse = ""; 
         }
     }
 
@@ -189,6 +189,7 @@ function handleCommand(command) {
     }
 }
 
+// Correction du bouton de bascule Mode Auto / Manuel
 function toggleVoiceMode() {
     stopSpeaking();
     isManualMode = !isManualMode;
@@ -196,21 +197,30 @@ function toggleVoiceMode() {
     const modeIcon = document.getElementById('mode-icon');
 
     if (isManualMode) {
-        if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
+        if (recognition) { 
+            try { recognition.stop(); } catch(e) {} 
+            recognition = null; 
+        }
         maladoModeAwake = false;
-        modeText.textContent = "Mode : Manuel (Micro requis)";
+        modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
         modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
+        console.log("Mode Manuel activé.");
     } else {
         modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
         modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
+        console.log("Mode Écoute Auto activé.");
     }
 }
 
+// Micro manuel dans la zone de chat
 function startManualListening() {
-    stopSpeaking(); // COUPE LA PAROLE QUAND TU APPUIES SUR LE MICRO MANUEL
+    stopSpeaking(); 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    if (!SpeechRecognition) {
+        alert("Reconnaissance vocale non supportée par ce navigateur.");
+        return;
+    }
 
     const manualRec = new SpeechRecognition();
     manualRec.lang = 'fr-FR';
@@ -231,10 +241,15 @@ function startManualListening() {
     try { manualRec.start(); } catch(e) {}
 }
 
+// Initialisation de la veille vocale automatique
 function initVoiceRecognition() {
     if (isManualMode) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
+
+    if (recognition) {
+        try { recognition.stop(); } catch(e) {}
+    }
 
     recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
@@ -244,9 +259,14 @@ function initVoiceRecognition() {
     recognition.onresult = function(event) {
         handleCommand(event.results[0][0].transcript.trim());
     };
+    
+    recognition.onerror = function(event) {};
+
     recognition.onend = function() {
         if (!isManualMode) {
-            setTimeout(() => { try { recognition.start(); } catch(e) {} }, 500);
+            setTimeout(() => { 
+                try { recognition.start(); } catch(e) {} 
+            }, 500);
         }
     };
 
