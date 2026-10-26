@@ -88,6 +88,29 @@
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
   </style>
+
+    <!-- Styles CSS Personnalisés -->
+    <style>
+.classroom-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+.student-desk-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 0.85rem;
+  padding: 0.85rem;
+  border-left: 5px solid #cbd5e1;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+.student-desk-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -3px rgba(217, 119, 6, 0.3);
+}
+.student-desk-card.status-support { border-left-color: #f59e0b; background: linear-gradient(to right, #fffbeb, #ffffff); }
+.student-desk-card.status-mastery { border-left-color: #10b981; background: linear-gradient(to right, #ecfdf5, #ffffff); }
+    </style>
 </head>
 
 <body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
