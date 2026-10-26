@@ -14,7 +14,44 @@ const studentsDatabase = [
     { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Amadou Bocoum obtient 14 sur 20. Très bon niveau général et participation active." }
 ];
 
+let synth = window.speechSynthesis;
+let voicesList = [];
 let uploadedCurriculumText = "";
+let maladoListeningActive = false;
+
+// Charger les voix du navigateur
+function chargerVoix() {
+    if (!synth) return;
+    voicesList = synth.getVoices();
+}
+chargerVoix();
+if (synth && synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = chargerVoix;
+}
+
+// Fonction pour faire parler Malado (Voix féminine fluide)
+function speakText(text) {
+    if (!synth) return;
+    synth.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'fr-FR';
+    utterance.rate = 0.92;
+    utterance.pitch = 1.1;
+
+    if (voicesList.length === 0) {
+        voicesList = synth.getVoices();
+    }
+
+    const voixFeminine = voicesList.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Hortense') || v.name.includes('Julie') || v.name.includes('Amélie'))) 
+                      || voicesList.find(v => v.lang.startsWith('fr'));
+
+    if (voixFeminine) {
+        utterance.voice = voixFeminine;
+    }
+
+    synth.speak(utterance);
+}
 
 // Rendu dynamique des pupitres
 function renderClassroomDesks() {
@@ -39,7 +76,7 @@ function showStudentDetails(studentId) {
     if (!student) return;
 
     const statutStr = student.mastery ? 'Maîtrise Acquise' : 'Soutien & Vygotsky';
-    const message = `Élève : ${student.name}\nNote : ${student.score}/20 (${statutStr})\n\nAnalyse : ${student.info}`;
+    const message = `Élève : ${student.name}. Note : ${student.score} sur 20. ${student.info}`;
 
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
@@ -51,7 +88,8 @@ function showStudentDetails(studentId) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\n${message}`);
+    speakText(`Fiche de ${student.name}. Note de ${student.score} sur 20. ${student.info}`);
+    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\nÉlève : ${student.name}\nNote : ${student.score}/20 (${statutStr})\n\nAnalyse : ${student.info}`);
 }
 
 // Gestion de l'upload du programme
@@ -62,7 +100,7 @@ function handleCurriculumUpload(event) {
     document.getElementById('upload-file-label').textContent = file.name;
     uploadedCurriculumText = `Programme officiel chargé via ${file.name}`;
 
-    const confirmationMsg = `Programme officiel ${file.name} pris en compte avec succès, Maître Balla. Mes analyses pédagogiques sont désormais synchronisées avec ce référentiel.`;
+    const confirmationMsg = `Programme officiel ${file.name} pris en compte avec succès, Maître Balla.`;
     
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
@@ -73,6 +111,7 @@ function handleCurriculumUpload(event) {
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
+    speakText(confirmationMsg);
 }
 
 function updateKPISummary() {
@@ -92,35 +131,34 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Gestion des commandes textuelles pour Malado
+// Gestion des commandes de Malado (Texte et Vocal)
 function handleCommand(command) {
-    const q = command.toLowerCase();
+    const q = command.toLowerCase().trim();
     let reponse = "";
 
-    if (q.includes('bonjour') || q.includes('salut')) {
+    // Fonctionnalité "Ya Malado"
+    if (q.includes('ya malado') || q.includes('dis malado') || q.includes('salut malado')) {
+        reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous savoir sur la classe de CE2-A ?";
+    } 
+    else if (q.includes('bonjour') || q.includes('salut')) {
         reponse = "Bonjour Maître Balla. C'est Malado. La classe de CE2-A de l'école El Hadji Malick Sy est prête.";
     } 
     // Présentation simple
-    else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-        reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour (CEB Sénégal). Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
+    else if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
+        reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
     } 
-    // Présentation approfondie (de quoi es-tu capable)
+    // Présentation approfondie (capacités)
     else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu') || q.includes('que fais') || q.includes('fonctionnalités')) {
-        reponse = "En tant que Malado, voici l'étendue de mes capacités pour vous assister :\n\n" +
-                  "1. Suivi individualisé des 12 élèves de la classe de CE2-A avec leurs notes et statuts.\n" +
-                  "2. Application de la théorie de l'Effet Vygotsky (Zone Proximale de Développement) pour organiser le tutorat par les pairs entre élèves forts et élèves en soutien.\n" +
-                  "3. Analyse en temps réel des statistiques de la classe (moyenne, taux de maîtrise, élèves en difficulté).\n" +
-                  "4. Intégration et lecture du Programme Éducatif National du Sénégal que vous pouvez importer directement.\n" +
-                  "5. Consultation rapide des fiches détaillées de chaque élève d'un simple clic sur son pupitre.";
+        reponse = "En tant que Malado, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour organiser le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
     } 
     else if (q.includes('élèves') || q.includes('liste')) {
-        reponse = "Les 12 élèves de la classe de CE2-A suivis sont : " + studentsDatabase.map(s => s.name).join(', ') + ".";
+        reponse = "Les 12 élèves de la classe de CE2-A sont : " + studentsDatabase.map(s => s.name).join(', ') + ".";
     } 
     else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève en maîtrise pour stimuler son apprentissage dans sa zone proximale de développement.";
+        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
     } 
     else {
-        reponse = `J'ai bien pris en compte votre consigne Maître Balla : "${command}". Je veille sur la classe de CE2-A.`;
+        reponse = `J'ai bien pris en compte votre consigne Maître Balla : "${command}". Je veille sur la classe.`;
     }
 
     const chatBox = document.getElementById('chat-box');
@@ -132,10 +170,70 @@ function handleCommand(command) {
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
+
+    // Malado répond à voix haute
+    speakText(reponse);
+}
+
+// Activation de la reconnaissance vocale du navigateur (Microphone)
+function initVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        console.warn("La reconnaissance vocale n'est pas supportée par ce navigateur.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+        const transcript = event.results[event.results.length - 1][0].transcript.trim();
+        console.log("Voix entendue :", transcript);
+
+        // Afficher ce que le maître a dit dans le chat
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+            chatBox.innerHTML += `
+                <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
+                    <strong>Maître Balla (Vocal) :</strong> "${transcript}"
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Traiter la commande vocale
+        handleCommand(transcript);
+    };
+
+    recognition.onerror = function(event) {
+        console.error("Erreur de reconnaissance vocale :", event.error);
+    };
+
+    recognition.onend = function() {
+        // Relancer automatiquement l'écoute pour garder Malado active en permanence
+        if (maladoListeningActive) {
+            try { recognition.start(); } catch(e) {}
+        }
+    };
+
+    try {
+        recognition.start();
+        maladoListeningActive = true;
+        console.log("Malado écoute activement le microphone...");
+    } catch(e) {
+        console.error("Impossible de démarrer l'écoute micro :", e);
+    }
 }
 
 // Lancement au chargement de la page
 window.addEventListener('DOMContentLoaded', () => {
     renderClassroomDesks();
     updateKPISummary();
+    
+    // Démarrer l'écoute vocale au premier clic ou chargement
+    setTimeout(() => {
+        initVoiceRecognition();
+    }, 1000);
 });
