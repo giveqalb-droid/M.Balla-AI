@@ -16,7 +16,7 @@ const studentsDatabase = [
 
 let synth = window.speechSynthesis;
 let voicesList = [];
-let maladoModeAwake = false; // Indicateur si Malado a été appelée par "badiéne"
+let maladoModeAwake = false; // Indicateur si l'assistante a été appelée
 let recognition = null;
 
 // Charger les voix du navigateur
@@ -144,19 +144,19 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // ÉTAPE 1 : Si on appelle "Ya Malado"
-    if (q.includes('ya malado') || q.includes('dis malado') || q.includes('salut malado')) {
-        maladoModeAwake = true; // Malado est réveillée et prête à écouter l'ordre suivant
+    // ÉTAPE 1 : Si on prononce le mot-clé "Assistante"
+    if (q.includes('assistante')) {
+        maladoModeAwake = true; // L'assistante est réveillée
         reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous ?";
     } 
-    // ÉTAPE 2 : Si Malado est éveillée, elle traite les ordres
+    // ÉTAPE 2 : Si l'assistante est éveillée, elle traite les ordres
     else if (maladoModeAwake) {
         if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
             reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
-            maladoModeAwake = false; // Retour en mode veille après l'action
+            maladoModeAwake = false; // Retour en mode veille silencieuse
         } 
         else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu') || q.includes('que fais') || q.includes('fonctionnalités')) {
-            reponse = "En tant que Malado, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
+            reponse = "En tant qu'assistante, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
             maladoModeAwake = false;
         } 
         else if (q.includes('élèves') || q.includes('liste')) {
@@ -172,9 +172,9 @@ function handleCommand(command) {
             maladoModeAwake = false;
         }
     } 
-    // ÉTAPE 3 : Si on parle sans dire "Ya Malado" au préalable
+    // ÉTAPE 3 : Si on parle sans dire "Assistante" au préalable
     else {
-        reponse = "Veuillez d'abord dire 'Ya Malado' pour attirer mon attention, Maître Balla.";
+        reponse = "Veuillez d'abord dire 'Assistante' pour attirer mon attention, Maître Balla.";
     }
 
     if (chatBox) {
@@ -189,7 +189,7 @@ function handleCommand(command) {
     speakText(reponse);
 }
 
-// Initialisation du micro (Mode intelligent : actif mais en veille d'écoute)
+// Initialisation du micro en arrière-plan discret et silencieux
 function initVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -199,7 +199,7 @@ function initVoiceRecognition() {
 
     recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
-    recognition.continuous = false; // S'arrête après chaque phrase pour éviter de capter en continu
+    recognition.continuous = false;
     recognition.interimResults = false;
 
     recognition.onresult = function(event) {
@@ -209,11 +209,11 @@ function initVoiceRecognition() {
     };
 
     recognition.onerror = function(event) {
-        console.warn("Erreur micro (normal en veille) :", event.error);
+        // Mode discret : aucune alerte visuelle ou sonore en cas d'erreur de veille
     };
 
     recognition.onend = function() {
-        // Redémarrer automatiquement l'écoute pour rester en arrière-plan sans bloquer
+        // Redémarrage automatique et silencieux pour maintenir la veille
         setTimeout(() => {
             try { recognition.start(); } catch(e) {}
         }, 500);
@@ -221,7 +221,7 @@ function initVoiceRecognition() {
 
     try {
         recognition.start();
-        console.log("Malado est en veille d'écoute (Dites 'Ya Malado')...");
+        console.log("Veille vocale silencieuse active (Dites 'Assistante')...");
     } catch(e) {
         console.error("Impossible de démarrer l'écoute micro :", e);
     }
@@ -232,7 +232,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderClassroomDesks();
     updateKPISummary();
     
-    // Démarrer la veille vocale
+    // Démarrage de la veille discrète
     setTimeout(() => {
         initVoiceRecognition();
     }, 1000);
