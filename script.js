@@ -40,7 +40,7 @@ function speakText(text) {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
-    utterance.rate = 0.98;
+    utterance.rate = 1.0;
     utterance.pitch = 1.05;
 
     if (voicesList.length === 0) voicesList = synth.getVoices();
@@ -73,8 +73,8 @@ function showStudentDetails(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
 
-    const statutStr = student.mastery ? 'Maîtrise Acquise' : 'Soutien requis';
-    const message = `${student.name} : ${student.score}/20 (${statutStr}). ${student.info}`;
+    const statutStr = student.mastery ? 'Maîtrise' : 'Soutien';
+    const message = `${student.name}, ${student.score sur 20}. Statut : ${statutStr}. ${student.info}`;
 
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
@@ -96,7 +96,7 @@ function handleCurriculumUpload(event) {
     if (!file) return;
 
     document.getElementById('upload-file-label').textContent = file.name;
-    const msg = `Programme ${file.name} bien pris en compte. Je synchronise les binômes et le suivi.`;
+    const msg = `Programme ${file.name} chargé. Suivi synchronisé.`;
     
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
@@ -127,9 +127,9 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Réponses directes, percutantes et sans récitatif
+// Réponses ultra-directes et sans fioritures
 function handleCommand(command) {
-    stopSpeaking();
+    stopSpeaking(); // COUPE LA PAROLE NET DÈS QUE TU PARLES
     const q = command.toLowerCase().trim();
     let reponse = "";
 
@@ -146,22 +146,22 @@ function handleCommand(command) {
     if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         
         if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme') || q.includes('soutien')) {
-            reponse = "Pour le tutorat Vygotsky, voici les binômes efficaces :\n• Awa (14) avec Oumar (9)\n• Aïcha (15) avec Moussa (7)\n• Karim (16) avec Diana (6).";
+            reponse = "Binômes de tutorat Vygotsky :\n• Awa (14) + Oumar (9)\n• Aïcha (15) + Moussa (7)\n• Karim (16) + Diana (6).";
         }
         else if (q.includes('pédagogie') || q.includes('classe') || q.includes('bilan')) {
-            reponse = "Moyenne de classe à 11.6. 7 élèves en soutien : l'effort prioritaire porte sur la remédiation en calcul et lecture.";
+            reponse = "Moyenne 11.6/20. 7 élèves en soutien prioritaires sur le calcul et la lecture.";
         }
         else if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu')) {
             reponse = "Je suis Malado, ton assistante pédagogique pour la CE2-A à El Hadji Malick Sy.";
         } 
         else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu')) {
-            reponse = "Je gère les notes, les binômes Vygotsky, les stats de classe et le programme officiel.";
+            reponse = "Suivi des 12 élèves, gestion des binômes Vygotsky, stats et programme officiel.";
         } 
         else if (q.includes('élèves') || q.includes('liste')) {
-            reponse = "Élèves CE2-A : " + studentsDatabase.map(s => `${s.name} (${s.score})`).join(', ') + ".";
+            reponse = "Élèves : " + studentsDatabase.map(s => `${s.name} (${s.score})`).join(', ') + ".";
         } 
         else {
-            reponse = `C'est noté pour "${command}". On fonce là-dessus ?`;
+            reponse = `C'est noté.`;
         }
         
         maladoModeAwake = false;
@@ -169,13 +169,13 @@ function handleCommand(command) {
     else {
         if (q.includes('assistante')) {
             maladoModeAwake = true;
-            reponse = "Oui, je t'écoute.";
+            reponse = "Oui ?";
         } else {
-            reponse = "Dis 'Assistante' ou clique sur le micro.";
+            reponse = ""; // Ne répond rien si le mot clé n'est pas dit pour garder le silence absolu en veille
         }
     }
 
-    if (chatBox) {
+    if (reponse && chatBox) {
         chatBox.innerHTML += `
             <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2 whitespace-pre-line">
                 <strong>🤖 Malado :</strong> "${reponse}"
@@ -184,7 +184,9 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    speakText(reponse);
+    if (reponse) {
+        speakText(reponse);
+    }
 }
 
 function toggleVoiceMode() {
@@ -196,7 +198,7 @@ function toggleVoiceMode() {
     if (isManualMode) {
         if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
         maladoModeAwake = false;
-        modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
+        modeText.textContent = "Mode : Manuel (Micro requis)";
         modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
     } else {
         modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
@@ -206,7 +208,7 @@ function toggleVoiceMode() {
 }
 
 function startManualListening() {
-    stopSpeaking();
+    stopSpeaking(); // COUPE LA PAROLE QUAND TU APPUIES SUR LE MICRO MANUEL
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
