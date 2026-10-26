@@ -1,24 +1,24 @@
-// Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal)
+// Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal) avec profils détaillés pour l'Effet Vygotsky
 const studentsDatabase = [
-    { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Awa Diop excelle avec 14 sur 20. Très rigoureuse, elle est idéale pour faire office de tutrice." },
-    { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "Oumar Sarr est à 9 sur 20. En difficulté sur le calcul, il bénéficie de l'Effet Vygotsky en étant jumelé avec un tuteur." },
-    { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, info: "Fatou Ndiaye totalise 12 sur 20. Bonne élève, attentive aux consignes grammaticales." },
-    { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, info: "Moussa Fall est à 7 sur 20. Nécessite un accompagnement renforcé en numération." },
-    { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, info: "Aïcha Mbaye est en tête avec 15 sur 20. Excellente en expression écrite." },
-    { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, info: "Ibrahima Traoré a 10 sur 20. Proche du seuil de maîtrise, il progresse régulièrement." },
-    { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, info: "Mariama Camara obtient 13 sur 20. Très à l'aise en géométrie et logique." },
-    { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, info: "Cheikh Diallo a 8 sur 20. En soutien prioritaire sur les résolutions de problèmes." },
-    { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, info: "Léona Mendy est à 11 sur 20. Elle acquiert peu à peu les notions fondamentales." },
-    { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, info: "Karim Sow est l'un des plus forts avec 16 sur 20. Il stimule son entourage par son dynamisme." },
-    { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, info: "Diana Gaye a 6 sur 20. Demande un suivi individualisé et un tutorat de proximité." },
-    { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Amadou Bocoum obtient 14 sur 20. Très bon niveau général et participation active." }
+    { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Excellente et rigoureuse. Tutorat idéal pour les camarades en difficulté." },
+    { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "En difficulté sur le calcul. Bénéficie directement de l'Effet Vygotsky via un tuteur." },
+    { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, info: "Bonne élève, très attentive aux consignes grammaticales." },
+    { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, info: "Nécessite un accompagnement renforcé en numération et lecture." },
+    { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, info: "En tête de classe, excellente en expression écrite et leadership." },
+    { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, info: "Proche du seuil de maîtrise, progresse régulièrement avec de l'encouragement." },
+    { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, info: "Très à l'aise en géométrie, logique et résolution de problèmes." },
+    { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, info: "En soutien prioritaire sur les exercices d'application rapide." },
+    { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, info: "Acquiert peu à peu les notions fondamentales du CE2." },
+    { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, info: "Très dynamique, stimule positivement son entourage par son niveau." },
+    { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, info: "Demande un suivi individualisé et un tutorat de proximité rapproché." },
+    { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Très bon niveau général, participation active et entraide naturelle." }
 ];
 
 let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false; // Faux par défaut (Mode Auto actif)
+let isManualMode = false;
 
 // Charger les voix du navigateur
 function chargerVoix() {
@@ -30,7 +30,7 @@ if (synth && synth.onvoiceschanged !== undefined) {
     synth.onvoiceschanged = chargerVoix;
 }
 
-// Fonction pour faire parler Malado (Voix féminine fluide)
+// Fonction pour faire parler Malado avec une intonation fluide
 function speakText(text) {
     if (!synth) return;
     synth.cancel();
@@ -38,7 +38,7 @@ function speakText(text) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
     utterance.rate = 0.92;
-    utterance.pitch = 1.1;
+    utterance.pitch = 1.05;
 
     if (voicesList.length === 0) {
         voicesList = synth.getVoices();
@@ -77,20 +77,20 @@ function showStudentDetails(studentId) {
     if (!student) return;
 
     const statutStr = student.mastery ? 'Maîtrise Acquise' : 'Soutien & Vygotsky';
-    const message = `Élève : ${student.name}. Note : ${student.score} sur 20. ${student.info}`;
+    const message = `Élève : ${student.name}. Note : ${student.score}/20 (${statutStr}). ${student.info}`;
 
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
         chatBox.innerHTML += `
             <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Malado :</strong> "Fiche de ${student.name} : Note ${student.score}/20. ${student.info}"
+                <strong>🤖 Malado :</strong> "Fiche de ${student.name} : ${message}"
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     speakText(`Fiche de ${student.name}. Note de ${student.score} sur 20. ${student.info}`);
-    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\nÉlève : ${student.name}\nNote : ${student.score}/20 (${statutStr})\n\nAnalyse : ${student.info}`);
+    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\n${message}`);
 }
 
 // Gestion de l'upload du programme
@@ -99,7 +99,7 @@ function handleCurriculumUpload(event) {
     if (!file) return;
 
     document.getElementById('upload-file-label').textContent = file.name;
-    const confirmationMsg = `Programme officiel ${file.name} pris en compte avec succès, Maître Balla.`;
+    const confirmationMsg = `Programme officiel ${file.name} intégré avec succès. Mes suggestions pédagogiques et l'application de l'Effet Vygotsky s'alignent désormais sur ces directives.`;
     
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
@@ -130,7 +130,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Traitement intelligent des commandes
+// Traitement intelligent et conversationnel (Effet Vygotsky & Profondeur)
 function handleCommand(command) {
     const q = command.toLowerCase().trim();
     let reponse = "";
@@ -139,38 +139,52 @@ function handleCommand(command) {
     if (chatBox) {
         chatBox.innerHTML += `
             <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
-                <strong>Maître Balla (Vocal) :</strong> "${command}"
+                <strong>Maître Balla :</strong> "${command}"
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // SI EN MODE MANUEL OU QUE L'ASSISTANTE A ÉTÉ RÉVEILLÉE EN MODE AUTO
-    if (isManualMode || maladoModeAwake) {
-        if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-            reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
+    if (isManualMode || maladoModeAwake || q.includes('assistante')) {
+        
+        // 1. Gestion de l'Effet Vygotsky / Tutorat par les pairs
+        if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme') || q.includes('soutien')) {
+            reponse = "Maître Balla, selon la théorie de Lev Vygotsky sur la Zone Proximale de Développement (ZPD), l'apprentissage est social. Pour votre classe de CE2-A, je vous suggère ces binômes de tutorat par les pairs :\n\n" +
+                      "• Awa Diop (14/20) jumelée avec Oumar Sarr (9/20) pour le calcul.\n" +
+                      "• Aïcha Mbaye (15/20) jumelée avec Moussa Fall (7/20) pour la lecture.\n" +
+                      "• Karim Sow (16/20) jumelé avec Diana Gaye (6/20) pour le soutien renforcé.\n\n" +
+                      "L'élève fort consolide ses acquis en expliquant, et l'élève en difficulté progresse grâce à un pair de confiance.";
+        }
+        // 2. Conversation profonde / Philosophie pédagogique
+        else if (q.includes('pédagogie') || q.includes('apprendre') || q.includes('classe') || q.includes('bilan') || q.includes('progrès')) {
+            reponse = "C'est une excellente réflexion, Maître Balla. En tant qu'éducateur à l'école El Hadji Malick Sy de Mbour, vous savez que chaque enfant possède un potentiel unique. Avec une moyenne de classe de 11.6 sur 20 et 7 élèves nécessitant un accompagnement, notre mission est de transformer ces écarts en une force collective grâce à l'émulation positive.";
+        }
+        // 3. Présentation simple
+        else if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu')) {
+            reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis conçue pour vous épauler dans la gestion quotidienne et l'excellence de vos 12 élèves.";
         } 
-        else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu') || q.includes('que fais') || q.includes('fonctionnalités')) {
-            reponse = "En tant qu'assistante, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
+        // 4. Capacités approfondies
+        else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu')) {
+            reponse = "Voici l'étendue de mes compétences pédagogiques :\n1. Suivi individualisé des 12 élèves et de leurs notes.\n2. Génération de stratégies de tutorat basées sur l'Effet Vygotsky.\n3. Analyse des dynamiques de classe et des besoins en soutien.\n4. Intégration des programmes officiels nationaux du Sénégal.\n5. Échange interactif par écriture ou par commande vocale.";
         } 
+        // 5. Liste des élèves
         else if (q.includes('élèves') || q.includes('liste')) {
-            reponse = "Les 12 élèves de la classe de CE2-A sont : " + studentsDatabase.map(s => s.name).join(', ') + ".";
-        } 
-        else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-            reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
+            reponse = "Voici l'effectif actuel des 12 élèves de la classe de CE2-A : " + studentsDatabase.map(s => `${s.name} (${s.score}/20)`).join(', ') + ".";
         } 
         else {
-            reponse = `J'ai bien noté : "${command}". Je veille sur la classe.`;
+            reponse = `J'analyse votre remarque, Maître Balla : "${command}". La classe de CE2-A avance bien. Souhaitez-vous que l'on aborde un point particulier sur le programme ou les binômes de soutien ?`;
         }
-        maladoModeAwake = false; 
-    } 
-    // EN MODE AUTO : Vérifier le mot-clé "Assistante"
-    else if (q.includes('assistante')) {
-        maladoModeAwake = true;
-        reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous ?";
+        
+        maladoModeAwake = false;
     } 
     else {
-        reponse = "Veuillez dire 'Assistante' pour m'activer, ou passez en Mode Manuel en haut pour utiliser le bouton micro.";
+        // Si le mot clé n'est pas prononcé en mode auto
+        if (q.includes('assistante')) {
+            maladoModeAwake = true;
+            reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous analyser ?";
+        } else {
+            reponse = "Veuillez dire 'Assistante' pour m'activer, ou utilisez le bouton micro manuel en bas.";
+        }
     }
 
     if (chatBox) {
@@ -185,14 +199,13 @@ function handleCommand(command) {
     speakText(reponse);
 }
 
-// Bouton Switch Mode (Auto / Manuel) corrigé et direct
+// Bouton Switch Mode (Auto / Manuel)
 function toggleVoiceMode() {
-    isManualMode = !isManualMode; // Inverse l'état (true <-> false)
+    isManualMode = !isManualMode;
     const modeText = document.getElementById('mode-text');
     const modeIcon = document.getElementById('mode-icon');
 
     if (isManualMode) {
-        // Mode Manuel : On stoppe complètement l'écoute auto en arrière-plan
         if (recognition) {
             try { recognition.stop(); } catch(e) {}
             recognition = null;
@@ -200,17 +213,14 @@ function toggleVoiceMode() {
         maladoModeAwake = false;
         modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
         modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
-        console.log("Basculé en Mode Manuel : Écoute auto désactivée.");
     } else {
-        // Mode Auto : On relance la veille vocale
         modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
         modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
-        console.log("Basculé en Mode Auto : Écoute auto activée.");
     }
 }
 
-// Fonction du petit micro manuel dans la discussion
+// Fonction du micro manuel
 function startManualListening() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -247,9 +257,9 @@ function startManualListening() {
     }
 }
 
-// Initialisation de la veille vocale (Mode Auto)
+// Initialisation veille vocale
 function initVoiceRecognition() {
-    if (isManualMode) return; // Sécurité : Ne démarre pas si on est en mode manuel
+    if (isManualMode) return;
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
@@ -267,7 +277,6 @@ function initVoiceRecognition() {
     recognition.onerror = function(event) {};
 
     recognition.onend = function() {
-        // Redémarrage uniquement si on est toujours en mode auto
         if (!isManualMode) {
             setTimeout(() => {
                 try { recognition.start(); } catch(e) {}
