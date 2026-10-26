@@ -1,169 +1,179 @@
-<!-- Script Principal de Synthesis AI et de la Classe de CE2-A -->
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-950 text-slate-100 font-sans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Pédagogique M. Balla — CE2-A</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
     <script>
-        // Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal)
-        const studentsDatabase = [
-            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Awa Diop excelle avec 14 sur 20. Très rigoureuse, elle est idéale pour faire office de tutrice." },
-            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "Oumar Sarr est à 9 sur 20. En difficulté sur le calcul, il bénéficie de l'Effet Vygotsky en étant jumelé avec un tuteur." },
-            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, info: "Fatou Ndiaye totalise 12 sur 20. Bonne élève, attentive aux consignes grammaticales." },
-            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, info: "Moussa Fall est à 7 sur 20. Nécessite un accompagnement renforcé en numération." },
-            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, info: "Aïcha Mbaye est en tête avec 15 sur 20. Excellente en expression écrite." },
-            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, info: "Ibrahima Traoré a 10 sur 20. Proche du seuil de maîtrise, il progresse régulièrement." },
-            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, info: "Mariama Camara obtient 13 sur 20. Très à l'aise en géométrie et logique." },
-            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, info: "Cheikh Diallo a 8 sur 20. En soutien prioritaire sur les résolutions de problèmes." },
-            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, info: "Léona Mendy est à 11 sur 20. Elle acquiert peu à peu les notions fondamentales." },
-            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, info: "Karim Sow est l'un des plus forts avec 16 sur 20. Il stimule son entourage par son dynamisme." },
-            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, info: "Diana Gaye a 6 sur 20. Demande un suivi individualisé et un tutorat de proximité." },
-            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Amadou Bocoum obtient 14 sur 20. Très bon niveau général et participation active." }
-        ];
-
-        let synth = window.speechSynthesis;
-        let voicesList = [];
-
-        function chargerVoix() {
-            if (!synth) return;
-            voicesList = synth.getVoices();
-        }
-
-        chargerVoix();
-        if (synth && synth.onvoiceschanged !== undefined) {
-            synth.onvoiceschanged = chargerVoix;
-        }
-
-        // Rendu dynamique des pupitres
-        function renderClassroomDesks() {
-            const container = document.getElementById('classroom-container');
-            if (!container) {
-                console.error("Conteneur #classroom-container introuvable !");
-                return;
-            }
-            container.innerHTML = '';
-            studentsDatabase.forEach(student => {
-                const desk = document.createElement('div');
-                desk.className = `desk ${student.mastery ? 'mastery' : 'support'}`;
-                desk.innerHTML = `
-                    <div class="student-name">${student.name}</div>
-                    <div class="student-score">${student.score}/20 — ${student.mastery ? 'Maîtrise' : 'Soutien'}</div>
-                `;
-                desk.onclick = () => showStudentDetails(student.id);
-                container.appendChild(desk);
-            });
-        }
-
-        function showStudentDetails(studentId) {
-            const student = studentsDatabase.find(s => s.id === studentId);
-            if (!student) return;
-            const message = `Élève ${student.name}. Note de ${student.score} sur 20. ${student.info}`;
-            
-            const chatBox = document.getElementById('chat-box');
-            if (chatBox) {
-                chatBox.innerHTML += `
-                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                        <strong>🤖 Synthesis AI :</strong> "${message}"
-                    </div>
-                `;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-            speakText(message);
-        }
-
-        function updateKPISummary() {
-            const total = studentsDatabase.length;
-            const avgScore = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / total).toFixed(1);
-            const masteryCount = studentsDatabase.filter(s => s.mastery).length;
-            const supportCount = total - masteryCount;
-            
-            document.getElementById('kpi-total-students').innerHTML = `${total} <span class="text-xs font-normal text-slate-400">Élèves suivis</span>`;
-            document.getElementById('kpi-avg-score').innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
-            document.getElementById('kpi-mastery-count').innerHTML = `${masteryCount} <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span>`;
-            document.getElementById('kpi-support-count').innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
-        }
-
-        function activateSynthesisAI() {
-            if (!synth) {
-                alert("La synthèse vocale n'est pas supportée par votre navigateur.");
-                return;
-            }
-            updateVoiceStatus('active');
-            const introMsg = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote intelligent pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête.";
-            speakText(introMsg);
-        }
-
-        function speakText(text) {
-            if (!synth) return;
-            synth.cancel();
-
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'fr-FR';
-            utterance.rate = 0.92;
-            utterance.pitch = 1.1;
-
-            if (voicesList.length === 0) {
-                voicesList = synth.getVoices();
-            }
-
-            const voixFeminine = voicesList.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Hortense') || v.name.includes('Julie') || v.name.includes('Amélie'))) 
-                              || voicesList.find(v => v.lang.startsWith('fr'));
-
-            if (voixFeminine) {
-                utterance.voice = voixFeminine;
-            }
-
-            synth.speak(utterance);
-        }
-
-        function updateVoiceStatus(status) {
-            const badge = document.getElementById('voice-status-badge');
-            const dot = document.getElementById('voice-indicator-dot');
-            const text = document.getElementById('voice-status-text');
-            if (!badge || !dot || !text) return;
-
-            if (status === 'active') {
-                badge.classList.add('active');
-                dot.classList.add('active');
-                text.textContent = 'Synthesis AI Active';
-            } else {
-                badge.classList.remove('active');
-                dot.classList.remove('active');
-                text.textContent = 'Synthèse vocale en attente';
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        chalk: ['Patrick Hand', 'cursive'],
+                    },
+                    colors: {
+                        chalkYellow: '#fef08a',
+                        chalkBlue: '#93c5fd',
+                        boardGreen: '#062c1e',
+                    }
+                }
             }
         }
-
-        function handleCommand(command) {
-            const q = command.toLowerCase();
-            let reponse = "";
-
-            if (q.includes('bonjour') || q.includes('salut')) {
-                reponse = "Bonjour Maître Balla. La classe de CE2 A est prête.";
-            } else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-                reponse = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs.";
-            } else if (q.includes('élèves') || q.includes('liste')) {
-                reponse = "Les 12 élèves de la classe sont : " + studentsDatabase.map(s => s.name).join(', ');
-            } else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-                reponse = "L'Effet Vygotsky consiste à placer un élève en soutien à côté d'un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
-            } else {
-                reponse = `J'ai bien reçu votre consigne : "${command}". La classe progresse harmonieusement.`;
-            }
-
-            const chatBox = document.getElementById('chat-box');
-            if (chatBox) {
-                chatBox.innerHTML += `
-                    <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                        <strong>🤖 Synthesis AI :</strong> "${reponse}"
-                    </div>
-                `;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-            speakText(reponse);
-        }
-
-        function readFullBoard() {
-            const msg = "Tableau noir de la classe de CE2 A. Objectif du jour : calcul mental, numération et application de l'Effet Vygotsky.";
-            speakText(msg);
-        }
-
-        // Exécution automatique dès que la page est prête
-        window.addEventListener('DOMContentLoaded', () => {
-            renderClassroomDesks();
-            updateKPISummary();
-        });
     </script>
+</head>
+<body class="h-full flex flex-col bg-slate-950 text-slate-100 overflow-x-hidden">
+    <!-- Header -->
+    <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col lg:flex-row items-center justify-between gap-4">
+            <!-- Institutional Info -->
+            <div class="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-lg shadow-amber-500/20">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">CEB Sénégal • Inspection Mbour</span>
+                            <span class="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">CE2-A</span>
+                        </div>
+                        <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Assistant Pédagogique M. Balla </h1>
+                        <p class="text-xs text-slate-400 hidden sm:block">École El Hadji Malick Sy — Suivi individualisé & Co-pilote vocal Synthesis AI</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Audio Activation & Voice Status -->
+            <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
+                <div id="voice-status-badge" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300">
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-500" id="voice-indicator-dot"></span>
+                    <span id="voice-status-text">Synthèse vocale en attente</span>
+                </div>
+                <button id="btn-activate-voice" onclick="activateSynthesisAI()" class="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition-all cursor-pointer">
+                    <i class="fa-solid fa-volume-high text-base"></i>
+                    <span>🔊 Activer Synthesis AI & la Voix</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
+        <!-- KPI STATS SUMMARY BAR (12 STUDENTS) -->
+        <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Effectif Total</p>
+                <p class="text-2xl font-black text-white mt-1" id="kpi-total-students">12 <span class="text-xs font-normal text-slate-400">Élèves suivis</span></p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Moyenne Classe</p>
+                <p class="text-2xl font-black text-amber-400 mt-1" id="kpi-avg-score">11.6 <span class="text-xs font-normal text-slate-400">/ 20</span></p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Maîtrise Acquise</p>
+                <p class="text-2xl font-black text-emerald-400 mt-1" id="kpi-mastery-count">5 <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span></p>
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
+                <p class="text-xs font-semibold text-slate-400">Soutien & Progrès</p>
+                <p class="text-2xl font-black text-rose-400 mt-1" id="kpi-support-count">7 <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span></p>
+            </div>
+        </section>
+
+        <!-- SECTION: Disposition de la Classe -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-chair"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Disposition de la Classe</h2>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour voir ses détails et écouter son profil vocal</p>
+                </div>
+            </div>
+            <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Les bureaux des élèves seront générés ici par JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECTION 1: BLACKBOARD (TABLEAU NOIR DYNAMIQUE) -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-chalkboard"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Tableau Noir de la Classe (CE2-A)</h2>
+                        <p class="text-xs text-slate-400">Visualisation dynamique des zones de cours — Cliquez sur le bouton pour lire le tableau</p>
+                    </div>
+                </div>
+                <button onclick="readFullBoard()" class="text-xs font-bold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl border border-slate-700 flex items-center gap-2 transition-all cursor-pointer">
+                    <i class="fa-solid fa-play"></i> Lire le tableau à la classe
+                </button>
+            </div>
+            <!-- THE BOARD -->
+            <div class="blackboard-bg rounded-2xl p-6 border-4 border-amber-900/40 shadow-inner">
+                <p class="font-chalk text-lg text-chalkYellow">Maître Balla • École El Hadji Malick Sy (Mbour)</p>
+                <p class="font-chalk text-sm text-chalkBlue mt-1">Objectif du jour : Calcul mental, numération et application de l'Effet Vygotsky.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: CO-PILOTE DIALOGUE SYNTHESIS AI -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-amber-950 border border-amber-600/40 text-amber-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Co-Pilote Intelligent Synthesis AI</h2>
+                    <p class="text-xs text-slate-400">Posez vos questions ou demandez à l'assistant de se présenter</p>
+                </div>
+            </div>
+            
+            <!-- Boîte de Chat -->
+            <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 mb-4 text-xs">
+                <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl">
+                    <strong>🤖 Synthesis AI :</strong> "Bonjour Maître Balla. Cliquez sur <strong>'Activer Synthesis AI'</strong> en haut, puis demandez-moi de me présenter ou cliquez sur un élève."
+                </div>
+            </div>
+
+            <!-- Zone de Saisie -->
+            <div class="flex gap-2">
+                <input type="text" id="teacher-reply-input" placeholder="Ex: Présente-toi, qui est Awa Diop, bilan de la classe..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                <button onclick="handleTeacherInput()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all cursor-pointer">
+                    Envoyer <i class="fa-solid fa-paper-plane ml-1"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Liaison du fichier JavaScript externe -->
+    <script src="script.js"></script>
+    <script>
+        function handleTeacherInput() {
+            const input = document.getElementById('teacher-reply-input');
+            if (!input) return;
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatBox = document.getElementById('chat-box');
+            if (chatBox) {
+                chatBox.innerHTML += `
+                    <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
+                        <strong>Maître Balla :</strong> "${query}"
+                    </div>
+                `;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+            input.value = '';
+
+            if (typeof handleCommand === 'function') {
+                handleCommand(query);
+            }
+        }
+    </script>
+</body>
+</html>
