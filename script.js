@@ -21,10 +21,10 @@ let recognition = null;
 let isManualMode = false;
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
-// MÉMOIRE DES RÈGLES DE COMPORTEMENT (Malado apprend de vos conseils en direct)
+// MÉMOIRE DES RÈGLES DE COMPORTEMENT PERSONNALISÉES (Persistante)
 let maladoRules = JSON.parse(localStorage.getItem('malado_dynamic_rules')) || {
-    requireWakeWord: true,     // Si true, demande "Assistante". Si false, répond directement à tout.
-    directAnswersOnly: true    // Si true, va droit au but sans bavardage
+    requireWakeWord: true,     // Exige "Assistante" en mode auto
+    politeMode: false          // Mode poli mémorisé
 };
 
 function chargerVoix() {
@@ -118,7 +118,7 @@ function handleCurriculumUpload(event) {
     reader.onload = function(e) {
         schoolKnowledgeBase = e.target.result;
         localStorage.setItem('malado_custom_knowledge', schoolKnowledgeBase);
-        const msg = ` Programme ${file.name} intégré et mémorisé.`;
+        const msg = `Programme ${file.name} intégré.`;
         
         const chatBox = document.getElementById('chat-box');
         if (chatBox) {
@@ -151,7 +151,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Cerveau intelligent de Malado avec Auto-Apprentissage de vos conseils
+// Cerveau avec apprentissage étendu des consignes de comportement
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -167,28 +167,35 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // 1. APPRENTISSAGE AUTonome : Si vous lui donnez un conseil ou modifiez une règle en direct
-    if (q.includes('plus besoin de dire assistante') || q.includes('ne dis plus assistante') || q.includes('réponds directement')) {
+    // 1. APPRENTISSAGE DE LA POLITESSE (Enregistré en mémoire persistante)
+    if (q.includes('politesse') || q.includes('poliment') || q.includes('avec politesse')) {
+        maladoRules.politeMode = true;
+        localStorage.setItem('malado_dynamic_rules', JSON.stringify(maladoRules));
+        reponse = "C'est bien compris, Maître Balla. J'ajusterai désormais mes réponses avec toute la déférence et la politesse requises.";
+    }
+    else if (q.includes('plus besoin de dire assistante') || q.includes('ne dis plus assistante')) {
         maladoRules.requireWakeWord = false;
         localStorage.setItem('malado_dynamic_rules', JSON.stringify(maladoRules));
-        reponse = "C'est compris. Je réponds désormais directement à toutes vos phrases sans exiger le mot 'Assistante'.";
+        reponse = "Entendu, je réponds directement à présent.";
     }
-    else if (q.includes('exige assistante') || q.includes('remets le mot assistante')) {
+    else if (q.includes('exige assistante')) {
         maladoRules.requireWakeWord = true;
         localStorage.setItem('malado_dynamic_rules', JSON.stringify(maladoRules));
-        reponse = "Entendu. Je passe en mode d'écoute avec le mot-clé 'Assistante'.";
+        reponse = "Mode avec mot-clé réactivé.";
     }
-    // 2. Traitement des commandes pédagogiques habituelles
+    // 2. COMMANDES PÉDAGOGIQUES
     else if (isManualMode || !maladoRules.requireWakeWord || maladoModeAwake || q.includes('assistante')) {
         
-        // Si le mot 'assistante' a été prononcé alors que requireWakeWord était actif, on le retire de la phrase analysée
         let cleanQ = q.replace('assistante', '').trim();
 
         if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('soutien')) {
             let forts = studentsDatabase.filter(s => s.mastery).sort((a,b) => b.score - a.score);
             let faibles = studentsDatabase.filter(s => !s.mastery).sort((a,b) => a.score - b.score);
             
-            reponse = "Binômes Vygotsky :\n";
+            reponse = maladoRules.politeMode 
+                ? "Maître Balla, voici respectueusement les binômes Vygotsky suggérés :\n" 
+                : "Binômes Vygotsky :\n";
+            
             for(let i = 0; i < Math.min(forts.length, faibles.length); i++) {
                 reponse += `• ${forts[i].name} (${forts[i].score}) + ${faibles[i].name} (${faibles[i].score})\n`;
             }
@@ -196,30 +203,27 @@ function handleCommand(command) {
         else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan')) {
             let avg = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1);
             let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
-            reponse = `Moyenne : ${avg}/20. ${faiblesCount} élèves en soutien.`;
+            reponse = maladoRules.politeMode
+                ? `Pour vous servir, la moyenne de la classe est de ${avg}/20, avec ${faiblesCount} élèves nécessitant un soutien.`
+                : `Moyenne : ${avg}/20. ${faiblesCount} élèves en soutien.`;
         }
         else if (cleanQ.includes('présente-toi') || cleanQ.includes('presente toi') || cleanQ.includes('qui es-tu')) {
-            reponse = "Malado, assistante pédagogique de la CE2-A à El Hadji Malick Sy.";
-        } 
-        else if (cleanQ.includes('capable') || cleanQ.includes('capacités')) {
-            reponse = "Suivi des 12 élèves, binômes Vygotsky, stats et programmes locaux.";
-        } 
-        else if (cleanQ.includes('élèves') || cleanQ.includes('liste')) {
-            reponse = "Effectif : " + studentsDatabase.map(s => `${s.name} (${s.score})`).join(', ') + ".";
+            reponse = maladoRules.politeMode
+                ? "Je suis Malado, votre humble et dévouée assistante pédagogique pour la classe de CE2-A."
+                : "Je suis Malado, assistante pédagogique de la CE2-A.";
         } 
         else {
-            reponse = `C'est noté.`;
+            reponse = maladoRules.politeMode ? "C'est bien noté, Maître Balla." : "C'est noté.";
         }
         
         maladoModeAwake = false;
     } 
     else {
-        // Mode Écoute Auto avec exigence du mot-clé
         if (q.includes('assistante')) {
             maladoModeAwake = true;
-            reponse = "Oui ?";
+            reponse = maladoRules.politeMode ? "Oui, Maître Balla ?" : "Oui ?";
         } else {
-            reponse = ""; // Silence radio si le mot-clé n'est pas dit
+            reponse = ""; 
         }
     }
 
