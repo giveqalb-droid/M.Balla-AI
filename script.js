@@ -16,8 +16,9 @@ const studentsDatabase = [
 
 let synth = window.speechSynthesis;
 let voicesList = [];
-let maladoModeAwake = false; // Indicateur si l'assistante a été appelée
+let maladoModeAwake = false; 
 let recognition = null;
+let isManualMode = false; // Par défaut : Mode Écoute Auto ("Assistante")
 
 // Charger les voix du navigateur
 function chargerVoix() {
@@ -144,37 +145,32 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // ÉTAPE 1 : Si on prononce le mot-clé "Assistante"
-    if (q.includes('assistante')) {
-        maladoModeAwake = true; // L'assistante est réveillée
-        reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous ?";
-    } 
-    // ÉTAPE 2 : Si l'assistante est éveillée, elle traite les ordres
-    else if (maladoModeAwake) {
+    // SI ON EST EN MODE MANUEL (Déclenché par le bouton micro) OU QUE L'ASSISTANTE A ÉTÉ RÉVEILLÉE
+    if (isManualMode || maladoModeAwake) {
         if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
             reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
-            maladoModeAwake = false; // Retour en mode veille silencieuse
         } 
         else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu') || q.includes('que fais') || q.includes('fonctionnalités')) {
             reponse = "En tant qu'assistante, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
-            maladoModeAwake = false;
         } 
         else if (q.includes('élèves') || q.includes('liste')) {
             reponse = "Les 12 élèves de la classe de CE2-A sont : " + studentsDatabase.map(s => s.name).join(', ') + ".";
-            maladoModeAwake = false;
         } 
         else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
             reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
-            maladoModeAwake = false;
         } 
         else {
             reponse = `J'ai bien noté : "${command}". Je veille sur la classe.`;
-            maladoModeAwake = false;
         }
+        maladoModeAwake = false; // Réinitialiser le réveil auto
     } 
-    // ÉTAPE 3 : Si on parle sans dire "Assistante" au préalable
+    // EN MODE AUTO : Vérifier le mot-clé "Assistante"
+    else if (q.includes('assistante')) {
+        maladoModeAwake = true;
+        reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous ?";
+    } 
     else {
-        reponse = "Veuillez d'abord dire 'Assistante' pour attirer mon attention, Maître Balla.";
+        reponse = "Veuillez dire 'Assistante' pour m'activer, ou passez en Mode Manuel en haut pour utiliser le bouton micro.";
     }
 
     if (chatBox) {
@@ -189,13 +185,66 @@ function handleCommand(command) {
     speakText(reponse);
 }
 
-// Initialisation du micro en arrière-plan discret et silencieux
-function initVoiceRecognition() {
+// Bouton Switch Mode (Auto / Manuel)
+function toggleVoiceMode() {
+    isManualMode = !isManualMode;
+    const modeText = document.getElementById('mode-text');
+    const modeIcon = document.getElementById('mode-icon');
+
+    if (isManualMode) {
+        if (recognition) { try { recognition.stop(); } catch(e) {} }
+        modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
+        modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
+    } else {
+        modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
+        modeIcon.className = "fa-solid fa-microphone text-emerald-400";
+        initVoiceRecognition();
+    }
+}
+
+// Fonction du petit micro manuel dans la discussion
+function startManualListening() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-        console.warn("La reconnaissance vocale n'est pas supportée par ce navigateur.");
+        alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
         return;
     }
+
+    const manualRec = new SpeechRecognition();
+    manualRec.lang = 'fr-FR';
+    manualRec.continuous = false;
+    manualRec.interimResults = false;
+
+    const micBtnIcon = document.querySelector('#btn-manual-mic i');
+    if (micBtnIcon) micBtnIcon.className = "fa-solid fa-spinner fa-spin text-amber-400";
+
+    manualRec.onresult = function(event) {
+        const transcript = event.results[0][0].transcript.trim();
+        if (micBtnIcon) micBtnIcon.className = "fa-solid fa-microphone text-amber-400";
+        handleCommand(transcript);
+    };
+
+    manualRec.onerror = function(event) {
+        if (micBtnIcon) micBtnIcon.className = "fa-solid fa-microphone text-amber-400";
+    };
+
+    manualRec.onend = function() {
+        if (micBtnIcon) micBtnIcon.className = "fa-solid fa-microphone text-amber-400";
+    };
+
+    try {
+        manualRec.start();
+    } catch(e) {
+        if (micBtnIcon) micBtnIcon.className = "fa-solid fa-microphone text-amber-400";
+    }
+}
+
+// Initialisation de la veille vocale (Mode Auto)
+function initVoiceRecognition() {
+    if (isManualMode) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
 
     recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
@@ -204,27 +253,22 @@ function initVoiceRecognition() {
 
     recognition.onresult = function(event) {
         const transcript = event.results[0][0].transcript.trim();
-        console.log("Voix entendue :", transcript);
         handleCommand(transcript);
     };
 
-    recognition.onerror = function(event) {
-        // Mode discret : aucune alerte visuelle ou sonore en cas d'erreur de veille
-    };
+    recognition.onerror = function(event) {};
 
     recognition.onend = function() {
-        // Redémarrage automatique et silencieux pour maintenir la veille
-        setTimeout(() => {
-            try { recognition.start(); } catch(e) {}
-        }, 500);
+        if (!isManualMode) {
+            setTimeout(() => {
+                try { recognition.start(); } catch(e) {}
+            }, 500);
+        }
     };
 
     try {
         recognition.start();
-        console.log("Veille vocale silencieuse active (Dites 'Assistante')...");
-    } catch(e) {
-        console.error("Impossible de démarrer l'écoute micro :", e);
-    }
+    } catch(e) {}
 }
 
 // Lancement au chargement de la page
@@ -232,7 +276,6 @@ window.addEventListener('DOMContentLoaded', () => {
     renderClassroomDesks();
     updateKPISummary();
     
-    // Démarrage de la veille discrète
     setTimeout(() => {
         initVoiceRecognition();
     }, 1000);
