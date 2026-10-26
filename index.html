@@ -1,3 +1,6 @@
+😊 Désolé pour l'attente ! Voici le `index.html` complet avec le conteneur des bureaux :
+
+```
 <!DOCTYPE html>
 <html lang="fr" class="h-full bg-slate-950 text-slate-100 font-sans">
 <head>
@@ -82,6 +85,22 @@
             </div>
         </section>
 
+        <!-- SECTION: Disposition de la Classe -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-chair"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Disposition de la Classe</h2>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour voir ses détails</p>
+                </div>
+            </div>
+            <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Les bureaux des élèves seront générés ici -->
+            </div>
+        </section>
+
         <!-- SECTION 1: BLACKBOARD (TABLEAU NOIR DYNAMIQUE) -->
         <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
@@ -99,12 +118,5 @@
                 </button>
             </div>
             <!-- THE BOARD -->
-            <div class="blackboard-bg rounded-2xl p-6 border-8 border-amber-950 shadow-inner grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[200px]">
-                <!-- Zone 1: Calcul / Chiffres (Craie Jaune) -->
-                <div onclick="speakText('Au tableau, zone Calcul : Addition posée avec retenue. Exemple : 3 4 8 plus 2 7 5. Règle : N\'oubliez pas la retenue dans la colonne des dizaines !')" class="p-4 rounded-xl border border-emerald-800/50 hover:bg-emerald-900/20 cursor-pointer transition-all group">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-bold px-2 py-0.5 rounded bg-yellow-400/20 text-yellow-300 border border-yellow-400/30 uppercase tracking-wider">Zone Chiffres & Calcul (Jaune)</span>
-                        <i class="fa-solid fa-volume-low text-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                    </div>
-                    <div class="font-chalk text-2xl sm:text-3xl chalk-text-yellow space-y
+            <div class="blackboard-bg rounded-2xl p-6 border-8 border-amber-950 shadow-inner grid grid-cols-1 md:grid-cols-2
 ```
