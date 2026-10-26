@@ -14,18 +14,24 @@ const studentsDatabase = [
     { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Amadou Bocoum obtient 14 sur 20. Très bon niveau général et participation active." }
 ];
 
-// Variables globales
-let synthesisActive = false;
-const synth = window.speechSynthesis;
-let recognition;
+let synth = window.speechSynthesis;
+let voicesList = [];
+
+// Chargement sécurisé des voix du navigateur
+function chargerVoix() {
+    if (!synth) return;
+    voicesList = synth.getVoices();
+}
+
+chargerVoix();
+if (synth && synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = chargerVoix;
+}
 
 // Rendu des pupitres des élèves
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
-    if (!container) {
-        console.error("Element #classroom-container introuvable !");
-        return;
-    }
+    if (!container) return;
     container.innerHTML = '';
     studentsDatabase.forEach(student => {
         const desk = document.createElement('div');
@@ -43,7 +49,6 @@ function renderClassroomDesks() {
 function showStudentDetails(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
-    
     const message = `Élève ${student.name}. Note de ${student.score} sur 20. ${student.info}`;
     speakText(message);
 }
@@ -61,37 +66,36 @@ function updateKPISummary() {
     document.getElementById('kpi-support-count').innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Activation de Synthesis AI avec voix féminine fluide unique
+// Bouton principal d'activation (déclenche obligatoirement le son)
 function activateSynthesisAI() {
     if (!synth) {
-        alert("La synthèse vocale n'est pas supportée par ce navigateur.");
+        alert("La synthèse vocale n'est pas supportée par votre navigateur.");
         return;
     }
-    synthesisActive = true;
     updateVoiceStatus('active');
-    
-    const introMsg = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote intelligent pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis activée et prête.";
+    const introMsg = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote intelligent pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. Je suis active et prête.";
     speakText(introMsg);
-    
-    if (recognition) {
-        try { recognition.start(); } catch(e) {}
-    }
 }
 
-// Synthèse vocale fluide et exclusive (Voix féminine)
+// Fonction centrale de synthèse vocale (Voix féminine fluide)
 function speakText(text) {
     if (!synth) return;
-    synth.cancel(); // Annule toute parole précédente pour éviter les superpositions
+    
+    // Annule la parole précédente pour éviter les files d'attente bloquées
+    synth.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'fr-FR';
     utterance.rate = 0.92;
     utterance.pitch = 1.1;
 
-    // Sélection stricte d'une voix féminine française si disponible
-    const voices = synth.getVoices();
-    const voixFeminine = voices.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Hortense') || v.name.includes('Julie'))) 
-                      || voices.find(v => v.lang.startsWith('fr'));
+    // Recherche d'une voix féminine en français
+    if (voicesList.length === 0) {
+        voicesList = synth.getVoices();
+    }
+
+    const voixFeminine = voicesList.find(v => v.lang.startsWith('fr') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Hortense') || v.name.includes('Julie') || v.name.includes('Amélie'))) 
+                      || voicesList.find(v => v.lang.startsWith('fr'));
 
     if (voixFeminine) {
         utterance.voice = voixFeminine;
@@ -117,45 +121,7 @@ function updateVoiceStatus(status) {
     }
 }
 
-// Initialisation de la reconnaissance vocale
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'fr-FR';
-    recognition.continuous = false;
-
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript.toLowerCase();
-        console.log('Reconnu :', transcript);
-        handleCommand(transcript);
-    };
-
-    recognition.onerror = (event) => {
-        console.error('Erreur de reconnaissance vocale:', event);
-    };
-
-    recognition.onend = () => {
-        try { recognition.start(); } catch(e) {}
-    };
-}
-
-// Gestion intelligente des commandes (avec explication de l'Effet Vygotsky)
-function handleCommand(command) {
-    const q = command.toLowerCase();
-
-    if (q.includes('bonjour') || q.includes('salut')) {
-        speakText("Bonjour Maître Balla. La classe de CE2 A est prête.");
-    } else if (q.includes('présente') || q.includes('presentation') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-        presentSelf();
-    } else if (q.includes('élèves') || q.includes('liste')) {
-        listStudents();
-    } else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-        speakText("L'Effet Vygotsky consiste à placer un élève en soutien à côté d'un élève fort. Le tuteur aide son camarade à progresser dans sa zone proximale de développement.");
-    } else {
-        speakText("J'ai bien reçu votre consigne. Je analyse les progrès de la classe.");
-    }
-}
-
-// Présentation complète de Synthesis AI et de l'Effet Vygotsky
+// Présentation vocale et explication de l'Effet Vygotsky
 function presentSelf() {
     const presentation = "Bonjour Maître Balla. Je suis Synthesis AI, votre co-pilote pédagogique pour la classe de CE2 A à l'école El Hadji Malick Sy de Mbour. " +
                          "J'analyse les résultats de vos 12 élèves et j'applique la théorie de l'Effet Vygotsky pour organiser le tutorat par les pairs, " +
@@ -163,23 +129,12 @@ function presentSelf() {
     speakText(presentation);
 }
 
-// Lister les élèves
-function listStudents() {
-    const names = studentsDatabase.map(s => s.name).join(', ');
-    speakText("Les 12 élèves de la classe sont : " + names);
-}
-
 // Lecture globale du tableau
 function readFullBoard() {
     speakText("Tableau noir de la classe de CE2 A. Activités du jour : calcul mental, numération et lecture active.");
 }
 
-// Chargement initial des voix
-if ('speechSynthesis' in window) {
-    synth.onvoiceschanged = () => { synth.getVoices(); };
-}
-
-// Initialisation au chargement de la page
+// Initialisation au chargement
 window.addEventListener('DOMContentLoaded', () => {
     renderClassroomDesks();
     updateKPISummary();
