@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant Pédagogique MALADO — CI-A</title>
+    <title>Assistant Pédagogique M. Balla — CE2-A</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -41,8 +41,8 @@
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">CEB Sénégal • Inspection Mbour</span>
                             <span class="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">CE2-A</span>
                         </div>
-                        <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Assistant Pédagogique MALADO </h1>
-                        <p class="text-xs text-slate-400 hidden sm:block">École El Hadji IBRAHIMA NIASS — Suivi individualisé & Co-pilote vocal Malado</p>
+                        <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Assistant Pédagogique M. Balla </h1>
+                        <p class="text-xs text-slate-400 hidden sm:block">École El Hadji Malick Sy — Suivi individualisé & Co-pilote vocal Malado</p>
                     </div>
                 </div>
             </div>
@@ -82,23 +82,7 @@
             </div>
         </section>
 
-        <!-- SECTION: Disposition de la Classe -->
-        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
-                    <i class="fa-solid fa-chair"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-white">Disposition de la Classe</h2>
-                    <p class="text-xs text-slate-400">Cliquez sur un élève pour voir ses détails et écouter son profil vocal</p>
-                </div>
-            </div>
-            <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Les bureaux des élèves seront générés ici par JavaScript -->
-            </div>
-        </section>
-
-        <!-- SECTION 1: BLACKBOARD (TABLEAU NOIR DYNAMIQUE) -->
+        <!-- SECTION 1: BLACKBOARD (TABLEAU NOIR DYNAMIQUE - PLACÉ EN HAUT) -->
         <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                 <div class="flex items-center gap-3">
@@ -116,8 +100,24 @@
             </div>
             <!-- THE BOARD -->
             <div class="blackboard-bg rounded-2xl p-6 border-4 border-amber-900/40 shadow-inner">
-                <p class="font-chalk text-lg text-chalkYellow">Maître Balla • École El Hadji IBRAHIMA NIASS)</p>
+                <p class="font-chalk text-lg text-chalkYellow">Maître Balla • École El Hadji Malick Sy (Mbour)</p>
                 <p class="font-chalk text-sm text-chalkBlue mt-1">Objectif du jour : Calcul mental, numération et application de l'Effet Vygotsky.</p>
+            </div>
+        </section>
+
+        <!-- SECTION: Disposition de la Classe (PLACÉE EN DESSOUS DU TABLEAU) -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
+                    <i class="fa-solid fa-chair"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-white">Disposition de la Classe</h2>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour voir ses détails et écouter son profil vocal</p>
+                </div>
+            </div>
+            <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                <!-- Les bureaux des élèves seront générés ici par JavaScript -->
             </div>
         </section>
 
@@ -140,8 +140,8 @@
                 </div>
             </div>
 
-          <!-- Zone de Saisie -->
-          <div class="flex gap-2">
+            <!-- Zone de Saisie -->
+            <div class="flex gap-2">
                 <input type="text" id="teacher-reply-input" placeholder="Ex: Présente-toi, qui est Awa Diop, bilan de la classe..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
                 <button onclick="handleTeacherInput()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all cursor-pointer">
                     Envoyer <i class="fa-solid fa-paper-plane ml-1"></i>
