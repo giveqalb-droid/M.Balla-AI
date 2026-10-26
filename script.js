@@ -1,5 +1,5 @@
-// Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal)
-const studentsDatabase = [
+// Base de données initiale ou chargée depuis la mémoire locale de l'école
+let studentsDatabase = JSON.parse(localStorage.getItem('malado_students_db')) || [
     { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Excellente et rigoureuse. Idéale comme tutrice." },
     { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "En difficulté en calcul. À jumeler avec un tuteur (Effet Vygotsky)." },
     { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, info: "Bonne élève, attentive en grammaire." },
@@ -18,7 +18,8 @@ let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false; // Faux par défaut (Mode Auto actif)
+let isManualMode = false;
+let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé pour le moment.";
 
 function chargerVoix() {
     if (!synth) return;
@@ -29,7 +30,6 @@ if (synth && synth.onvoiceschanged !== undefined) {
     synth.onvoiceschanged = chargerVoix;
 }
 
-// Stoppe la parole instantanément
 function stopSpeaking() {
     if (synth) synth.cancel();
 }
@@ -87,27 +87,48 @@ function showStudentDetails(studentId) {
     }
 
     speakText(message);
-    alert(`FICHE ÉLÈVE — CE2-A\n-------------------------\n${message}`);
+    
+    // Possibilité d'évoluer : Demander si on veut modifier la note de l'élève en direct
+    let nouvelleNote = prompt(`Fiche de ${student.name}\nNote actuelle : ${student.score}/20\n\nEntrez une nouvelle note pour mettre à jour la base de données locale (ou laissez vide) :`, student.score);
+    if (nouvelleNote !== null && nouvelleNote.trim() !== "") {
+        let noteNum = parseFloat(nouvelleNote);
+        if (!isNaN(noteNum) && noteNum >= 0 && noteNum <= 20) {
+            student.score = noteNum;
+            student.mastery = noteNum >= 12;
+            localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
+            renderClassroomDesks();
+            updateKPISummary();
+            speakText(`Note de ${student.name} mise à jour à ${noteNum} sur 20.`);
+        }
+    }
 }
 
+// Apprentissage par l'importation de documents (Base de données locale de l'école)
 function handleCurriculumUpload(event) {
     stopSpeaking();
     const file = event.target.files[0];
     if (!file) return;
 
     document.getElementById('upload-file-label').textContent = file.name;
-    const msg = `Programme ${file.name} chargé. Suivi synchronisé.`;
-    
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
-                <strong>🤖 Malado :</strong> "${msg}"
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-    speakText(msg);
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        schoolKnowledgeBase = e.target.result;
+        localStorage.setItem('malado_custom_knowledge', schoolKnowledgeBase);
+        
+        const msg = `Programme ${file.name} intégré et mémorisé dans la base locale de l'école. J'ai appris de nouveaux contenus.`;
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+            chatBox.innerHTML += `
+                <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2">
+                    <strong>🤖 Malado :</strong> "${msg}"
+                </div>
+            `;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+        speakText(msg);
+    };
+    reader.readAsText(file);
 }
 
 function updateKPISummary() {
@@ -127,9 +148,9 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Réponses directes et sans bavardage
+// Intelligence évolutive et génération dynamique basée sur les données réelles de la classe
 function handleCommand(command) {
-    stopSpeaking(); // Se tait immédiatement dès que tu parles
+    stopSpeaking(); 
     const q = command.toLowerCase().trim();
     let reponse = "";
 
@@ -145,23 +166,40 @@ function handleCommand(command) {
 
     if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         
+        // Génération dynamique des binômes Vygotsky basée sur les vraies notes actuelles
         if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme') || q.includes('soutien')) {
-            reponse = "Binômes Vygotsky :\n• Awa (14) + Oumar (9)\n• Aïcha (15) + Moussa (7)\n• Karim (16) + Diana (6).";
+            let forts = studentsDatabase.filter(s => s.mastery).sort((a,b) => b.score - a.score);
+            let faibles = studentsDatabase.filter(s => !s.mastery).sort((a,b) => a.score - b.score);
+            
+            reponse = "Binômes Vygotsky dynamiques (selon la base actuelle) :\n";
+            for(let i = 0; i < Math.min(forts.length, faibles.length); i++) {
+                reponse += `• ${forts[i].name} (${forts[i].score}) coache ${faibles[i].name} (${faibles[i].score})\n`;
+            }
         }
         else if (q.includes('pédagogie') || q.includes('classe') || q.includes('bilan')) {
-            reponse = "Moyenne 11.6/20. 7 élèves en soutien prioritaires sur le calcul et la lecture.";
+            let avg = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1);
+            let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
+            reponse = `Bilan de la base locale : Moyenne de ${avg}/20. ${faiblesCount} élèves nécessitent un soutien rapproché.`;
         }
         else if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu')) {
-            reponse = "Je suis Malado, ton assistante pédagogique pour la CE2-A à El Hadji Malick Sy.";
+            reponse = "Je suis Malado, assistante pédagogique évolutive pour la classe de CE2-A.";
         } 
         else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu')) {
-            reponse = "Suivi des 12 élèves, gestion des binômes Vygotsky, stats et programme officiel.";
+            reponse = "Je m'adapte aux données locales, j'analyse les notes enregistrées, j'organise le tutorat Vygotsky et j'intègre vos programmes importés.";
         } 
         else if (q.includes('élèves') || q.includes('liste')) {
-            reponse = "Élèves : " + studentsDatabase.map(s => `${s.name} (${s.score})`).join(', ') + ".";
+            reponse = "Effectif actuel en mémoire : " + studentsDatabase.map(s => `${s.name} (${s.score}/20)`).join(', ') + ".";
         } 
+        // Recherche intelligente dans le contenu du fichier importé
+        else if (q.includes('programme') || q.includes('leçon') || q.includes('cours')) {
+            if (schoolKnowledgeBase !== "Aucun programme spécifique importé pour le moment.") {
+                reponse = `Extrait de la base documentaire locale : "${schoolKnowledgeBase.substring(0, 150)}..."`;
+            } else {
+                reponse = "Aucun programme n'a encore été importé dans la base locale de l'école.";
+            }
+        }
         else {
-            reponse = `C'est noté.`;
+            reponse = `Donnée enregistrée. Je m'adapte à votre consigne : "${command}".`;
         }
         
         maladoModeAwake = false;
@@ -189,7 +227,6 @@ function handleCommand(command) {
     }
 }
 
-// Correction du bouton de bascule Mode Auto / Manuel
 function toggleVoiceMode() {
     stopSpeaking();
     isManualMode = !isManualMode;
@@ -197,23 +234,17 @@ function toggleVoiceMode() {
     const modeIcon = document.getElementById('mode-icon');
 
     if (isManualMode) {
-        if (recognition) { 
-            try { recognition.stop(); } catch(e) {} 
-            recognition = null; 
-        }
+        if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
         maladoModeAwake = false;
-        modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
+        modeText.textContent = "Mode : Manuel (Micro requis)";
         modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
-        console.log("Mode Manuel activé.");
     } else {
         modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
         modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
-        console.log("Mode Écoute Auto activé.");
     }
 }
 
-// Micro manuel dans la zone de chat
 function startManualListening() {
     stopSpeaking(); 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -241,7 +272,6 @@ function startManualListening() {
     try { manualRec.start(); } catch(e) {}
 }
 
-// Initialisation de la veille vocale automatique
 function initVoiceRecognition() {
     if (isManualMode) return;
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
