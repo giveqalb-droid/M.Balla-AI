@@ -16,8 +16,8 @@ const studentsDatabase = [
 
 let synth = window.speechSynthesis;
 let voicesList = [];
-let uploadedCurriculumText = "";
-let maladoListeningActive = false;
+let maladoModeAwake = false; // Indicateur si Malado a été appelée par "Ya Malado"
+let recognition = null;
 
 // Charger les voix du navigateur
 function chargerVoix() {
@@ -98,8 +98,6 @@ function handleCurriculumUpload(event) {
     if (!file) return;
 
     document.getElementById('upload-file-label').textContent = file.name;
-    uploadedCurriculumText = `Programme officiel chargé via ${file.name}`;
-
     const confirmationMsg = `Programme officiel ${file.name} pris en compte avec succès, Maître Balla.`;
     
     const chatBox = document.getElementById('chat-box');
@@ -131,37 +129,54 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Gestion des commandes de Malado (Texte et Vocal)
+// Traitement intelligent des commandes
 function handleCommand(command) {
     const q = command.toLowerCase().trim();
     let reponse = "";
 
-    // Fonctionnalité "Ya Malado"
-    if (q.includes('ya malado') || q.includes('dis malado') || q.includes('salut malado')) {
-        reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous savoir sur la classe de CE2-A ?";
-    } 
-    else if (q.includes('bonjour') || q.includes('salut')) {
-        reponse = "Bonjour Maître Balla. C'est Malado. La classe de CE2-A de l'école El Hadji Malick Sy est prête.";
-    } 
-    // Présentation simple
-    else if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
-        reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
-    } 
-    // Présentation approfondie (capacités)
-    else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu') || q.includes('que fais') || q.includes('fonctionnalités')) {
-        reponse = "En tant que Malado, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour organiser le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
-    } 
-    else if (q.includes('élèves') || q.includes('liste')) {
-        reponse = "Les 12 élèves de la classe de CE2-A sont : " + studentsDatabase.map(s => s.name).join(', ') + ".";
-    } 
-    else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
-        reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
-    } 
-    else {
-        reponse = `J'ai bien pris en compte votre consigne Maître Balla : "${command}". Je veille sur la classe.`;
+    const chatBox = document.getElementById('chat-box');
+    if (chatBox) {
+        chatBox.innerHTML += `
+            <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
+                <strong>Maître Balla (Vocal) :</strong> "${command}"
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    const chatBox = document.getElementById('chat-box');
+    // ÉTAPE 1 : Si on appelle "Ya Malado"
+    if (q.includes('ya malado') || q.includes('dis malado') || q.includes('salut malado')) {
+        maladoModeAwake = true; // Malado est réveillée et prête à écouter l'ordre suivant
+        reponse = "Oui Maître Balla, je vous écoute. Que souhaitez-vous ?";
+    } 
+    // ÉTAPE 2 : Si Malado est éveillée, elle traite les ordres
+    else if (maladoModeAwake) {
+        if (q.includes('présente-toi') || q.includes('presente toi') || q.includes('qui es-tu') || q.includes('qui es tu')) {
+            reponse = "Je m'appelle Malado, votre assistante pédagogique et co-pilote pour la classe de CE2-A à l'école El Hadji Malick Sy de Mbour, au Sénégal. Je suis là pour vous accompagner dans le suivi individualisé de vos 12 élèves.";
+            maladoModeAwake = false; // Retour en mode veille après l'action
+        } 
+        else if (q.includes('capable') || q.includes('capacités') || q.includes('fais-tu') || q.includes('que fais') || q.includes('fonctionnalités')) {
+            reponse = "En tant que Malado, voici mes capacités :\n1. Suivi individualisé des 12 élèves de CE2-A.\n2. Application de l'Effet Vygotsky pour le tutorat par les pairs.\n3. Analyse des statistiques de la classe.\n4. Intégration du Programme Éducatif National du Sénégal.\n5. Consultation des fiches élèves au clic.";
+            maladoModeAwake = false;
+        } 
+        else if (q.includes('élèves') || q.includes('liste')) {
+            reponse = "Les 12 élèves de la classe de CE2-A sont : " + studentsDatabase.map(s => s.name).join(', ') + ".";
+            maladoModeAwake = false;
+        } 
+        else if (q.includes('vygotsky') || q.includes('tuteur') || q.includes('binôme')) {
+            reponse = "L'Effet Vygotsky consiste à associer un élève en soutien avec un élève fort pour stimuler son apprentissage dans sa zone proximale de développement.";
+            maladoModeAwake = false;
+        } 
+        else {
+            reponse = `J'ai bien noté : "${command}". Je veille sur la classe.`;
+            maladoModeAwake = false;
+        }
+    } 
+    // ÉTAPE 3 : Si on parle sans dire "Ya Malado" au préalable
+    else {
+        reponse = "Veuillez d'abord dire 'Ya Malado' pour attirer mon attention, Maître Balla.";
+    }
+
     if (chatBox) {
         chatBox.innerHTML += `
             <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2 whitespace-pre-line">
@@ -171,11 +186,10 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Malado répond à voix haute
     speakText(reponse);
 }
 
-// Activation de la reconnaissance vocale du navigateur (Microphone)
+// Initialisation du micro (Mode intelligent : actif mais en veille d'écoute)
 function initVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -183,45 +197,31 @@ function initVoiceRecognition() {
         return;
     }
 
-    const recognition = new SpeechRecognition();
+    recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
-    recognition.continuous = true;
+    recognition.continuous = false; // S'arrête après chaque phrase pour éviter de capter en continu
     recognition.interimResults = false;
 
     recognition.onresult = function(event) {
-        const transcript = event.results[event.results.length - 1][0].transcript.trim();
+        const transcript = event.results[0][0].transcript.trim();
         console.log("Voix entendue :", transcript);
-
-        // Afficher ce que le maître a dit dans le chat
-        const chatBox = document.getElementById('chat-box');
-        if (chatBox) {
-            chatBox.innerHTML += `
-                <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
-                    <strong>Maître Balla (Vocal) :</strong> "${transcript}"
-                </div>
-            `;
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // Traiter la commande vocale
         handleCommand(transcript);
     };
 
     recognition.onerror = function(event) {
-        console.error("Erreur de reconnaissance vocale :", event.error);
+        console.warn("Erreur micro (normal en veille) :", event.error);
     };
 
     recognition.onend = function() {
-        // Relancer automatiquement l'écoute pour garder Malado active en permanence
-        if (maladoListeningActive) {
+        // Redémarrer automatiquement l'écoute pour rester en arrière-plan sans bloquer
+        setTimeout(() => {
             try { recognition.start(); } catch(e) {}
-        }
+        }, 500);
     };
 
     try {
         recognition.start();
-        maladoListeningActive = true;
-        console.log("Malado écoute activement le microphone...");
+        console.log("Malado est en veille d'écoute (Dites 'Ya Malado')...");
     } catch(e) {
         console.error("Impossible de démarrer l'écoute micro :", e);
     }
@@ -232,7 +232,7 @@ window.addEventListener('DOMContentLoaded', () => {
     renderClassroomDesks();
     updateKPISummary();
     
-    // Démarrer l'écoute vocale au premier clic ou chargement
+    // Démarrer la veille vocale
     setTimeout(() => {
         initVoiceRecognition();
     }, 1000);
