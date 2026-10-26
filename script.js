@@ -16,7 +16,7 @@ const studentsDatabase = [
 
 let synth = window.speechSynthesis;
 let voicesList = [];
-let maladoModeAwake = false; // Indicateur si Malado a été appelée par "Ya Malado"
+let maladoModeAwake = false; // Indicateur si Malado a été appelée par "badiéne"
 let recognition = null;
 
 // Charger les voix du navigateur
