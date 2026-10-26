@@ -134,9 +134,9 @@ function readFullBoard() {
     speakText("Tableau noir de la classe de CE2 A. Activités du jour : calcul mental, numération et lecture active.");
 }
 
-// Initialisation au chargement de la page et des éléments DOM
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Chargement de la classe CE2-A...");
+// Initialisation ultra-sécurisée au chargement complet de la page
+window.addEventListener('DOMContentLoaded', () => {
+    console.log("Initialisation de la classe de CE2-A...");
     renderClassroomDesks();
     updateKPISummary();
 });
