@@ -1,5 +1,3 @@
-script.js
-
 // Données des élèves
 const studentsDatabase = [
     { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1 },
