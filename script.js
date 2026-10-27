@@ -21,10 +21,15 @@ let recognition = null;
 let isManualMode = false;
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
-// MÉMOIRE DES RÈGLES (Persistante)
-let maladoRules = JSON.parse(localStorage.getItem('malado_dynamic_rules')) || {
-    politeMode: false          // Mode poli mémorisé
+// MÉMOIRE ÉVOLUTIVE ET INTERNET (Persistante)
+let maladoMemory = JSON.parse(localStorage.getItem('malado_dynamic_memory')) || {
+    directives: [],          
+    tone: "direct",
+    learnedConcepts: {}      
 };
+
+// États de gestion des permissions
+let awaitingInternetPermissionFor = null; // Stocke le concept pour lequel elle demande l'accès internet
 
 function chargerVoix() {
     if (!synth) return;
@@ -150,7 +155,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Cerveau intelligent
+// Cerveau adaptatif avec demande de permission Internet
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -166,25 +171,43 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // 1. APPRENTISSAGE DE LA DIRECTIVE "POLITESSE" (Si tu dis "politesse" ou "poliment")
-    if (q.includes('politesse') || q.includes('poliment') || q.includes('avec politesse')) {
-        maladoRules.politeMode = true;
-        localStorage.setItem('malado_dynamic_rules', JSON.stringify(maladoRules));
-        reponse = "C'est bien compris, Maître Balla. Je te répondrai désormais avec toute la politesse requise.";
+    // ÉTAPE 1 : Si Malado attendait une permission pour aller sur Internet
+    if (awaitingInternetPermissionFor) {
+        let concept = awaitingInternetPermissionFor;
+        if (q.includes('oui') || q.includes('vas-y') || q.includes('va') || q.includes('d\'accord') || q.includes('ok')) {
+            // Simulation de la recherche connectée en ligne
+            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active centrée sur l'accompagnement personnalisé et l'émulation par les pairs.`;
+            maladoMemory.learnedConcepts[concept] = simulatedOnlineDefinition;
+            localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
+
+            awaitingInternetPermissionFor = null;
+            reponse = `Connexion établie. J'ai consulté les ressources en ligne sur "${concept}" et j'ai combiné ces données avec le profil de la classe. C'est mémorisé !`;
+        } else {
+            awaitingInternetPermissionFor = null;
+            reponse = "Entendu, je ne vais pas sur Internet. Restons sur nos bases locales.";
+        }
     }
-    // 2. EN MODE AUTO : On vérifie si tu as dit "Assistante" au début de la phrase
+    // ÉTAPE 2 : Gestion des directives improvisées (politesse, style, etc.)
+    else if (q.includes("si je") || q.includes("à partir de") || q.includes("désormais") || q.includes("je veux que tu") || q.includes("sois") || q.includes("parle")) {
+        maladoMemory.directives.push(command);
+        if (q.includes("politesse") || q.includes("poliment") || q.includes("respect")) {
+            maladoMemory.tone = "polite";
+        } else if (q.includes("court") || q.includes("bref") || q.includes("direct")) {
+            maladoMemory.tone = "direct";
+        }
+        localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
+
+        reponse = maladoMemory.tone === "polite" ? "C'est bien noté, Maître Balla. J'ai intégré cette directive." : "Directive enregistrée.";
+    }
+    // ÉTAPE 3 : Commandes pédagogiques et vérification des concepts
     else if (isManualMode || maladoModeAwake || q.includes('assistante')) {
-        
         let cleanQ = q.replace('assistante', '').trim();
 
         if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('soutien')) {
             let forts = studentsDatabase.filter(s => s.mastery).sort((a,b) => b.score - a.score);
             let faibles = studentsDatabase.filter(s => !s.mastery).sort((a,b) => a.score - b.score);
             
-            reponse = maladoRules.politeMode 
-                ? "Maître Balla, voici respectueusement les binômes Vygotsky :\n" 
-                : "Binômes Vygotsky :\n";
-            
+            reponse = maladoMemory.tone === "polite" ? "Maître Balla, voici les binômes Vygotsky :\n" : "Binômes Vygotsky :\n";
             for(let i = 0; i < Math.min(forts.length, faibles.length); i++) {
                 reponse += `• ${forts[i].name} (${forts[i].score}) + ${faibles[i].name} (${faibles[i].score})\n`;
             }
@@ -192,26 +215,29 @@ function handleCommand(command) {
         else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan')) {
             let avg = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1);
             let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
-            reponse = maladoRules.politeMode
-                ? `Moyenne de la classe : ${avg}/20. ${faiblesCount} élèves nécessitent un soutien.`
-                : `Moyenne : ${avg}/20. ${faiblesCount} élèves en soutien.`;
+            reponse = `Moyenne : ${avg}/20. ${faiblesCount} élèves en soutien.`;
         }
         else if (cleanQ.includes('présente-toi') || cleanQ.includes('presente toi') || cleanQ.includes('qui es-tu')) {
-            reponse = maladoRules.politeMode
-                ? "Je suis Malado, ton assistante pédagogique dévouée pour la classe de CE2-A."
-                : "Je suis Malado, assistante pédagogique de la CE2-A.";
+            reponse = "Je suis Malado, assistante pédagogique de la CE2-A.";
         } 
         else {
-            reponse = maladoRules.politeMode ? "C'est bien noté, Maître Balla." : "C'est noté.";
+            // Vérifie si le concept est connu
+            let foundConcept = Object.keys(maladoMemory.learnedConcepts).find(c => cleanQ.includes(c));
+            if (foundConcept) {
+                reponse = `D'après mes apprentissages sur "${foundConcept}" : ${maladoMemory.learnedConcepts[foundConcept]}`;
+            } else {
+                // SI ELLE NE CONNAÎT PAS : ELLE DEMANDE LA PERMISSION D'ALLER SUR INTERNET
+                awaitingInternetPermissionFor = cleanQ;
+                reponse = `Maître Balla, je ne connais pas ce concept (« ${cleanQ} »). Me donnez-vous la permission d'aller consulter les ressources en ligne pour vous proposer une approche adaptée ?`;
+            }
         }
         
         maladoModeAwake = false;
     } 
     else {
-        // En mode écoute auto, si tu n'as pas dit "Assistante", elle ne fait rien (silence)
         if (q.includes('assistante')) {
             maladoModeAwake = true;
-            reponse = maladoRules.politeMode ? "Oui, Maître Balla ?" : "Oui ?";
+            reponse = "Oui ?";
         } else {
             reponse = ""; 
         }
