@@ -112,7 +112,7 @@ function injectLocalBadge() {
     }
 }
 
-// RENDU VISUEL PLEINE LARGEUR : 3 RANGÉES VERTICALES DE 3 PUPITRES DOUBLES EN PROFONDEUR (18 PLACES)
+// RENDU VISUEL RÉALISTE : 3 RANGÉES VERTICALES DE 3 PUPITRES DOUBLES EN PROFONDEUR (18 PLACES)
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
@@ -123,7 +123,7 @@ function renderClassroomDesks() {
     if (!blackboard) {
         blackboard = document.createElement('div');
         blackboard.id = 'classroom-blackboard';
-        blackboard.className = 'bg-slate-900 border-2 border-emerald-500/40 p-3 rounded-xl mb-6 text-center text-emerald-400 font-bold text-sm shadow-inner w-full max-w-7xl mx-auto';
+        blackboard.className = 'bg-slate-900 border-2 border-emerald-500/40 p-3 rounded-xl mb-6 text-center text-emerald-400 font-chalk font-bold text-sm shadow-inner w-full max-w-7xl mx-auto';
         blackboard.innerHTML = `🏫 [ TABLEAU NOIR — ZONE PÉDAGOGIQUE DU MAÎTRE (CE2-A) • 18 ÉLÈVES ]`;
         container.parentNode.insertBefore(blackboard, container);
     }
@@ -143,7 +143,7 @@ function renderClassroomDesks() {
         colDiv.appendChild(colTitle);
 
         let desksListDiv = document.createElement('div');
-        desksListDiv.className = 'space-y-3';
+        desksListDiv.className = 'space-y-4'; // Plus d'espace entre les pupitres
 
         // Génération des 3 pupitres en profondeur pour cette rangée
         for (let depth = 1; depth <= 3; depth++) {
@@ -157,32 +157,76 @@ function renderClassroomDesks() {
             deskHeader.innerHTML = `<span>🪑 Pupitre Double #${depth}</span> <span class="text-amber-300">Profondeur ${depth}/3</span>`;
             deskCard.appendChild(deskHeader);
 
+            // STRUCTURE DU PUPITRE RÉALISTE
+            let deskRealistStructure = document.createElement('div');
+            deskRealistStructure.className = 'w-full aspect-[2/1] rounded-lg relative overflow-hidden bg-slate-950 border-2 border-black shadow-lg'; // Cadre métallique noir
+
+            // 1. Plateau de table (Bois clair)
+            let deskTopSurface = document.createElement('div');
+            deskTopSurface.className = 'absolute top-0 left-0 w-full h-[30%] bg-[#D2B48C] rounded-t-lg border-b-2 border-black shadow-md z-10'; // Bois clair, bordure noire
+            deskRealistStructure.appendChild(deskTopSurface);
+
+            // 2. Casier sous plateau (Bois plus sombre)
+            let deskCasterCompartment = document.createElement('div');
+            deskCasterCompartment.className = 'absolute top-[30%] left-[5%] w-[90%] h-[30%] bg-[#A67D3D] rounded border border-black shadow-inner z-0'; // Bois casier, bordure noire
+            deskRealistStructure.appendChild(deskCasterCompartment);
+
+            // Grille des deux places d'élèves (Chaises)
             let seatsGrid = document.createElement('div');
-            seatsGrid.className = 'grid grid-cols-2 gap-2';
+            seatsGrid.className = 'absolute bottom-0 left-0 w-full h-[50%] grid grid-cols-2 gap-3 px-3 z-20'; // Grille pour 2 places, au-dessus du casier
 
             // 2 places par pupitre double
             for (let seatIndex = 1; seatIndex <= 2; seatIndex++) {
                 let student = studentsAtDesk[seatIndex - 1];
+                let seatBoxContainer = document.createElement('div');
+                seatBoxContainer.className = 'relative flex items-center justify-center'; // Conteneur pour chaise et étiquette
+
+                // Chaise réaliste (Style image)
+                let chairStructure = document.createElement('div');
+                chairStructure.className = 'absolute inset-0 flex flex-col items-center justify-center pointer-events-none';
+                
+                // Structure métallique de la chaise
+                let chairFrame = document.createElement('div');
+                chairFrame.className = 'w-[80%] h-[90%] border-[2px] border-slate-950 bg-transparent rounded-lg shadow-inner';
+                chairStructure.appendChild(chairFrame);
+
+                // Dossier de la chaise (Bois)
+                let chairBackrest = document.createElement('div');
+                chairBackrest.className = 'absolute top-[10%] w-[60%] h-[20%] bg-[#D2B48C] rounded-md border border-black shadow z-10'; // Bois clair
+                chairStructure.appendChild(chairBackrest);
+
+                // Assise de la chaise (Bois)
+                let chairSeat = document.createElement('div');
+                chairSeat.className = 'absolute top-[40%] w-[70%] h-[30%] bg-[#D2B48C] rounded-lg border border-black shadow-inner z-0'; // Bois clair
+                chairStructure.appendChild(chairSeat);
+
+                seatBoxContainer.appendChild(chairStructure); // Ajouter la chaise en arrière-plan
+
+                // Place d'élève (L'étiquette de statut)
                 let seatBox = document.createElement('div');
 
                 if (student) {
-                    seatBox.className = `p-2 rounded-lg cursor-pointer transition-all border text-left flex flex-col justify-between ${student.mastery ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200 hover:bg-emerald-900/40' : 'bg-amber-950/40 border-amber-500/40 text-amber-200 hover:bg-amber-900/40'}`;
+                    // Utiliser des couleurs de statut plus fines pour ne pas cacher le pupitre
+                    seatBox.className = `p-2 rounded-lg cursor-pointer transition-all border text-left flex flex-col justify-between w-full h-[60%] relative z-30 ${student.mastery ? 'bg-emerald-950/70 border-emerald-500/50 text-emerald-100 hover:bg-emerald-900/70' : 'bg-amber-950/70 border-amber-500/50 text-amber-100 hover:bg-amber-900/70'}`;
                     seatBox.innerHTML = `
                         <div class="font-bold text-xs truncate">${student.name}</div>
                         <div class="text-[10px] text-slate-300 flex justify-between mt-1">
                             <span>${student.score}/20</span>
-                            <span class="${student.mastery ? 'text-emerald-400 font-semibold' : 'text-amber-400'}">${student.mastery ? 'Maîtrise' : 'Soutien'}</span>
+                            <span class="${student.mastery ? 'text-emerald-400 font-semibold' : 'text-amber-400'}">${student.mastery ? 'M' : 'S'}</span> // Raccourcis pour statut
                         </div>
                     `;
                     seatBox.onclick = () => showStudentDetails(student.id);
                 } else {
-                    seatBox.className = 'p-2 rounded-lg border border-dashed border-slate-700/60 bg-slate-900/40 text-slate-500 text-[10px] text-center flex items-center justify-center';
+                    seatBox.className = 'p-2 rounded-lg border border-dashed border-slate-700/60 bg-slate-900/40 text-slate-500 text-[10px] text-center flex items-center justify-center w-full h-[60%] relative z-30';
                     seatBox.innerHTML = `<span>Place libre</span>`;
                 }
-                seatsGrid.appendChild(seatBox);
+                seatBoxContainer.appendChild(seatBox); // Ajouter l'étiquette au conteneur
+
+                seatsGrid.appendChild(seatBoxContainer);
             }
 
-            deskCard.appendChild(seatsGrid);
+            deskRealistStructure.appendChild(seatsGrid); // Ajouter la grille de places
+            deskCard.appendChild(deskRealistStructure); // Ajouter la structure réaliste à la carte
             desksListDiv.appendChild(deskCard);
         }
 
