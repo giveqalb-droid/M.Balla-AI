@@ -426,6 +426,33 @@ function updateKPISummary() {
     if (kpiAvg) kpiAvg.innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
 }
 
+// Base de connaissances et cadres de référence majeurs de Malado AI
+const maladoExpertFrameworks = {
+    sociocognitif: {
+        source: "Lev Vygotsky - 'Mind in Society' & Études sur la ZPD",
+        domaine: "Pédagogie et Interactions Sociales",
+        application: "Jumelage entre élèves (tuteur / tutoré) pour l'étayage social et l'élévation des compétences par les pairs."
+    },
+    cognitif: {
+        source: "Jean Piaget & Jerome Bruner - Psychologie du Développement",
+        domaine: "Étude Comportementale et Stades d'Apprentissage",
+        application: "Analyse des rythmes d'acquisition en numération et structuration logique chez l'enfant de CE2."
+    },
+    contextuelAfricain: {
+        source: "Rapports CONFEMEN / PASEC & IEF de Mbour",
+        domaine: "Politiques Éducatives et Réussite Scolaire en Milieu Subsaharien",
+        application: "Adaptation des exercices aux contextes locaux, gestion des effectifs et remédiation ciblée."
+    }
+};
+
+// Fonction pour que Malado cite ses sources et cadres théoriques dans ses réponses
+function getExpertJustification(queryType) {
+    if (queryType === 'vygotsky' || queryType === 'placement') {
+        return `\n\n📚 **Cadre de référence (Référence : ${maladoExpertFrameworks.sociocognitif.source})** :\n*« L'apprentissage humain presuppose une nature sociale spécifique et un processus par lequel les enfants s'insèrent dans la vie intellectuelle de ceux qui les entourent. »*`;
+    }
+    return `\n\n📖 **Référence experte (Cadre : ${maladoExpertFrameworks.contextuelAfricain.source})**`;
+}
+
 window.addEventListener('DOMContentLoaded', () => { 
     renderClassroomDesks();
     updateKPISummary();
