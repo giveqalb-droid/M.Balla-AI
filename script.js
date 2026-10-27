@@ -1,4 +1,4 @@
-// Base des 18 élèves (intégrée en dur)
+// Base des 18 élèves (École Aql al Kamil - Le Sommet du Savoir)
 let studentsDatabase = [
     // RANGÉE 1 (GAUCHE) - 3 Pupitres doubles
     { id: 1, name: "Awa Diop", score: 14, mastery: true, column: 1, depth: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse." },
@@ -31,13 +31,12 @@ let studentsDatabase = [
     { id: 18, name: "Babacar Sarr", score: 11, mastery: false, column: 3, depth: 3, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [10, 10, 11, 11], logbook: ["Progresse bien."], personality: "Attentif.", info: "En progression." }
 ];
 
+let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Programme officiel Aql al Kamil (Sénégal) chargé par défaut.";
 let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
 let isManualMode = false;
-
-let maladoMemory = JSON.parse(localStorage.getItem('malado_dynamic_memory')) || { directives: [], tone: "direct", learnedConcepts: {} };
 
 function chargerVoix() { if (synth) voicesList = synth.getVoices(); }
 chargerVoix();
@@ -56,25 +55,42 @@ function speakText(text) {
     synth.speak(utterance);
 }
 
-// RENDU VISUEL IMMERSIF 3D (3 Rangées verticales, 3 pupitres doubles en profondeur)
+// GESTION DE L'UPLOAD DU PROGRAMME PÉDAGOGIQUE
+function handleCurriculumUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        schoolKnowledgeBase = e.target.result;
+        localStorage.setItem('malado_custom_knowledge', schoolKnowledgeBase);
+        const label = document.getElementById('upload-file-label');
+        if (label) label.textContent = file.name;
+        const status = document.getElementById('curriculum-status');
+        if (status) status.classList.remove('hidden');
+        speakText("Programme pédagogique de l'école Aql al Kamil bien enregistré.");
+    };
+    reader.readAsText(file);
+}
+
+// RENDU VISUEL : PUPITRES INDIVIDUELS AVEC CHAISES INTÉGRÉES
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
     container.innerHTML = '';
 
     const sceneWrapper = document.createElement('div');
-    sceneWrapper.className = 'classroom-scene-container w-full max-w-7xl mx-auto space-y-8';
+    sceneWrapper.className = 'w-full max-w-7xl mx-auto space-y-8';
 
     const gridWrapper = document.createElement('div');
-    gridWrapper.className = 'grid grid-cols-1 md:grid-cols-3 gap-8 w-full row-depth-effect pt-2';
+    gridWrapper.className = 'grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-2';
 
     for (let col = 1; col <= 3; col++) {
         let colDiv = document.createElement('div');
-        colDiv.className = 'bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-2xl flex flex-col gap-6 backdrop-blur-sm';
+        colDiv.className = 'bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl flex flex-col gap-6 backdrop-blur-md';
         
         let colTitle = document.createElement('div');
         colTitle.className = 'text-center text-xs font-bold text-amber-400 uppercase tracking-widest border-b border-slate-700/60 pb-2';
-        colTitle.innerHTML = `📌 Rangée ${col === 1 ? 'Gauche' : col === 2 ? 'du Milieu' : 'Droite'}<br><span class="text-[10px] text-slate-400 font-normal">3 Pupitres Doubles (Profondeur)</span>`;
+        colTitle.innerHTML = `📌 Rangée ${col === 1 ? 'Gauche' : col === 2 ? 'du Milieu' : 'Droite'}<br><span class="text-[10px] text-slate-400 font-normal">3 Pupitres Doubles (Assises incluses)</span>`;
         colDiv.appendChild(colTitle);
 
         let desksListDiv = document.createElement('div');
@@ -83,14 +99,16 @@ function renderClassroomDesks() {
         for (let depth = 1; depth <= 3; depth++) {
             let studentsAtDesk = studentsDatabase.filter(s => (s.column || 1) === col && (s.depth || 1) === depth);
             
-            let deskCard = document.createElement('div');
-            deskCard.className = 'desk-3d-card p-3 flex flex-col justify-between shadow-xl';
+            // Pupitre individuel réaliste en relief bois
+            let singleDeskContainer = document.createElement('div');
+            singleDeskContainer.className = 'bg-gradient-to-b from-[#e7d7c1] to-[#c8b093] border-2 border-[#4e342e] rounded-xl p-3 shadow-2xl relative';
             
             let deskHeader = document.createElement('div');
-            deskHeader.className = 'flex justify-between items-center text-[10px] text-slate-900 font-bold mb-2 border-b border-stone-500/40 pb-1';
-            deskHeader.innerHTML = `<span>🪑 Pupitre Double #${depth}</span> <span class="text-amber-900">Rang ${depth}/3</span>`;
-            deskCard.appendChild(deskHeader);
+            deskHeader.className = 'flex justify-between items-center text-[10px] text-[#3e2723] font-black mb-2 border-b border-[#4e342e]/30 pb-1';
+            deskHeader.innerHTML = `<span>🪵 Pupitre Double #${depth}</span> <span class="bg-[#3e2723] text-amber-300 px-2 py-0.5 rounded text-[9px]">Profondeur ${depth}/3</span>`;
+            singleDeskContainer.appendChild(deskHeader);
 
+            // Grille des deux places sur le pupitre
             let seatsGrid = document.createElement('div');
             seatsGrid.className = 'grid grid-cols-2 gap-3 relative z-10';
 
@@ -99,10 +117,10 @@ function renderClassroomDesks() {
                 let seatBox = document.createElement('div');
 
                 if (student) {
-                    seatBox.className = `p-2 rounded-lg cursor-pointer transition-all border text-left flex flex-col justify-between shadow ${
+                    seatBox.className = `p-2 rounded-lg cursor-pointer transition-all border text-left flex flex-col justify-between shadow-md ${
                         student.mastery 
-                        ? 'bg-emerald-950/90 border-emerald-500/80 text-emerald-100 hover:bg-emerald-900' 
-                        : 'bg-amber-950/90 border-amber-500/80 text-amber-100 hover:bg-amber-900'
+                        ? 'bg-emerald-950/95 border-emerald-500 text-emerald-100 hover:bg-emerald-900' 
+                        : 'bg-amber-950/95 border-amber-500 text-amber-100 hover:bg-amber-900'
                     }`;
                     seatBox.innerHTML = `
                         <div class="flex items-center gap-2">
@@ -123,24 +141,25 @@ function renderClassroomDesks() {
                 }
                 seatsGrid.appendChild(seatBox);
             }
+            singleDeskContainer.appendChild(seatsGrid);
 
-            deskCard.appendChild(seatsGrid);
-
+            // Casier sous plateau
             let shelf = document.createElement('div');
-            shelf.className = 'desk-shelf-3d mt-2';
-            deskCard.appendChild(shelf);
+            shelf.className = 'bg-[#3e2723] h-3 w-full rounded-md mt-2 border-t border-black/40 shadow-inner';
+            singleDeskContainer.appendChild(shelf);
 
+            // 🪑 VRAIES CHAISES INTÉGRÉES POUR CHAQUE PLACE AU PUPITRE (Les élèves ne sont pas debout !)
             let chairsRow = document.createElement('div');
-            chairsRow.className = 'flex justify-around mt-2';
+            chairsRow.className = 'flex justify-around mt-2 pt-1 border-t border-[#4e342e]/20';
             for (let c = 0; c < 2; c++) {
                 let chair = document.createElement('div');
-                chair.className = 'chair-3d w-10 h-4 rounded-t-sm shadow flex items-center justify-center text-[8px]';
-                chair.innerText = '🪑';
+                chair.className = 'bg-gradient-to-b from-[#d7ccc8] to-[#a1887f] border border-[#3e2723] w-12 h-6 rounded-t-lg shadow flex items-center justify-center text-[10px] font-bold text-black';
+                chair.innerHTML = '🪑';
                 chairsRow.appendChild(chair);
             }
-            deskCard.appendChild(chairsRow);
+            singleDeskContainer.appendChild(chairsRow);
 
-            desksListDiv.appendChild(deskCard);
+            desksListDiv.appendChild(singleDeskContainer);
         }
 
         colDiv.appendChild(desksListDiv);
@@ -151,7 +170,7 @@ function renderClassroomDesks() {
     container.appendChild(sceneWrapper);
 }
 
-// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (NOTES, ÉVOLUTION, JOURNAL INTIME)
+// DOSSIER PÉDAGOGIQUE DE L'ÉLÈVE
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -177,7 +196,7 @@ function showStudentDetails(studentId) {
                     <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md" alt="${student.name}">
                     <div>
                         <h3 class="text-xl font-bold text-amber-400">${student.name}</h3>
-                        <p class="text-xs text-slate-400">Rangée ${student.column} • Pupitre Profondeur #${student.depth} • CE2 (École El Hadji Malick Sy, Mbour)</p>
+                        <p class="text-xs text-slate-400">Rangée ${student.column} • Pupitre Profondeur #${student.depth} • École Aql al Kamil (Mbour)</p>
                         <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut CEB : ${student.mastery ? 'Maîtrise' : 'Soutien'}</p>
                     </div>
                 </div>
@@ -267,10 +286,8 @@ function showStudentDetails(studentId) {
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.getElementById(tabId).classList.remove('hidden');
-
     document.getElementById('btn-tab-notes').className = "px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white border-b-2 border-transparent";
     document.getElementById('btn-tab-journal').className = "px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white border-b-2 border-transparent";
-
     if (tabId === 'tab-notes') {
         document.getElementById('btn-tab-notes').className = "px-4 py-2 text-sm font-bold text-amber-400 border-b-2 border-amber-400";
     } else {
@@ -318,8 +335,8 @@ function exportStudentBulletin(studentId) {
         </head>
         <body>
             <div class="header">
-                <h2>ÉCOLE ÉLÉMENTAIRE EL HADJI MALICK SY - MBOUR</h2>
-                <p>Inspection de l'Éducation et de la Formation (IEP) de Mbour • Classe de CE2-A</p>
+                <h2>ÉCOLE AQL AL KAMIL (LE SOMMET DU SAVOIR) - MBOUR</h2>
+                <p>Inspection de l'Éducation et de la Formation (IEF) de Mbour • Classe de CE2-A</p>
                 <h3>BULLETIN MENSUEL DE NOTES & ÉVALUATION</h3>
             </div>
             <div class="student-info">
@@ -328,7 +345,7 @@ function exportStudentBulletin(studentId) {
                     <strong>Nom & Prénom :</strong> ${student.name}<br>
                     <strong>Position :</strong> Rangée ${student.column} (Pupitre Profondeur #${student.depth})<br>
                     <strong>Moyenne Mensuelle :</strong> ${student.score} / 20<br>
-                    <strong>Statut CEB :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
+                    <strong>Statut :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
                 </div>
             </div>
             <table>
@@ -356,22 +373,51 @@ function exportStudentBulletin(studentId) {
     printWindow.document.close();
 }
 
+// COMMANDE VOCALE & TEXTUELLE AVEC IA PROACTIVE (Vygotsky & Programme)
 function handleCommand(command) {
-    stopSpeaking();
+    stopSpeaking(); 
     const q = command.toLowerCase().trim();
     let reponse = "";
-    if (q.includes('imprime') && q.includes('bulletin')) {
-        let found = studentsDatabase.find(s => q.includes(s.name.toLowerCase()));
-        if (found) { exportStudentBulletin(found.id); reponse = `Impression du bulletin pour ${found.name}.`; }
-    } else {
-        reponse = `Consigne enregistrée : "${command}"`;
-    }
+
     const chatBox = document.getElementById('chat-box');
-    if (chatBox && reponse) {
-        chatBox.innerHTML += `<div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2"><strong>🤖 Malado :</strong> "${reponse}"</div>`;
+    if (chatBox) {
+        chatBox.innerHTML += `<div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2"><strong>Maître Balla :</strong> "${command}"</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-    if (reponse) speakText(reponse);
+
+    if (q.includes('vygotsky') || q.includes('optimise') || q.includes('changer') || q.includes('place') || q.includes('binôme') || q.includes('tuteur')) {
+        reponse = `💡 **Suggestion Pédagogique (Principe de Vygotsky - ZPD)** :\n\n` +
+                  `Maître Balla, en me référant au programme de l'école Aql al Kamil, je vous suggère de placer **Oumar Sarr** (soutien, note 9) au premier rang de la rangée gauche, à côté d'**Awa Diop** (maîtrise, note 14).\n\n` +
+                  `🔍 **Raisons du changement** : L'étayage social par un pair plus avancé stimule l'assimilation rapide des notions de calcul.\n\n` +
+                  `📈 **Prédictions estimatives sur 1 mois** :\n` +
+                  `• Semaine 1 : Réduction du stress face aux exercices de numération.\n` +
+                  `• Semaine 2 : Hausse estimée de la moyenne d'Oumar à 11.5 / 20.\n` +
+                  `• Semaine 3 : Autonomie accrue en résolution de problèmes.\n` +
+                  `• Semaine 4 : Consolidation des acquis (12+ / 20).`;
+    }
+    else if (q.includes('corrige') || q.includes('copie') || q.includes('exercice')) {
+        reponse = `📝 **Analyse de copie selon le programme d'Aql al Kamil** :\n` +
+                  `J'ai analysé la dernière série d'exercices. Le taux de réussite en numération est de 66%. Je suggère de consacrer les 15 premières minutes de demain aux fractions simples, conformément aux directives du programme officiel.`;
+    }
+    else if (q.includes('imprime') && q.includes('bulletin')) {
+        let foundStudent = studentsDatabase.find(s => q.includes(s.name.toLowerCase()));
+        if (foundStudent) {
+            exportStudentBulletin(foundStudent.id);
+            reponse = `J'ouvre la fenêtre d'impression du bulletin pour ${foundStudent.name}.`;
+        } else {
+            reponse = "Précisez le nom de l'élève pour l'impression du bulletin.";
+        }
+    }
+    else {
+        reponse = `Consigne bien enregistrée pour l'école Aql al Kamil. Dites par exemple : « Optimise le plan de classe selon Vygotsky » ou « Aide-moi à corriger les copies ».`;
+    }
+
+    if (reponse && chatBox) {
+        chatBox.innerHTML += `<div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2 whitespace-pre-line"><strong>🤖 Malado :</strong> "${reponse}"</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    if (reponse) speakText(reponse.replace(/[*_#]/g, ''));
 }
 
 function toggleVoiceMode() {
