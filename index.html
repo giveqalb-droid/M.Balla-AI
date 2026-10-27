@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>École Aql al Kamil — Salle 3D Immersive CE2-A (Maître Balla)</title>
+    <title>École Aql al Kamil — Classe CE2-A (Maître Balla)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
         }
     </script>
     <style>
-        /* MOTEUR DE PERSPECTIVE ET SCÈNE 3D PURE CSS */
+        /* MOTEUR 3D PURE CSS — VUE DE FACE PAR DÉFAUT */
         .scene-container {
             perspective: 1200px;
             perspective-origin: 50% 35%;
@@ -28,6 +28,7 @@
 
         .classroom-3d {
             transform-style: preserve-3d;
+            transform: rotateX(0deg) scale(0.95); /* Fixé en vue de face */
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -49,7 +50,7 @@
                 0 0 0 12px #3e2723;
         }
 
-        /* MODÉLISATION 3D REALISTE DE CHAISE SCOLAIRE TUBULAIRE EN CSS */
+        /* MODÉLISATION 3D DE CHAISE SCOLAIRE TUBULAIRE */
         .chair-3d-wrapper {
             position: relative;
             width: 76px;
@@ -58,7 +59,6 @@
             margin: 0 auto;
         }
 
-        /* Ombre au sol de la chaise */
         .chair-shadow {
             position: absolute;
             bottom: 2px;
@@ -71,7 +71,6 @@
             transform: rotateX(80deg) translateZ(-5px);
         }
 
-        /* Pieds métalliques tubulaires */
         .chair-leg {
             position: absolute;
             width: 4px;
@@ -86,7 +85,6 @@
         .leg-bl { left: 12px; transform: translateZ(-12px); }
         .leg-br { right: 12px; transform: translateZ(-12px); }
 
-        /* Barreaux de renforcement */
         .chair-crossbar {
             position: absolute;
             bottom: 18px;
@@ -97,7 +95,6 @@
             border-radius: 1px;
         }
 
-        /* Assise 3D en bois ergonomique */
         .chair-seat-3d {
             position: absolute;
             bottom: 40px;
@@ -123,7 +120,6 @@
             border-radius: 0 0 4px 4px;
         }
 
-        /* Montants arrières */
         .chair-back-posts {
             position: absolute;
             bottom: 42px;
@@ -142,29 +138,17 @@
         .post-left { left: 0; }
         .post-right { right: 0; }
 
-        /* Dossier ergonomique en bois courbé */
         .chair-backrest-3d {
             position: absolute;
             top: 2px;
             left: 2px;
             right: 2px;
             height: 24px;
-            background: linear-gradient(180deg, #b0bec5, #78909c);
-            background-image: linear-gradient(135deg, #d7ccc8 0%, #8d6e63 100%);
+            background: linear-gradient(135deg, #d7ccc8 0%, #8d6e63 100%);
             border: 1px solid #4e342e;
             border-radius: 5px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 2px rgba(255,255,255,0.5);
             transform: rotateX(-5deg);
-        }
-
-        /* AVATAR ÉLÈVE DANS LA CHAISE */
-        .student-occupant {
-            position: absolute;
-            bottom: 42px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 25;
-            transition: all 0.3s ease;
         }
 
         /* PUPITRE SCOLAIRE 3D */
@@ -184,7 +168,6 @@
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
         }
 
-        /* MODAL ANIMATIONS */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
@@ -212,14 +195,6 @@
                         <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight">Maître Balla — Co-Pilote Malado AI</h1>
                     </div>
                 </div>
-            </div>
-
-            <!-- ANGLE CAMERA CONTROLS -->
-            <div class="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
-                <span class="text-xs text-slate-400 font-medium px-2">Vue 3D :</span>
-                <button onclick="setCameraView('front')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition-all">Face</button>
-                <button onclick="setCameraView('perspective')" class="px-2.5 py-1 rounded-lg text-xs bg-amber-600 text-slate-950 font-bold shadow transition-all">Immersive 3D</button>
-                <button onclick="setCameraView('top')" class="px-2.5 py-1 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium transition-all">Survol</button>
             </div>
 
             <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
@@ -280,25 +255,23 @@
             </div>
         </section>
 
-        <!-- CLASSE 3D ULTRA-IMMERSIVE (PUPITRES & CHAISES SCOLAIRES 3D CSS) -->
+        <!-- CLASSE 3D IMMERSIVE EN VUE DE FACE -->
         <section class="bg-slate-900/80 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
-            
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
                     <div class="w-9 h-9 rounded-xl bg-amber-950 border border-amber-600/40 text-amber-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-cubes"></i>
+                        <i class="fa-solid fa-chalkboard"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-white">Salle de Classe 3D (Modélisation Ergonomique)</h2>
-                        <p class="text-xs text-slate-400">Vraies chaises tubulaires en bois & pupitres doubles 3D. Cliquez sur un élève pour son dossier.</p>
+                        <h2 class="text-lg font-bold text-white">Salle de Classe — Vue de Face</h2>
+                        <p class="text-xs text-slate-400">Chaises tubulaires & pupitres doubles. Cliquez sur un élève pour son dossier.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- CONTENEUR SCÈNE 3D -->
+            <!-- SCÈNE 3D -->
             <div class="scene-container w-full min-h-[700px] rounded-2xl overflow-hidden floor-grid relative border border-slate-800 p-6">
-                
-                <div id="classroom-3d-target" class="classroom-3d w-full h-full flex flex-col justify-between items-center" style="transform: rotateX(22deg) scale(0.92);">
+                <div id="classroom-3d-target" class="classroom-3d w-full h-full flex flex-col justify-between items-center">
                     
                     <!-- TABLEAU NOIR DU FOND DE CLASSE -->
                     <div class="w-full max-w-4xl chalkboard rounded-xl p-6 text-center border-4 border-[#3e2723] mb-8 relative">
@@ -312,19 +285,15 @@
                         </div>
                     </div>
 
-                    <!-- AMÉNAGEMENT DES 3 RANGÉES AVEC PUPITRES ET CHAISES 3D -->
+                    <!-- AMÉNAGEMENT DES 3 RANGÉES -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12 w-full max-w-6xl">
-                        <!-- RANGÉE 1 (GAUCHE) -->
                         <div class="space-y-12" id="row-1"></div>
-                        <!-- RANGÉE 2 (MILIEU) -->
                         <div class="space-y-12" id="row-2"></div>
-                        <!-- RANGÉE 3 (DROITE) -->
                         <div class="space-y-12" id="row-3"></div>
                     </div>
 
                 </div>
             </div>
-
         </section>
 
         <!-- SECTION CO-PILOTE MALADO AI -->
@@ -341,7 +310,7 @@
 
             <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-52 overflow-y-auto space-y-3 mb-4 text-xs font-sans">
                 <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3.5 rounded-2xl max-w-2xl leading-relaxed">
-                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. La modélisation 3D de la classe CE2-A est configurée avec des chaises ergonomiques et le programme d'Aql al Kamil. Dites-moi comment vous assister aujourd'hui."
+                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. La classe CE2-A est affichée en vue de face. Vos 18 élèves et leurs observations sont à jour. Que souhaitez-vous faire ?"
                 </div>
             </div>
 
@@ -359,37 +328,25 @@
 
     </main>
 
-    <!-- JS SCRIPT LOGIQUE ET BASE DE DONNÉES -->
+    <!-- LOGIQUE JAVASCRIPT -->
     <script>
-        // BASE DES 18 ÉLÈVES DU CE2-A
         const students = [
-            // RANGÉE 1 (GAUCHE)
             { id: 1, name: "Awa Diop", score: 14, mastery: true, col: 1, depth: 1, subjects: { math: 15, french: 14, dictation: 13 }, history: [12, 13, 14, 14], photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", info: "Très rigoureuse et attentive.", personality: "Profil analytique et calme.", logbook: ["Excellente participation aux travaux de groupes."] },
             { id: 2, name: "Oumar Sarr", score: 9, mastery: false, col: 1, depth: 1, subjects: { math: 7, french: 10, dictation: 10 }, history: [8, 8, 9, 9], photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", info: "Aide requise en numération.", personality: "Apprenant visuel et dynamique.", logbook: ["Besoin d'encadrement sur les exercices individuels."] },
-
             { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, col: 1, depth: 2, subjects: { math: 11, french: 14, dictation: 12 }, history: [10, 11, 12, 12], photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", info: "Aisance en lecture et grammaire.", personality: "Sociable et expressive.", logbook: ["Bonne intégration au groupe."] },
             { id: 4, name: "Moussa Fall", score: 7, mastery: false, col: 1, depth: 2, subjects: { math: 6, french: 8, dictation: 7 }, history: [6, 6, 7, 7], photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", info: "Soutien prioritaire en lecture.", personality: "Kinesthésique.", logbook: ["Déconcentré en fin de matinée."] },
-
             { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, col: 1, depth: 3, subjects: { math: 14, french: 16, dictation: 15 }, history: [14, 14, 15, 15], photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", info: "Excellente expression écrite.", personality: "Créative et autonomie élevée.", logbook: ["Aide volontiers ses camarades."] },
             { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, col: 1, depth: 3, subjects: { math: 10, french: 10, dictation: 10 }, history: [9, 9, 10, 10], photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", info: "Niveau moyen, constant.", personality: "Réservé.", logbook: ["Progrès réguliers."] },
-
-            // RANGÉE 2 (MILIEU)
             { id: 7, name: "Mariama Camara", score: 13, mastery: true, col: 2, depth: 1, subjects: { math: 14, french: 12, dictation: 13 }, history: [12, 12, 13, 13], photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", info: "Très bien organisée.", personality: "Méthodique.", logbook: ["Travail propre et bien tenu."] },
             { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, col: 2, depth: 1, subjects: { math: 8, french: 9, dictation: 7 }, history: [7, 7, 8, 8], photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", info: "Difficultés en résolution.", personality: "Réfléchi.", logbook: ["Prend du temps pour démarrer."] },
-
             { id: 9, name: "Léona Mendy", score: 11, mastery: false, col: 2, depth: 2, subjects: { math: 11, french: 11, dictation: 11 }, history: [10, 10, 11, 11], photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", info: "En voie d'acquisition.", personality: "Observatrice.", logbook: ["Bonne écoute."] },
             { id: 10, name: "Karim Sow", score: 16, mastery: true, col: 2, depth: 2, subjects: { math: 17, french: 15, dictation: 16 }, history: [15, 15, 16, 16], photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", info: "Leader logique de la classe.", personality: "Compétitif et enthousiaste.", logbook: ["Excellente rapidité d'assimilation."] },
-
             { id: 11, name: "Diana Gaye", score: 6, mastery: false, col: 2, depth: 3, subjects: { math: 5, french: 7, dictation: 6 }, history: [5, 5, 6, 6], photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", info: "Besoin de soutien rapproché.", personality: "Sensible et appliquée.", logbook: ["Encouragements fréquents requis."] },
             { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, col: 2, depth: 3, subjects: { math: 13, french: 14, dictation: 15 }, history: [13, 13, 14, 14], photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", info: "Solide en orthographe.", personality: "Calme et coopératif.", logbook: ["Prêt pour le rôle de tuteur."] },
-
-            // RANGÉE 3 (DROITE)
             { id: 13, name: "Seynabou Ba", score: 15, mastery: true, col: 3, depth: 1, subjects: { math: 15, french: 15, dictation: 14 }, history: [13, 14, 15, 15], photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", info: "Excellente élève globale.", personality: "Application constante.", logbook: ["Présentation irréprochable."] },
             { id: 14, name: "Pape Diop", score: 10, mastery: false, col: 3, depth: 1, subjects: { math: 10, french: 10, dictation: 10 }, history: [9, 9, 10, 10], logbook: ["Écoute régulière."], personality: "Calme.", info: "Moyenne stable." },
-
             { id: 15, name: "Aminata Sow", score: 13, mastery: true, col: 3, depth: 2, subjects: { math: 13, french: 13, dictation: 12 }, history: [11, 12, 13, 13], photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", info: "Bonne autonomie.", personality: "Dynamique.", logbook: ["Participe bien à l'oral."] },
-            { id: 16, name: "Modou Ndiaye", score: 8, mastery: false, col: 3, depth: 2, subjects: { math: 8, french: 8, dictation: 8 }, history: [7, 7, 8, 8], photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", info: "Besoin de soutien en français.", personality: "Réservé.", logbook: ["Travaille bien en binôme."] },
-
+            { id: 16, name: "Modou Ndiaye", score: 8, mastery: false, col: 3, depth: 2, subjects: { math: 8, french: 8, dictation: 8 }, history: [7, 7, 8, 8], logbook: ["Besoin de soutien en français."], personality: "Réservé.", info: "Travaille bien en binôme." },
             { id: 17, name: "Khady Fall", score: 14, mastery: true, col: 3, depth: 3, subjects: { math: 14, french: 14, dictation: 14 }, history: [12, 13, 14, 14], photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", info: "Très rigoureuse.", personality: "Attentive.", logbook: ["Résultats constants."] },
             { id: 18, name: "Babacar Sarr", score: 11, mastery: false, col: 3, depth: 3, subjects: { math: 11, french: 11, dictation: 11 }, history: [10, 10, 11, 11], photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", info: "Acquis en cours de consolidation.", personality: "Volontaire.", logbook: ["Fait des efforts remarqués."] }
         ];
@@ -397,7 +354,6 @@
         let synth = window.speechSynthesis;
         let isVoiceMode = true;
 
-        // RENDU VISUEL : DE VRAIES CHAISES 3D CSS SOUS CHAQUE PUPITRE
         function render3DClassroom() {
             for (let col = 1; col <= 3; col++) {
                 const rowContainer = document.getElementById(`row-${col}`);
@@ -407,11 +363,9 @@
                 for (let depth = 1; depth <= 3; depth++) {
                     const pupils = students.filter(s => s.col === col && s.depth === depth);
 
-                    // UNITÉ PUPITRE DOUBLE + 2 CHAISES 3D COMPLÈTES
                     const deskBlock = document.createElement('div');
                     deskBlock.className = 'relative w-full space-y-2';
 
-                    // 1. LE PUPITRE SCOLAIRE 3D EN RELIEF
                     const deskBody = document.createElement('div');
                     deskBody.className = 'desk-3d-box rounded-xl p-3 relative z-30 shadow-2xl border-2 border-[#3e2723]';
                     
@@ -440,11 +394,9 @@
                             }).join('')}
                         </div>
 
-                        <!-- CASIER DE RANGEMENT SOUS PLATEAU -->
                         <div class="mt-2 h-2.5 bg-[#2c1d11] rounded-md shadow-inner border-t border-black/50"></div>
                     `;
 
-                    // 2. RENDU DE 2 VRAIES CHAISES 3D REALISTES CSS EN DESSOUS DU PUPITRE
                     const chairsContainer = document.createElement('div');
                     chairsContainer.className = 'grid grid-cols-2 gap-4 pt-1 relative z-10';
 
@@ -453,25 +405,17 @@
                         chair3D.className = 'chair-3d-wrapper';
                         
                         chair3D.innerHTML = `
-                            <!-- Ombre portée au sol -->
                             <div class="chair-shadow"></div>
-
-                            <!-- Pieds métalliques tubulaires noirs -->
                             <div class="chair-leg leg-fl"></div>
                             <div class="chair-leg leg-fr"></div>
                             <div class="chair-leg leg-bl"></div>
                             <div class="chair-leg leg-br"></div>
                             <div class="chair-crossbar"></div>
-
-                            <!-- Montants arrières du dossier -->
                             <div class="chair-back-posts">
                                 <div class="post-left"></div>
                                 <div class="post-right"></div>
-                                <!-- Dossier ergonomique en bois courbé 3D -->
                                 <div class="chair-backrest-3d"></div>
                             </div>
-
-                            <!-- Assise ergonomique en bois 3D avec bordures -->
                             <div class="chair-seat-3d">
                                 <div class="chair-seat-edge"></div>
                             </div>
@@ -486,20 +430,6 @@
             }
         }
 
-        // CONTROL DE CAMERA 3D
-        function setCameraView(mode) {
-            const target = document.getElementById('classroom-3d-target');
-            if (!target) return;
-            if (mode === 'front') {
-                target.style.transform = 'rotateX(0deg) scale(0.95)';
-            } else if (mode === 'perspective') {
-                target.style.transform = 'rotateX(22deg) scale(0.92)';
-            } else if (mode === 'top') {
-                target.style.transform = 'rotateX(55deg) scale(0.82)';
-            }
-        }
-
-        // SYNTHÈSE VOCALE
         function speak(text) {
             if (!synth) return;
             synth.cancel();
@@ -510,7 +440,6 @@
             synth.speak(ut);
         }
 
-        // UPLOAD DU PROGRAMME NATIONAL
         function uploadCurriculum(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -519,7 +448,6 @@
             speak(`Le programme officiel ${file.name} a été importé. Malado s'y réfère désormais.`);
         }
 
-        // DOSSIER PÉDAGOGIQUE ÉLÈVE INTERACTIF
         function openStudentModal(id) {
             synth.cancel();
             const st = students.find(s => s.id === id);
@@ -544,7 +472,7 @@
                         <!-- ONGLETS -->
                         <div class="flex border-b border-slate-800 mb-5">
                             <button onclick="toggleTab('tab-notes')" id="btn-notes" class="px-4 py-2 text-xs font-bold text-amber-400 border-b-2 border-amber-400">Notes & Évolution</button>
-                            <button onclick="toggleTab('tab-log')" id="btn-log" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white">📖 Journal Intime & Personnalité</button>
+                            <button onclick="toggleTab('tab-log')" id="btn-log" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white">📋 Observations & Personnalité</button>
                         </div>
 
                         <!-- CONTENU 1 : NOTES -->
@@ -582,7 +510,7 @@
                             </div>
                         </div>
 
-                        <!-- CONTENU 2 : JOURNAL INTIME -->
+                        <!-- CONTENU 2 : OBSERVATIONS -->
                         <div id="tab-log" class="space-y-4 hidden">
                             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
                                 <h4 class="text-xs font-bold text-emerald-400 mb-1">🧠 Profil psychopédagogique</h4>
@@ -590,7 +518,7 @@
                             </div>
 
                             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
-                                <h4 class="text-xs font-bold text-amber-400">📖 Observations & Remarques du Maître</h4>
+                                <h4 class="text-xs font-bold text-amber-400">📋 Observations & Remarques du Maître</h4>
                                 <ul id="log-list" class="list-disc list-inside text-xs text-slate-300 space-y-1">
                                     ${st.logbook.map(l => `<li>${l}</li>`).join('')}
                                 </ul>
@@ -649,7 +577,6 @@
             }
         }
 
-        // IMPRESSION DU BULLETIN
         function printBulletin(id) {
             const st = students.find(s => s.id === id);
             if (!st) return;
@@ -680,11 +607,11 @@
                         <tr><th>Discipline</th><th>Note / 20</th><th>Appréciation</th></tr>
                         <tr><td>Mathématiques</td><td>${st.subjects.math}</td><td>${st.subjects.math >= 10 ? 'Satisfaisant' : 'Aide requise'}</td></tr>
                         <tr><td>Français</td><td>${st.subjects.french}</td><td>${st.subjects.french >= 10 ? 'Bon niveau' : 'Soutien recommandé'}</td></tr>
-                        <tr><td>Dictée</td><td>${st.subjects.dictation}</td><td>${st.subjects.dictation >= 10 ? 'Acquis' : 'Renforcement'}</td></tr>
+                        <tr><td>Dictée</td><td>${st.subjects.dictation}</td><td>${st.subjects.dictation >= 10 ? 'Acquis' : 'À renforcer'}</td></tr>
                     </table>
 
                     <div class="box">
-                        <strong>✍️ Observation du Maître Balla :</strong><br>
+                        <strong>✍️ Observations du Maître Balla :</strong><br>
                         ${st.info}
                     </div>
 
@@ -700,7 +627,6 @@
             win.document.close();
         }
 
-        // INTELLIGENCE ARTIFICIELLE MALADO (CONSIGNE VOCALE / TEXTE & VYGOTSKY)
         function sendTeacherMessage() {
             const input = document.getElementById('teacher-input');
             if (!input || !input.value.trim()) return;
@@ -743,17 +669,9 @@
             speak("Je vous écoute Maître Balla.");
         }
 
-        // INITIALISATION
         window.addEventListener('DOMContentLoaded', () => {
             render3DClassroom();
         });
     </script>
 </body>
 </html>
-
-<div class="flex flex-wrap gap-2 my-4">
-    <button onclick="triggerBehavioralAnalysis()" class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer">
-        <i class="fa-solid fa-brain"></i>
-        <span>Lancer l'Analyse Comportementale Globale (Malado AI)</span>
-    </button>
-</div>
