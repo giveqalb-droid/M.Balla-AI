@@ -1,4 +1,4 @@
-// Variable globale pour la base des élèves
+// Variable globale pour la base des élèves et la gestion des pupitres doubles
 let studentsDatabase = [];
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
@@ -64,18 +64,18 @@ async function loadClassroomData() {
     } catch (error) {
         console.warn("Chargement local de secours activé :", error);
         studentsDatabase = [
-            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe, leader naturelle."], personality: "Analytique et calme. Apprécie les défis logiques.", info: "Excellente et rigoureuse. Idéale comme tutrice en Maths." },
-            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [8, 8, 9, 9], logbook: ["Besoin d'encouragement en calcul mental."], personality: "Kinésthésique, besoin de manipuler des objets pour comprendre.", info: "Besoin de soutien en Mathématiques (calcul et numération)." },
-            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 11, 12, 12], logbook: ["Bonne participation en grammaire."], personality: "Attentive, sensible à la lecture expressive.", info: "Bonne élève, forte en Français et grammaire." },
-            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [6, 6, 7, 7], logbook: ["Distrait en fin de matinée, très actif en récréation."], personality: "Énergique, requiert des pauses courtes et un encadrement visuel.", info: "Besoin d'un appui renforcé en Numération et Dictée." },
-            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [14, 14, 15, 15], logbook: ["Excellente rédaction d'expression écrite."], personality: "Créative et méthodique.", info: "Excellente en Expression Écrite et Français." },
-            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [9, 9, 10, 10], logbook: ["Progrès réguliers et appliqués."], personality: "Réservé mais régulier dans l'effort.", info: "Proche du seuil, progresse régulièrement." },
-            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [12, 12, 13, 13], logbook: ["Très organisée dans ses cahiers."], personality: "Structurée et rigoureuse.", info: "Très à l'aise en Géométrie et Logique." },
-            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [7, 7, 8, 8], logbook: ["Besoin de confiance en soi à l'oral."], personality: "Timide, s'exprime mieux par écrit.", info: "Soutien prioritaire sur la Résolution de Problèmes." },
-            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [10, 10, 11, 11], logbook: ["Travailleuse consciencieuse."], personality: "Observatrice et appliquée.", info: "Acquiert progressivement les bases dans toutes les matières." },
-            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [15, 15, 16, 16], logbook: ["Leader naturel en calcul mental."], personality: "Dynamique et rapide.", info: "Leader en Mathématiques et Calcul rapide." },
-            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [5, 5, 6, 6], logbook: ["Fatigue apparente le matin."], personality: "Discrète, demande une attention bienveillante.", info: "Demande un suivi individualisé rapproché en Français." },
-            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [13, 13, 14, 14], logbook: ["Très bon esprit d'entraide avec ses voisins."], personality: "Social et empathique.", info: "Très bon niveau, entraide naturelle." }
+            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse. Idéale comme tutrice." },
+            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 1, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [8, 8, 9, 9], logbook: ["Besoin d'aide en calcul."], personality: "Kinésthésique.", info: "Besoin de soutien en Mathématiques." },
+            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 2, subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 11, 12, 12], logbook: ["Bonne participation."], personality: "Attentive.", info: "Bonne élève, forte en Français." },
+            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 2, subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [6, 6, 7, 7], logbook: ["Distrait en fin de matinée."], personality: "Énergique.", info: "Appui renforcé en Numération." },
+            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 3, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [14, 14, 15, 15], logbook: ["Très active à l'oral."], personality: "Créative.", info: "Excellente en expression écrite." },
+            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 3, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [9, 9, 10, 10], logbook: ["Progrès réguliers."], personality: "Réservé.", info: "Proche du seuil de maîtrise." },
+            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 4, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [12, 12, 13, 13], logbook: ["Très organisée."], personality: "Structurée.", info: "À l'aise en géométrie." },
+            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 4, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [7, 7, 8, 8], logbook: ["Timide à l'oral."], personality: "Réfléchi.", info: "Soutien en résolution de problèmes." },
+            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 5, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [10, 10, 11, 11], logbook: ["Appliquée."], personality: "Observatrice.", info: "Acquiert progressivement les bases." },
+            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 5, subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [15, 15, 16, 16], logbook: ["Leader naturel."], personality: "Dynamique.", info: "Leader en mathématiques." },
+            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 6, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [5, 5, 6, 6], logbook: ["Fatigue matinale."], personality: "Discrète.", info: "Suivi rapproché en français." },
+            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 6, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [13, 13, 14, 14], logbook: ["Bon esprit d'entraide."], personality: "Empathique.", info: "Entraide naturelle." }
         ];
     }
     renderClassroomDesks();
@@ -95,26 +95,107 @@ function injectLocalBadge() {
     }
 }
 
+// RENDU VISUEL DES VRAIS PUPITRES DOUBLES DE CLASSE
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
     container.innerHTML = '';
-    studentsDatabase.forEach(student => {
-        const desk = document.createElement('div');
-        desk.className = `desk p-3 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${student.mastery ? 'bg-emerald-900/20 border-emerald-500/40 text-emerald-200' : 'bg-amber-900/20 border-amber-500/40 text-amber-200'}`;
-        desk.innerHTML = `
-            <img src="${student.photo || 'https://via.placeholder.com/150'}" class="w-10 h-10 rounded-full object-cover border border-amber-500/50" alt="${student.name}">
-            <div>
-                <div class="font-bold text-sm">${student.name}</div>
-                <div class="text-xs text-slate-300">Table ${student.desk} • <span class="font-semibold">${student.score}/20</span></div>
+
+    // Ajout d'un panneau de contrôle pour le nombre de pupitres / effectif de la classe
+    let controlBar = document.getElementById('classroom-control-bar');
+    if (!controlBar) {
+        controlBar = document.createElement('div');
+        controlBar.id = 'classroom-control-bar';
+        controlBar.className = 'flex justify-between items-center bg-slate-800/80 p-3 rounded-xl mb-4 border border-slate-700 text-xs text-white';
+        controlBar.innerHTML = `
+            <div>🏫 <strong>Configuration Classe CE2-A :</strong> Tables-bancs doubles (Modèle Sénégal Standard)</div>
+            <div class="flex gap-2 items-center">
+                <span>Nombre total d'élèves : <strong>${studentsDatabase.length}</strong></span>
+                <button onclick="addNewStudentDesk()" class="bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-400">+ Ajouter un Pupitre</button>
             </div>
         `;
-        desk.onclick = () => showStudentDetails(student.id);
-        container.appendChild(desk);
+        container.parentNode.insertBefore(controlBar, container);
+    } else {
+        controlBar.querySelector('strong').textContent = studentsDatabase.length;
+    }
+
+    // Regroupement des élèves par table-banc (2 élèves par table)
+    let desksMap = {};
+    studentsDatabase.forEach(student => {
+        let deskNum = student.desk || 1;
+        if (!desksMap[deskNum]) desksMap[deskNum] = [];
+        desksMap[deskNum].push(student);
     });
+
+    // Affichage visuel des pupitres doubles inspirés de la photo
+    const gridDiv = document.createElement('div');
+    gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+
+    Object.keys(desksMap).forEach(deskNum => {
+        let pair = desksMap[deskNum];
+        let tableCard = document.createElement('div');
+        tableCard.className = 'bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-xl relative flex flex-col justify-between';
+        
+        let studentsHtml = pair.map(student => `
+            <div onclick="showStudentDetails(${student.id})" class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-slate-700/80 border ${student.mastery ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200' : 'bg-amber-950/30 border-amber-500/40 text-amber-200'}">
+                <img src="${student.photo}" class="w-10 h-10 rounded-full object-cover border-2 border-amber-400 shadow" alt="${student.name}">
+                <div class="overflow-hidden">
+                    <div class="font-bold text-sm truncate">${student.name}</div>
+                    <div class="text-[11px] text-slate-300">Moy : <span class="font-semibold text-white">${student.score}/20</span> • ${student.mastery ? 'Maîtrise' : 'Soutien'}</div>
+                </div>
+            </div>
+        `).join('');
+
+        tableCard.innerHTML = `
+            <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">🪑 Table-Banc Double N°${deskNum}</span>
+                <span class="text-[10px] bg-slate-900 px-2 py-0.5 rounded text-slate-400">2 Places</span>
+            </div>
+            <div class="space-y-2 mb-3">
+                ${studentsHtml}
+                ${pair.length < 2 ? '<div class="text-xs text-slate-500 italic p-2 border border-dashed border-slate-700 rounded-xl text-center">Place libre disponible</div>' : ''}
+            </div>
+            <div class="bg-slate-900/60 p-2 rounded-xl text-center text-[10px] text-slate-400 border border-slate-700/50">
+                <span>Plateau bois & Casiers intégrés (Modèle Standard)</span>
+            </div>
+        `;
+        gridDiv.appendChild(tableCard);
+    });
+
+    container.appendChild(gridDiv);
 }
 
-// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (PROFIL & JOURNAL INTIME DE PERSONNALITÉ)
+// Fonction pour ajouter un nouvel élève / pupitre dynamiquement selon la taille de la classe
+function addNewStudentDesk() {
+    let name = prompt("Entrez le nom et prénom du nouvel élève :");
+    if (!name || !name.trim()) return;
+    
+    let newId = studentsDatabase.length > 0 ? Math.max(...studentsDatabase.map(s => s.id)) + 1 : 1;
+    let lastDesk = studentsDatabase.length > 0 ? studentsDatabase[studentsDatabase.length - 1].desk : 1;
+    let targetDesk = studentsDatabase.filter(s => s.desk === lastDesk).length >= 2 ? lastDesk + 1 : lastDesk;
+
+    let newStudent = {
+        id: newId,
+        name: name.trim(),
+        score: 10,
+        mastery: false,
+        desk: targetDesk,
+        subjects: { math: 10, french: 10, dictation: 10 },
+        photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+        history: [10, 10, 10, 10],
+        logbook: ["Nouvel élève intégré à la classe."],
+        personality: "Profil en cours d'observation.",
+        info: "Élève nouvellement inscrit."
+    };
+
+    studentsDatabase.push(newStudent);
+    localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
+    renderClassroomDesks();
+    updateKPISummary();
+    speakText(`Nouvel élève ${name} ajouté à la table-banc ${targetDesk}.`);
+}
+
+// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (PROFIL & JOURNAL INTIME)
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -140,7 +221,7 @@ function showStudentDetails(studentId) {
                     <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md" alt="${student.name}">
                     <div>
                         <h3 class="text-xl font-bold text-amber-400">${student.name}</h3>
-                        <p class="text-xs text-slate-400">Table-Banc N°${student.desk} • CE2 (École El Hadji Malick Sy, Mbour)</p>
+                        <p class="text-xs text-slate-400">Table-Banc Double N°${student.desk} • CE2 (École El Hadji Malick Sy, Mbour)</p>
                         <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut CEB : ${student.mastery ? 'Maîtrise' : 'Soutien'}</p>
                     </div>
                 </div>
@@ -215,7 +296,7 @@ function showStudentDetails(studentId) {
                     </div>
                 </div>
 
-                <!-- BOUTON D'EXPORT DE BULLETIN BIEN VISIBLE -->
+                <!-- BOUTON D'EXPORT DE BULLETIN -->
                 <div class="flex gap-3 justify-between items-center border-t border-slate-800 pt-4 mt-2">
                     <button onclick="exportStudentBulletin(${student.id})" class="bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-emerald-500 text-sm flex items-center gap-2 shadow-lg">
                         <i class="fa-solid fa-print"></i> Imprimer / Exporter le Bulletin Officiel
@@ -228,7 +309,6 @@ function showStudentDetails(studentId) {
 
     const existingModal = document.getElementById('student-modal');
     if (existingModal) existingModal.remove();
-
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
@@ -259,7 +339,7 @@ function addManualMemo(studentId) {
         if (!student.logbook) student.logbook = [];
         student.logbook.push(input.value.trim());
         localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
-        showStudentDetails(studentId); // Recharge la modale avec la nouvelle entrée
+        showStudentDetails(studentId);
         speakText("Observation enregistrée dans le journal intime.");
     }
 }
@@ -295,7 +375,7 @@ function exportStudentBulletin(studentId) {
                 <img src="${student.photo}" alt="${student.name}">
                 <div>
                     <strong>Nom & Prénom :</strong> ${student.name}<br>
-                    <strong>Table-Banc N° :</strong> ${student.desk}<br>
+                    <strong>Table-Banc Double N° :</strong> ${student.desk}<br>
                     <strong>Moyenne Mensuelle :</strong> ${student.score} / 20<br>
                     <strong>Statut CEB :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
                 </div>
@@ -325,7 +405,7 @@ function exportStudentBulletin(studentId) {
     printWindow.document.close();
 }
 
-// COMMANDE VOCALE & TEXTUELLE AVANCÉE ("Imprime le bulletin de...", "Devoir de math de...", etc.)
+// COMMANDE VOCALE & TEXTUELLE
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -358,7 +438,6 @@ function handleCommand(command) {
     else if (isManualMode || maladoModeAwake || q.includes('assistante') || q.includes('malado')) {
         let cleanQ = q.replace('assistante', '').replace('malado', '').trim();
 
-        // COMMANDE D'IMPRESSION DE BULLETIN : "imprime le bulletin de [Nom]"
         if (cleanQ.includes('imprime') && cleanQ.includes('bulletin')) {
             let foundStudent = studentsDatabase.find(s => cleanQ.includes(s.name.toLowerCase()));
             if (foundStudent) {
@@ -368,17 +447,15 @@ function handleCommand(command) {
                 reponse = "Je n'ai pas trouvé le nom de l'élève pour l'impression du bulletin.";
             }
         }
-        // COMMANDE DE CONSULTATION DE DEVOIR / MATIÈRE : "devoir de math de [Nom]"
         else if (cleanQ.includes('devoir') || cleanQ.includes('note') || cleanQ.includes('math') || cleanQ.includes('français')) {
             let foundStudent = studentsDatabase.find(s => cleanQ.includes(s.name.toLowerCase()));
             if (foundStudent) {
                 showStudentDetails(foundStudent.id);
-                reponse = `Voici le dossier et les notes de ${foundStudent.name}.`;
+                reponse = `Voici le dossier de ${foundStudent.name}.`;
             } else {
-                reponse = "Précisez le nom de l'élève dont vous souhaitez consulter les résultats.";
+                reponse = "Précisez le nom de l'élève.";
             }
         }
-        // MÉMO VOCAL POUR LE JOURNAL INTIME
         else if (cleanQ.startsWith('note que') || cleanQ.startsWith('rappelle-moi') || cleanQ.startsWith('ajoute')) {
             let parts = cleanQ.split(' pour ');
             if (parts.length > 1) {
@@ -389,7 +466,7 @@ function handleCommand(command) {
                     if (!student.logbook) student.logbook = [];
                     student.logbook.push(memoContent);
                     localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
-                    reponse = `Observation enregistrée dans le journal intime de ${student.name}. J'analyse son profil.`;
+                    reponse = `Observation enregistrée dans le journal intime de ${student.name}.`;
                 } else {
                     reponse = `Élève ${studentName} introuvable.`;
                 }
@@ -399,20 +476,17 @@ function handleCommand(command) {
         }
         else if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('permutation')) {
             triggerVygotskyPermutationSimulation();
-            reponse = "J'ouvre l'analyse logique et les propositions de permutation Vygotsky.";
+            reponse = "J'ouvre l'analyse de permutation Vygotsky.";
         }
         else if (cleanQ.includes('scan') || cleanQ.includes('copie')) {
             triggerOCRScanModal();
-            reponse = "J'ouvre l'assistant de correction photo des devoirs.";
+            reponse = "J'ouvre l'assistant de correction photo.";
         }
         else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan')) {
             let avg = studentsDatabase.length > 0 ? (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1) : 0;
             let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
-            reponse = `Bilan CE2-A (El Hadji Malick Sy) : Moyenne de ${avg}/20. ${faiblesCount} élèves en soutien.`;
+            reponse = `Bilan CE2-A : Moyenne de ${avg}/20. ${faiblesCount} élèves en soutien.`;
         }
-        else if (cleanQ.includes('présente-toi') || cleanQ.includes('qui es-tu')) {
-            reponse = "Je suis Malado, assistante pédagogique de la CE2-A à l'école El Hadji Malick Sy de Mbour.";
-        } 
         else {
             let foundConcept = Object.keys(maladoMemory.learnedConcepts).find(c => cleanQ.includes(c));
             if (foundConcept) {
@@ -424,7 +498,6 @@ function handleCommand(command) {
                 reponse = `Maître Balla, je ne connais pas ce concept (« ${cleanQ} »). Me donnez-vous la permission d'aller consulter les ressources en ligne ?`;
             }
         }
-        
         maladoModeAwake = false;
     } 
     else {
@@ -445,12 +518,9 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    if (reponse) {
-        speakText(reponse);
-    }
+    if (reponse) speakText(reponse);
 }
 
-// Fonctions utilitaires annexes
 function toggleVoiceMode() {
     stopSpeaking();
     isManualMode = !isManualMode;
@@ -520,7 +590,6 @@ function initVoiceRecognition() {
     try { recognition.start(); } catch(e) {}
 }
 
-// Fonctions de support (Permutation et OCR)
 function triggerVygotskyPermutationSimulation() {
     stopSpeaking();
     alert("Module de permutation Vygotsky activé.");
@@ -536,7 +605,7 @@ function updateKPISummary() {
     if (total === 0) return;
     const avgScore = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / total).toFixed(1);
     const masteryCount = studentsDatabase.filter(s => s.mastery).length;
-    const supportCount = total - masteryCode = total - masteryCount;
+    const supportCount = total - masteryCount;
     
     const kpiTotal = document.getElementById('kpi-total-students');
     const kpiAvg = document.getElementById('kpi-avg-score');
