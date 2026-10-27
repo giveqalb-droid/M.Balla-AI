@@ -18,7 +18,7 @@ let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false;
+let isManualMode = false; // Faux par défaut (Mode Écoute Auto actif)
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
 // MÉMOIRE ÉVOLUTIVE (Persistante)
@@ -154,7 +154,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Cerveau corrigé et précis
+// Cerveau principal stable
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -170,11 +170,11 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // 1. Si elle attendait une réponse pour Internet
+    // 1. Gestion des réponses en attente de permission Internet
     if (awaitingInternetPermissionFor) {
         let concept = awaitingInternetPermissionFor;
         if (q.includes('oui') || q.includes('vas-y') || q.includes('va') || q.includes('d\'accord') || q.includes('ok')) {
-            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active et adaptée au niveau des élèves.`;
+            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active et adaptée au niveau de la classe.`;
             maladoMemory.learnedConcepts[concept] = simulatedOnlineDefinition;
             localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
 
@@ -185,7 +185,7 @@ function handleCommand(command) {
             reponse = "Entendu, je ne vais pas sur Internet.";
         }
     }
-    // 2. Commandes de la classe et de gestion (Vygotsky, bilan, élèves, présentation)
+    // 2. En mode manuel OU si le réveil "Assistante" a été prononcé en mode auto
     else if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         let cleanQ = q.replace('assistante', '').trim();
 
@@ -212,12 +212,14 @@ function handleCommand(command) {
             reponse = "C'est bien noté, Maître Balla. Je serai plus polie.";
         }
         else {
-            // Si c'est une question spécifique sur un concept qu'elle ne connaît pas
+            // Vérifie si le concept est déjà connu
             let foundConcept = Object.keys(maladoMemory.learnedConcepts).find(c => cleanQ.includes(c));
             if (foundConcept) {
                 reponse = `Au sujet de "${foundConcept}" : ${maladoMemory.learnedConcepts[foundConcept]}`;
+            } else if (cleanQ === "" || cleanQ === "assistante") {
+                reponse = "Oui, Maître Balla ?";
             } else {
-                // Demande de permission internet uniquement si c'est une question ou un concept flou
+                // Demande de permission internet pour un concept inconnu
                 awaitingInternetPermissionFor = cleanQ;
                 reponse = `Maître Balla, je ne connais pas ce concept (« ${cleanQ} »). Me donnez-vous la permission d'aller consulter les ressources en ligne ?`;
             }
@@ -226,11 +228,12 @@ function handleCommand(command) {
         maladoModeAwake = false;
     } 
     else {
+        // En mode Écoute Auto (veille), attend le mot-clé "Assistante"
         if (q.includes('assistante')) {
             maladoModeAwake = true;
             reponse = "Oui ?";
         } else {
-            reponse = ""; 
+            reponse = ""; // Silence radio en arrière-plan
         }
     }
 
@@ -248,6 +251,7 @@ function handleCommand(command) {
     }
 }
 
+// Correction du bouton de bascule Mode Auto / Manuel
 function toggleVoiceMode() {
     stopSpeaking();
     isManualMode = !isManualMode;
@@ -255,21 +259,29 @@ function toggleVoiceMode() {
     const modeIcon = document.getElementById('mode-icon');
 
     if (isManualMode) {
-        if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
+        if (recognition) { 
+            try { recognition.stop(); } catch(e) {} 
+            recognition = null; 
+        }
         maladoModeAwake = false;
-        modeText.textContent = "Mode : Manuel (Micro requis)";
-        modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
+        if (modeText) modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
+        if (modeIcon) modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
+        console.log("Mode Manuel activé.");
     } else {
-        modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
-        modeIcon.className = "fa-solid fa-microphone text-emerald-400";
+        if (modeText) modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
+        if (modeIcon) modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
+        console.log("Mode Écoute Auto activé.");
     }
 }
 
 function startManualListening() {
     stopSpeaking(); 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
+    if (!SpeechRecognition) {
+        alert("Reconnaissance vocale non supportée par ce navigateur.");
+        return;
+    }
 
     const manualRec = new SpeechRecognition();
     manualRec.lang = 'fr-FR';
@@ -295,10 +307,11 @@ function initVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
-    if (recognition) { try { recognition.stop(); } catch(e) {} }
+    if (recognition) { 
+        try { recognition.stop(); } catch(e) {} 
+    }
 
     recognition = new SpeechRecognition();
-    recognition.lang.fr-FR = 'fr-FR';
     recognition.lang = 'fr-FR';
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -311,7 +324,9 @@ function initVoiceRecognition() {
 
     recognition.onend = function() {
         if (!isManualMode) {
-            setTimeout(() => { try { recognition.start(); } catch(e) {} }, 500);
+            setTimeout(() => { 
+                try { recognition.start(); } catch(e) {} 
+            }, 500);
         }
     };
 
