@@ -1,4 +1,4 @@
-// Variable globale pour la base des élèves et la gestion des pupitres doubles
+// Variable globale pour la base des élèves
 let studentsDatabase = [];
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
@@ -64,18 +64,18 @@ async function loadClassroomData() {
     } catch (error) {
         console.warn("Chargement local de secours activé :", error);
         studentsDatabase = [
-            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse. Idéale comme tutrice." },
-            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 1, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [8, 8, 9, 9], logbook: ["Besoin d'aide en calcul."], personality: "Kinésthésique.", info: "Besoin de soutien en Mathématiques." },
-            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 2, subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 11, 12, 12], logbook: ["Bonne participation."], personality: "Attentive.", info: "Bonne élève, forte en Français." },
-            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 2, subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [6, 6, 7, 7], logbook: ["Distrait en fin de matinée."], personality: "Énergique.", info: "Appui renforcé en Numération." },
-            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 3, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [14, 14, 15, 15], logbook: ["Très active à l'oral."], personality: "Créative.", info: "Excellente en expression écrite." },
-            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 3, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [9, 9, 10, 10], logbook: ["Progrès réguliers."], personality: "Réservé.", info: "Proche du seuil de maîtrise." },
-            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 4, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [12, 12, 13, 13], logbook: ["Très organisée."], personality: "Structurée.", info: "À l'aise en géométrie." },
-            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 4, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [7, 7, 8, 8], logbook: ["Timide à l'oral."], personality: "Réfléchi.", info: "Soutien en résolution de problèmes." },
-            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 5, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [10, 10, 11, 11], logbook: ["Appliquée."], personality: "Observatrice.", info: "Acquiert progressivement les bases." },
-            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 5, subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [15, 15, 16, 16], logbook: ["Leader naturel."], personality: "Dynamique.", info: "Leader en mathématiques." },
-            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 6, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [5, 5, 6, 6], logbook: ["Fatigue matinale."], personality: "Discrète.", info: "Suivi rapproché en français." },
-            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 6, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [13, 13, 14, 14], logbook: ["Bon esprit d'entraide."], personality: "Empathique.", info: "Entraide naturelle." }
+            { id: 1, name: "Awa Diop", score: 14, mastery: true, row: 1, position: "Gauche", subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse. Idéale comme tutrice." },
+            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, row: 1, position: "Droite", subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [8, 8, 9, 9], logbook: ["Besoin d'aide en calcul."], personality: "Kinésthésique.", info: "Besoin de soutien en Mathématiques." },
+            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, row: 2, position: "Gauche", subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 11, 12, 12], logbook: ["Bonne participation."], personality: "Attentive.", info: "Bonne élève, forte en Français." },
+            { id: 4, name: "Moussa Fall", score: 7, mastery: false, row: 2, position: "Droite", subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [6, 6, 7, 7], logbook: ["Distrait en fin de matinée."], personality: "Énergique.", info: "Appui renforcé en Numération." },
+            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, row: 3, position: "Gauche", subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [14, 14, 15, 15], logbook: ["Très active à l'oral."], personality: "Créative.", info: "Excellente en expression écrite." },
+            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, row: 3, position: "Droite", subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [9, 9, 10, 10], logbook: ["Progrès réguliers."], personality: "Réservé.", info: "Proche du seuil de maîtrise." },
+            { id: 7, name: "Mariama Camara", score: 13, mastery: true, row: 4, position: "Gauche", subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [12, 12, 13, 13], logbook: ["Très organisée."], personality: "Structurée.", info: "À l'aise en géométrie." },
+            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, row: 4, position: "Droite", subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [7, 7, 8, 8], logbook: ["Timide à l'oral."], personality: "Réfléchi.", info: "Soutien en résolution de problèmes." },
+            { id: 9, name: "Léona Mendy", score: 11, mastery: false, row: 5, position: "Gauche", subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [10, 10, 11, 11], logbook: ["Appliquée."], personality: "Observatrice.", info: "Acquiert progressivement les bases." },
+            { id: 10, name: "Karim Sow", score: 16, mastery: true, row: 5, position: "Droite", subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [15, 15, 16, 16], logbook: ["Leader naturel."], personality: "Dynamique.", info: "Leader en mathématiques." },
+            { id: 11, name: "Diana Gaye", score: 6, mastery: false, row: 6, position: "Gauche", subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [5, 5, 6, 6], logbook: ["Fatigue matinale."], personality: "Discrète.", info: "Suivi rapproché en français." },
+            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, row: 6, position: "Droite", subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [13, 13, 14, 14], logbook: ["Bon esprit d'entraide."], personality: "Empathique.", info: "Entraide naturelle." }
         ];
     }
     renderClassroomDesks();
@@ -95,107 +95,68 @@ function injectLocalBadge() {
     }
 }
 
-// RENDU VISUEL DES VRAIS PUPITRES DOUBLES DE CLASSE
+// RENDU VISUEL DES RANGÉES DE PUPITRES DOUBLES (FASE AU TABLEAU)
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
     container.innerHTML = '';
 
-    // Ajout d'un panneau de contrôle pour le nombre de pupitres / effectif de la classe
-    let controlBar = document.getElementById('classroom-control-bar');
-    if (!controlBar) {
-        controlBar = document.createElement('div');
-        controlBar.id = 'classroom-control-bar';
-        controlBar.className = 'flex justify-between items-center bg-slate-800/80 p-3 rounded-xl mb-4 border border-slate-700 text-xs text-white';
-        controlBar.innerHTML = `
-            <div>🏫 <strong>Configuration Classe CE2-A :</strong> Tables-bancs doubles (Modèle Sénégal Standard)</div>
-            <div class="flex gap-2 items-center">
-                <span>Nombre total d'élèves : <strong>${studentsDatabase.length}</strong></span>
-                <button onclick="addNewStudentDesk()" class="bg-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-lg hover:bg-amber-400">+ Ajouter un Pupitre</button>
-            </div>
-        `;
-        container.parentNode.insertBefore(controlBar, container);
-    } else {
-        controlBar.querySelector('strong').textContent = studentsDatabase.length;
+    // Barre d'en-tête de la classe simulant le tableau noir au fond/devant
+    let tableauxHeader = document.getElementById('classroom-blackboard');
+    if (!tableauxHeader) {
+        tableauxHeader = document.createElement('div');
+        tableauxHeader.id = 'classroom-blackboard';
+        tableauxHeader.className = 'bg-slate-900 border-2 border-emerald-500/40 p-3 rounded-xl mb-6 text-center text-emerald-400 font-bold text-sm shadow-inner';
+        tableauxHeader.innerHTML = `chalkboard 🏫 [ TABLEAU NOIR — ZONE PÉDAGOGIQUE DU MAÎTRE (CE2-A) ]`;
+        container.parentNode.insertBefore(tableauxHeader, container);
     }
 
-    // Regroupement des élèves par table-banc (2 élèves par table)
-    let desksMap = {};
+    // Regroupement des élèves par rangée (Rang 1 = Premier rang près du tableau, Rang 2, etc.)
+    let rowsMap = {};
     studentsDatabase.forEach(student => {
-        let deskNum = student.desk || 1;
-        if (!desksMap[deskNum]) desksMap[deskNum] = [];
-        desksMap[deskNum].push(student);
+        let r = student.row || 1;
+        if (!rowsMap[r]) rowsMap[r] = [];
+        rowsMap[r].push(student);
     });
 
-    // Affichage visuel des pupitres doubles inspirés de la photo
-    const gridDiv = document.createElement('div');
-    gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+    const layoutDiv = document.createElement('div');
+    layoutDiv.className = 'space-y-4 max-w-4xl mx-auto';
 
-    Object.keys(desksMap).forEach(deskNum => {
-        let pair = desksMap[deskNum];
-        let tableCard = document.createElement('div');
-        tableCard.className = 'bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-xl relative flex flex-col justify-between';
+    Object.keys(rowsMap).sort((a, b) => a - b).forEach(rowNum => {
+        let rowStudents = rowsMap[rowNum];
+        let rowCard = document.createElement('div');
+        rowCard.className = 'bg-slate-800/80 border border-slate-700 rounded-2xl p-4 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4';
         
-        let studentsHtml = pair.map(student => `
-            <div onclick="showStudentDetails(${student.id})" class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-slate-700/80 border ${student.mastery ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200' : 'bg-amber-950/30 border-amber-500/40 text-amber-200'}">
+        let rowLabel = document.createElement('div');
+        rowLabel.className = 'text-xs font-bold text-amber-400 uppercase tracking-wider min-w-[120px] text-center md:text-left';
+        rowLabel.innerHTML = `🪑 Rangée ${rowNum}<br><span class="text-[10px] text-slate-400">Table-Banc Double</span>`;
+        rowCard.appendChild(rowLabel);
+
+        let seatsDiv = document.createElement('div');
+        seatsDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-3 w-full';
+
+        rowStudents.forEach(student => {
+            let seat = document.createElement('div');
+            seat.className = `flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-slate-700/80 border ${student.mastery ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200' : 'bg-amber-950/40 border-amber-500/40 text-amber-200'}`;
+            seat.innerHTML = `
                 <img src="${student.photo}" class="w-10 h-10 rounded-full object-cover border-2 border-amber-400 shadow" alt="${student.name}">
                 <div class="overflow-hidden">
                     <div class="font-bold text-sm truncate">${student.name}</div>
                     <div class="text-[11px] text-slate-300">Moy : <span class="font-semibold text-white">${student.score}/20</span> • ${student.mastery ? 'Maîtrise' : 'Soutien'}</div>
                 </div>
-            </div>
-        `).join('');
+            `;
+            seat.onclick = () => showStudentDetails(student.id);
+            seatsDiv.appendChild(seat);
+        });
 
-        tableCard.innerHTML = `
-            <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
-                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">🪑 Table-Banc Double N°${deskNum}</span>
-                <span class="text-[10px] bg-slate-900 px-2 py-0.5 rounded text-slate-400">2 Places</span>
-            </div>
-            <div class="space-y-2 mb-3">
-                ${studentsHtml}
-                ${pair.length < 2 ? '<div class="text-xs text-slate-500 italic p-2 border border-dashed border-slate-700 rounded-xl text-center">Place libre disponible</div>' : ''}
-            </div>
-            <div class="bg-slate-900/60 p-2 rounded-xl text-center text-[10px] text-slate-400 border border-slate-700/50">
-                <span>Plateau bois & Casiers intégrés (Modèle Standard)</span>
-            </div>
-        `;
-        gridDiv.appendChild(tableCard);
+        rowCard.appendChild(seatsDiv);
+        layoutDiv.appendChild(rowCard);
     });
 
-    container.appendChild(gridDiv);
+    container.appendChild(layoutDiv);
 }
 
-// Fonction pour ajouter un nouvel élève / pupitre dynamiquement selon la taille de la classe
-function addNewStudentDesk() {
-    let name = prompt("Entrez le nom et prénom du nouvel élève :");
-    if (!name || !name.trim()) return;
-    
-    let newId = studentsDatabase.length > 0 ? Math.max(...studentsDatabase.map(s => s.id)) + 1 : 1;
-    let lastDesk = studentsDatabase.length > 0 ? studentsDatabase[studentsDatabase.length - 1].desk : 1;
-    let targetDesk = studentsDatabase.filter(s => s.desk === lastDesk).length >= 2 ? lastDesk + 1 : lastDesk;
-
-    let newStudent = {
-        id: newId,
-        name: name.trim(),
-        score: 10,
-        mastery: false,
-        desk: targetDesk,
-        subjects: { math: 10, french: 10, dictation: 10 },
-        photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
-        history: [10, 10, 10, 10],
-        logbook: ["Nouvel élève intégré à la classe."],
-        personality: "Profil en cours d'observation.",
-        info: "Élève nouvellement inscrit."
-    };
-
-    studentsDatabase.push(newStudent);
-    localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
-    renderClassroomDesks();
-    updateKPISummary();
-    speakText(`Nouvel élève ${name} ajouté à la table-banc ${targetDesk}.`);
-}
-
-// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (PROFIL & JOURNAL INTIME)
+// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (NOTES & JOURNAL INTIME)
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -221,18 +182,16 @@ function showStudentDetails(studentId) {
                     <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md" alt="${student.name}">
                     <div>
                         <h3 class="text-xl font-bold text-amber-400">${student.name}</h3>
-                        <p class="text-xs text-slate-400">Table-Banc Double N°${student.desk} • CE2 (École El Hadji Malick Sy, Mbour)</p>
+                        <p class="text-xs text-slate-400">Rangée ${student.row} • CE2 (École El Hadji Malick Sy, Mbour)</p>
                         <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut CEB : ${student.mastery ? 'Maîtrise' : 'Soutien'}</p>
                     </div>
                 </div>
 
-                <!-- NAVIGATION PAR ONGLETS -->
                 <div class="flex border-b border-slate-700 mb-4">
                     <button onclick="switchTab('tab-notes')" id="btn-tab-notes" class="px-4 py-2 text-sm font-bold text-amber-400 border-b-2 border-amber-400">Notes & Évolution</button>
                     <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white">📖 Journal Intime & Personnalité</button>
                 </div>
 
-                <!-- ONGLET 1 : NOTES & COURBES -->
                 <div id="tab-notes" class="tab-content">
                     <div class="grid grid-cols-3 gap-3 mb-4 text-center">
                         <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
@@ -277,7 +236,6 @@ function showStudentDetails(studentId) {
                     </div>
                 </div>
 
-                <!-- ONGLET 2 : JOURNAL INTIME & APPRENTISSAGE DE LA PERSONNALITÉ -->
                 <div id="tab-journal" class="tab-content hidden">
                     <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
                         <h4 class="font-bold text-emerald-400 text-sm mb-2">🧠 Analyse Continue de la Personnalité (IA Malado)</h4>
@@ -296,7 +254,6 @@ function showStudentDetails(studentId) {
                     </div>
                 </div>
 
-                <!-- BOUTON D'EXPORT DE BULLETIN -->
                 <div class="flex gap-3 justify-between items-center border-t border-slate-800 pt-4 mt-2">
                     <button onclick="exportStudentBulletin(${student.id})" class="bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-emerald-500 text-sm flex items-center gap-2 shadow-lg">
                         <i class="fa-solid fa-print"></i> Imprimer / Exporter le Bulletin Officiel
@@ -375,7 +332,7 @@ function exportStudentBulletin(studentId) {
                 <img src="${student.photo}" alt="${student.name}">
                 <div>
                     <strong>Nom & Prénom :</strong> ${student.name}<br>
-                    <strong>Table-Banc Double N° :</strong> ${student.desk}<br>
+                    <strong>Rangée :</strong> Rangée ${student.row}<br>
                     <strong>Moyenne Mensuelle :</strong> ${student.score} / 20<br>
                     <strong>Statut CEB :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
                 </div>
