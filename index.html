@@ -25,7 +25,6 @@
     <!-- Header principal épuré -->
     <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 flex flex-col lg:flex-row items-center justify-between gap-4">
-            <!-- Information de la classe & Enseignant -->
             <div class="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-start">
                 <div class="flex items-center gap-3">
                     <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 text-slate-950 flex items-center justify-center font-black text-xl shadow-lg shadow-amber-500/20">
@@ -33,15 +32,14 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">CEB Sénégal • Inspection Mbour</span>
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Classe : CE2-A</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 uppercase tracking-wider">CEB Sénégal • Mbour</span>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">CE2-A (18 Élèves)</span>
                         </div>
                         <h1 class="text-base sm:text-lg font-extrabold text-white tracking-tight"> Maître Balla </h1>
                         <p class="text-xs text-slate-400">École El Hadji Malick Sy — Co-pilote vocal Malado</p>
                     </div>
                 </div>
             </div>
-            <!-- Bouton pour switcher entre Mode Automatique et Manuel -->
             <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
                 <button id="btn-toggle-mode" onclick="toggleVoiceMode()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs text-slate-300 flex items-center gap-2 transition-all cursor-pointer">
                     <i id="mode-icon" class="fa-solid fa-microphone text-emerald-400"></i>
@@ -53,11 +51,11 @@
 
     <!-- Contenu Principal -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
-        <!-- STATISTIQUES RÉSUMÉES (18 ÉLÈVES) -->
+        <!-- KPI Statistiques -->
         <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Effectif Total</p>
-                <p class="text-2xl font-black text-white mt-1" id="kpi-total-students">18 <span class="text-xs font-normal text-slate-400">Élèves suivis</span></p>
+                <p class="text-2xl font-black text-white mt-1" id="kpi-total-students">18 <span class="text-xs font-normal text-slate-400">Élèves</span></p>
             </div>
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Moyenne Classe</p>
@@ -65,55 +63,31 @@
             </div>
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Maîtrise Acquise</p>
-                <p class="text-2xl font-black text-emerald-400 mt-1" id="kpi-mastery-count">9 <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span></p>
+                <p class="text-2xl font-black text-emerald-400 mt-1" id="kpi-mastery-count">9 <span class="text-xs font-normal text-slate-400">Élèves</span></p>
             </div>
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
-                <p class="text-xs font-semibold text-slate-400">Soutien & Progrès</p>
-                <p class="text-2xl font-black text-rose-400 mt-1" id="kpi-support-count">9 <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span></p>
+                <p class="text-xs font-semibold text-slate-400">Soutien Requis</p>
+                <p class="text-2xl font-black text-rose-400 mt-1" id="kpi-support-count">9 <span class="text-xs font-normal text-slate-400">Élèves</span></p>
             </div>
         </section>
 
-        <!-- SECTION : UPLOAD DU PROGRAMME ÉDUCATIF NATIONAL -->
-        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-blue-950 border border-blue-600/40 text-blue-400 flex items-center justify-center text-base">
-                        <i class="fa-solid fa-file-arrow-up"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-white">Programme Éducatif National (Sénégal)</h2>
-                        <p class="text-xs text-slate-400">Importez le document officiel du programme (PDF ou Texte) pour Malado</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <label class="flex-1 sm:flex-initial px-4 py-2 bg-slate-800 hover:bg-slate-700 text-blue-300 rounded-xl border border-slate-700 text-xs font-bold cursor-pointer flex items-center justify-center gap-2 transition-all">
-                        <i class="fa-solid fa-upload"></i>
-                        <span id="upload-file-label">Importer le programme</span>
-                        <input type="file" id="curriculum-file-input" accept=".txt,.pdf,.doc,.docx" class="hidden" onchange="handleCurriculumUpload(event)">
-                    </label>
+        <!-- DECOR DE LA SALLE DE CLASSE -->
+        <section class="classroom-floor p-6 border border-slate-800 shadow-2xl">
+            <!-- Vrai Tableau Noir en Haut -->
+            <div class="blackboard-frame max-w-4xl mx-auto mb-8 p-1">
+                <div class="blackboard-surface p-4 text-center rounded">
+                    <h2 class="font-chalk text-2xl text-emerald-200 tracking-wider">🏫 SALLE DE CLASSE CE2-A — MAÎTRE BALLA</h2>
+                    <p class="font-chalk text-sm text-emerald-400/80 mt-1">« Programme National du Sénégal • Inspection de Mbour »</p>
                 </div>
             </div>
-        </section>
 
-        <!-- SECTION : Disposition des Pupitres de la Classe (3 Rangées Verticales Pleine Largeur) -->
-        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl w-full">
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
-                    <i class="fa-solid fa-chair"></i>
-                </div>
-                <div>
-                    <h2 class="text-lg font-bold text-white">Plan de Classe CE2-A (3 Rangées Verticales - 18 Élèves)</h2>
-                    <p class="text-xs text-slate-400">Cliquez sur un élève pour afficher sa fiche détaillée et son journal intime</p>
-                </div>
-            </div>
-            
-            <!-- Conteneur généré par script.js occupant toute la largeur -->
+            <!-- Conteneur des pupitres -->
             <div id="classroom-container" class="w-full">
-                <!-- Les rangées de pupitres doubles seront injectées ici -->
+                <!-- Les pupitres 3D réalistes sont injectés par script.js -->
             </div>
         </section>
 
-        <!-- SECTION : CO-PILOTE DIALOGUE MALADO -->
+        <!-- SECTION CO-PILOTE MALADO -->
         <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-9 h-9 rounded-xl bg-amber-950 border border-amber-600/40 text-amber-400 flex items-center justify-center text-base">
@@ -121,21 +95,17 @@
                 </div>
                 <div>
                     <h2 class="text-lg font-bold text-white">Co-Pilote Intelligent Malado</h2>
-                    <p class="text-xs text-slate-400">Mode automatique ("Assistante") ou mode manuel avec le petit micro</p>
+                    <p class="text-xs text-slate-400">Posez vos questions vocales ou écrites</p>
                 </div>
             </div>
-            
-            <!-- Boîte de Chat -->
-            <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 mb-4 text-xs">
+            <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-40 overflow-y-auto space-y-3 mb-4 text-xs">
                 <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl">
-                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Le plan de classe à 3 rangées est prêt. Dites par exemple : 'Malado, imprime le bulletin d'Awa Diop'."
+                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Le plan de la classe avec les vrais pupitres est prêt."
                 </div>
             </div>
-
-            <!-- Zone de Saisie avec Bouton Micro Manuel -->
             <div class="flex gap-2">
-                <input type="text" id="teacher-reply-input" placeholder="Écrivez votre consigne ou utilisez le micro..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
-                <button id="btn-manual-mic" onclick="startManualListening()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs transition-all cursor-pointer" title="Parler au micro (Mode Manuel)">
+                <input type="text" id="teacher-reply-input" placeholder="Consigne vocale ou texte..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+                <button id="btn-manual-mic" onclick="startManualListening()" class="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-xs transition-all cursor-pointer">
                     <i class="fa-solid fa-microphone text-amber-400"></i>
                 </button>
                 <button onclick="handleTeacherInput()" class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-slate-950 font-extrabold rounded-xl text-xs transition-all cursor-pointer">
@@ -145,29 +115,19 @@
         </section>
     </main>
 
-    <!-- Liaison du fichier JavaScript externe -->
     <script src="script.js"></script>
     <script>
         function handleTeacherInput() {
             const input = document.getElementById('teacher-reply-input');
-            if (!input) return;
+            if (!input || !input.value.trim()) return;
             const query = input.value.trim();
-            if (!query) return;
-
             const chatBox = document.getElementById('chat-box');
             if (chatBox) {
-                chatBox.innerHTML += `
-                    <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
-                        <strong>Maître Balla :</strong> "${query}"
-                    </div>
-                `;
+                chatBox.innerHTML += `<div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2"><strong>Maître Balla :</strong> "${query}"</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
             input.value = '';
-
-            if (typeof handleCommand === 'function') {
-                handleCommand(query);
-            }
+            if (typeof handleCommand === 'function') handleCommand(query);
         }
     </script>
 </body>
