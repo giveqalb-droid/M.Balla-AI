@@ -1,4 +1,4 @@
-// Variable globale pour la base des élèves avec suivi par matière
+// Variable globale pour la base des élèves avec suivi par matière et journal de bord
 let studentsDatabase = [];
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
@@ -48,7 +48,7 @@ function speakText(text) {
     synth.speak(utterance);
 }
 
-// CHARGEMENT DE LA BASE DE DONNÉES AVEC DÉTAIL PAR MATIÈRE
+// CHARGEMENT DE LA BASE DE DONNÉES
 async function loadClassroomData() {
     try {
         const localSaved = localStorage.getItem('malado_students_db');
@@ -64,22 +64,35 @@ async function loadClassroomData() {
     } catch (error) {
         console.warn("Chargement local de secours activé :", error);
         studentsDatabase = [
-            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [11, 12, 13, 12, 14, 14], info: "Excellente et rigoureuse. Idéale comme tutrice en Maths." },
-            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [7, 8, 8, 9, 8, 9], info: "Besoin de soutien en Mathématiques (calcul et numération)." },
-            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 10, 11, 12, 11, 12], info: "Bonne élève, forte en Français et grammaire." },
-            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [5, 6, 6, 7, 6, 7], info: "Besoin d'un appui renforcé en Numération et Dictée." },
-            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [13, 14, 14, 15, 14, 15], info: "Excellente en Expression Écrite et Français." },
-            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [8, 9, 9, 10, 9, 10], info: "Proche du seuil, progresse régulièrement." },
-            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [11, 12, 12, 13, 12, 13], info: "Très à l'aise en Géométrie et Logique." },
-            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [6, 7, 7, 8, 7, 8], info: "Soutien prioritaire sur la Résolution de Problèmes." },
-            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [9, 10, 10, 11, 10, 11], info: "Acquiert progressivement les bases dans toutes les matières." },
-            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [14, 15, 15, 16, 15, 16], info: "Leader en Mathématiques et Calcul rapide." },
-            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [4, 5, 5, 6, 5, 6], info: "Demande un suivi individualisé rapproché en Français." },
-            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [12, 13, 13, 14, 13, 14], info: "Très bon niveau, entraide naturelle." }
+            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [11, 12, 13, 12, 14, 14], logbook: ["Très rigoureuse en classe."], info: "Excellente et rigoureuse. Idéale comme tutrice en Maths." },
+            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [7, 8, 8, 9, 8, 9], logbook: ["Besoin d'aide en calcul."], info: "Besoin de soutien en Mathématiques (calcul et numération)." },
+            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 10, 11, 12, 11, 12], logbook: ["Bonne participation."], info: "Bonne élève, forte en Français et grammaire." },
+            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [5, 6, 6, 7, 6, 7], logbook: ["Distrait en fin de matinée."], info: "Besoin d'un appui renforcé en Numération et Dictée." },
+            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [13, 14, 14, 15, 14, 15], logbook: ["Très active à l'oral."], info: "Excellente en Expression Écrite et Français." },
+            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [8, 9, 9, 10, 9, 10], logbook: ["Progrès réguliers."], info: "Proche du seuil, progresse régulièrement." },
+            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [11, 12, 12, 13, 12, 13], logbook: ["Méthodique en géométrie."], info: "Très à l'aise en Géométrie et Logique." },
+            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [6, 7, 7, 8, 7, 8], logbook: ["Réservé, demande de l'encouragement."], info: "Soutien prioritaire sur la Résolution de Problèmes." },
+            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [9, 10, 10, 11, 10, 11], logbook: ["Appliquée et attentive."], info: "Acquiert progressivement les bases dans toutes les matières." },
+            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [14, 15, 15, 16, 15, 16], logbook: ["Leader naturel en calcul."], info: "Leader en Mathématiques et Calcul rapide." },
+            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [4, 5, 5, 6, 5, 6], logbook: ["Suivi individualisé requis."], info: "Demande un suivi individualisé rapproché en Français." },
+            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [12, 13, 13, 14, 13, 14], logbook: ["Bon esprit d'entraide."], info: "Très bon niveau, entraide naturelle." }
         ];
     }
     renderClassroomDesks();
     updateKPISummary();
+    injectLocalBadge();
+}
+
+// 1. AJOUT DU BADGE DE STATUT LOCAL (SSD / CLÉ USB)
+function injectLocalBadge() {
+    const headerContainer = document.querySelector('header') || document.body;
+    if (!document.getElementById('local-status-badge')) {
+        const badge = document.createElement('div');
+        badge.id = 'local-status-badge';
+        badge.className = 'bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs px-3 py-1.5 rounded-full flex items-center gap-2 w-fit mx-auto my-2 shadow-lg';
+        badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span> 🟢 Mode Local Actif • Stockage SSD 1 To / Clé USB (0% Cloud — Sécurisé CEB Mbour)`;
+        document.body.prepend(badge);
+    }
 }
 
 function renderClassroomDesks() {
@@ -101,7 +114,7 @@ function renderClassroomDesks() {
     });
 }
 
-// AFFICHAGE DU DOSSIER PÉDAGOGIQUE AVEC ANALYSE PAR MATIÈRE
+// DOSSIER PÉDAGOGIQUE AVEC EXPORT DE BULLETIN ET JOURNAL DE BORD
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -109,19 +122,13 @@ function showStudentDetails(studentId) {
 
     let history = student.history || [10, 10, 10, 10, 10, student.score];
     let subs = student.subjects || { math: 10, french: 10, dictation: 10 };
-
-    // Détermination automatique des besoins par matière
-    let weakSubjects = [];
-    if (subs.math < 10) weakSubjects.push("Mathématiques / Numération");
-    if (subs.french < 10) weakSubjects.push("Français / Grammaire");
-    if (subs.dictation < 10) weakSubjects.push("Dictée / Orthographe");
-    if (weakSubjects.length === 0) weakSubjects.push("Aucune lacune majeure (Maîtrise globale)");
+    let logbookEntries = student.logbook || ["Aucune note récente dans le journal."];
 
     let assistantAppreciation = student.score >= 14 
-        ? `« Élève très solide. Peut encadrer un pair en difficulté grâce à sa maîtrise de ${subs.math >= 14 ? 'Mathématiques' : 'Français'}. »`
+        ? `« Élève très solide. Peut encadrer un pair en difficulté grâce à sa maîtrise globale. »`
         : student.score >= 10 
-        ? `« Progrès réguliers. Un effort ciblé en ${weakSubjects[0]} permettra de franchir le seuil supérieur. »`
-        : `« Nécessite un soutien prioritaire en ${weakSubjects.join(', ')}. Jumelage Vygotsky recommandé. »`;
+        ? `« Progrès réguliers observés. Un renforcement méthodologique consolidera ses acquis. »`
+        : `« Nécessite un soutien prioritaire. Jumelage Vygotsky recommandé au premier rang. »`;
 
     const modalHtml = `
         <div id="student-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -137,7 +144,7 @@ function showStudentDetails(studentId) {
                     </div>
                 </div>
 
-                <!-- ANALYSE PAR MATIÈRE -->
+                <!-- NOTES PAR MATIÈRE -->
                 <div class="grid grid-cols-3 gap-3 mb-4 text-center">
                     <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
                         <div class="text-xs text-slate-400">Mathématiques</div>
@@ -179,7 +186,18 @@ function showStudentDetails(studentId) {
                     </div>
                 </div>
 
+                <!-- JOURNAL DE BORD VOCAL -->
+                <div class="bg-slate-800 p-3 rounded-xl mb-4 border border-slate-700 text-xs">
+                    <h4 class="font-bold text-emerald-400 mb-1">📖 Journal de Bord Vocal (Mémoire Persistante)</h4>
+                    <ul class="list-disc list-inside text-slate-300 space-y-1">
+                        ${logbookEntries.map(entry => `<li>${entry}</li>`).join('')}
+                    </ul>
+                </div>
+
                 <div class="flex gap-3 justify-end">
+                    <button onclick="exportStudentBulletin(${student.id})" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-emerald-500 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-print"></i> Exporter le Bulletin Officiel
+                    </button>
                     <button onclick="closeStudentModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Fermer</button>
                 </div>
             </div>
@@ -190,7 +208,7 @@ function showStudentDetails(studentId) {
     if (existingModal) existingModal.remove();
 
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    speakText(`Ouverture du dossier de ${student.name}. Matières à surveiller : ${weakSubjects.join(', ')}.`);
+    speakText(`Ouverture du dossier de ${student.name}.`);
 }
 
 function closeStudentModal() {
@@ -198,16 +216,87 @@ function closeStudentModal() {
     if (modal) modal.remove();
 }
 
-// MODULE DE PERMUTATION LOGIQUE ET PRÉDICTIVE (EFFET VYGOTSKY CIBLÉ)
+// 2. EXPORTATEUR DE BULLETIN OFFICIEL (Format imprimable)
+function exportStudentBulletin(studentId) {
+    const student = studentsDatabase.find(s => s.id === studentId);
+    if (!student) return;
+
+    let printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Bulletin - ${student.name}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+                .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+                .student-info { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
+                .student-info img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #333; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                th, td { border: 1px solid #999; padding: 8px; text-align: left; font-size: 14px; }
+                th { background-color: #f2f2f2; }
+                .appreciation { border: 1px solid #999; padding: 12px; margin-bottom: 15px; border-radius: 5px; font-size: 13px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h2>ÉCOLE ÉLÉMENTAIRE EL HADJI MALICK SY - MBOUR</h2>
+                <p>Inspection de l'Éducation et de la Formation (IEP) de Mbour • Classe de CE2-A</p>
+                <h3>BULLETIN TRIMESTRIEL DE NOTES & ÉVALUATION</h3>
+            </div>
+            <div class="student-info">
+                <img src="${student.photo}" alt="${student.name}">
+                <div>
+                    <strong>Nom & Prénom :</strong> ${student.name}<br>
+                    <strong>Table-Banc N° :</strong> ${student.desk}<br>
+                    <strong>Moyenne Générale :</strong> ${student.score} / 20<br>
+                    <strong>Statut CEB :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
+                </div>
+            </div>
+            <table>
+                <tr><th>Matière</th><th>Note (/20)</th><th>Appréciation / Niveau</th></tr>
+                <tr><td>Mathématiques / Numération</td><td>${student.subjects.math}</td><td>${student.subjects.math >= 12 ? 'Maîtrise satisfaisante' : 'En consolidation'}</td></tr>
+                <tr><td>Français / Grammaire</td><td>${student.subjects.french}</td><td>${student.subjects.french >= 12 ? 'Bon niveau' : 'Soutien nécessaire'}</td></tr>
+                <tr><td>Dictée / Orthographe</td><td>${student.subjects.dictation}</td><td>${student.subjects.dictation >= 12 ? 'Acquis' : 'À renforcer'}</td></tr>
+            </table>
+            <div class="appreciation">
+                <strong>✍️ Appréciation du Maître (Maître Balla) :</strong><br>
+                ${student.info}
+            </div>
+            <div class="appreciation" style="background-color: #f9f9f9;">
+                <strong>🤖 Appréciation de l'Assistant Pédagogique (Malado AI) :</strong><br>
+                Élève suivi via l'analyse des tests hebdomadaires du vendredi. Évolution régulière et dynamique de classe positive.
+            </div>
+            <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+                <div>Signature du Maître :</div>
+                <div>Cachet de l'École :</div>
+            </div>
+            <script>window.print();</script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+// 3. JOURNAL DE BORD VOCAL (Mémo instantané dicté par le Maître)
+function addMemoToLogbook(studentName, memoText) {
+    let student = studentsDatabase.find(s => s.name.toLowerCase().includes(studentName.toLowerCase()));
+    if (student) {
+        if (!student.logbook) student.logbook = [];
+        student.logbook.push(memoText);
+        localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
+        speakText(`Mémo enregistré pour ${student.name}.`);
+    } else {
+        speakText(`Je n'ai pas trouvé l'élève ${studentName}.`);
+    }
+}
+
+// MODULE DE PERMUTATION LOGIQUE VYGOTSKY
 function triggerVygotskyPermutationSimulation() {
     stopSpeaking();
-
-    // Analyse logique automatisée pour trouver le meilleur binôme de soutien
     let weakStudents = studentsDatabase.filter(s => !s.mastery);
     let strongStudents = studentsDatabase.filter(s => s.mastery);
-
-    let targetWeak = weakStudents.length > 0 ? weakStudents[0] : studentsDatabase[1]; // Ex: Oumar Sarr
-    let targetStrong = strongStudents.length > 0 ? strongStudents[0] : studentsDatabase[0]; // Ex: Awa Diop
+    let targetWeak = weakStudents.length > 0 ? weakStudents[0] : studentsDatabase[1];
+    let targetStrong = strongStudents.length > 0 ? strongStudents[0] : studentsDatabase[0];
 
     const modalHtml = `
         <div id="permutation-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
@@ -219,32 +308,31 @@ function triggerVygotskyPermutationSimulation() {
 
                 <div class="bg-slate-800 p-4 rounded-xl mb-4 text-sm border border-emerald-500/20">
                     <h4 class="font-bold text-amber-300 mb-1">Permutation Recommandée : Table-Banc ${targetWeak.desk} ⇄ Table-Banc ${targetStrong.desk}</h4>
-                    <p class="text-slate-300 text-xs mb-3">Association ciblée entre <strong>${targetWeak.name}</strong> (Besoin en Maths : ${targetWeak.subjects.math}/20) et <strong>${targetStrong.name}</strong> (Experte en Maths : ${targetStrong.subjects.math}/20).</p>
+                    <p class="text-slate-300 text-xs mb-3">Association ciblée entre <strong>${targetWeak.name}</strong> et <strong>${targetStrong.name}</strong>.</p>
                     
                     <div class="space-y-2 text-xs text-slate-300">
-                        <p>• <strong>Logique Pédagogique :</strong> ${targetWeak.name} présente un déficit en calcul. Le jumeler avec ${targetStrong.name} active l'Effet Vygotsky par explication par les pairs au même pupitre.</p>
-                        <p>• <strong>Prédiction d'Impact :</strong> <span class="text-emerald-400">+3.0 Pts Estimés</span> en Mathématiques au test du prochain vendredi.</p>
-                        <p class="text-amber-300">• <strong>Mesure de Précaution :</strong> Alterner les rôles de rapporteur pour maintenir l'engagement mutuel.</p>
+                        <p>• <strong>Logique Pédagogique :</strong> Jumelage par pairage pour stimuler l'explication mutuelle.</p>
+                        <p>• <strong>Prédiction d'Impact :</strong> <span class="text-emerald-400">+3.0 Pts Estimés</span> au test du prochain vendredi.</p>
                     </div>
                 </div>
 
                 <div class="flex gap-3 justify-end">
                     <button onclick="document.getElementById('permutation-modal').remove()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Fermer</button>
-                    <button onclick="applyPermutation()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-emerald-500 text-sm">Valider & Appliquer la Permutation</button>
+                    <button onclick="applyPermutation()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-emerald-500 text-sm">Valider & Appliquer</button>
                 </div>
             </div>
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    speakText(`Analyse logique terminée. Proposition de permutation entre ${targetWeak.name} et ${targetStrong.name} prête.`);
+    speakText(`Proposition de permutation entre ${targetWeak.name} et ${targetStrong.name} prête.`);
 }
 
 function applyPermutation() {
     document.getElementById('permutation-modal').remove();
-    speakText("Permutation logique appliquée avec succès. Les prédictions d'impact par matière sont enregistrées.");
+    speakText("Permutation logique appliquée avec succès.");
 }
 
-// SCAN PHOTO DES DEVOIRS (GÉNÉRATION DES BULLETINS ET DOUBLE APPRÉCIATION)
+// SCAN PHOTO DES DEVOIRS
 function triggerOCRScanModal() {
     stopSpeaking();
     const modalHtml = `
@@ -253,16 +341,15 @@ function triggerOCRScanModal() {
                 <button onclick="document.getElementById('ocr-modal').remove()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
                 
                 <h3 class="text-xl font-bold text-emerald-400 mb-2">📸 Correction Automatique par Photo (Devoirs du Vendredi)</h3>
-                <p class="text-xs text-slate-400 mb-4">Malado analyse les copies, identifie les lacunes par matière, met à jour les courbes et rédige la double appréciation.</p>
+                <p class="text-xs text-slate-400 mb-4">Malado analyse les copies, met à jour les courbes et rédige la double appréciation.</p>
 
                 <div class="border-2 border-dashed border-emerald-500/40 rounded-xl p-6 text-center bg-slate-800/50 mb-4 cursor-pointer hover:bg-slate-800" onclick="simulateOCRProcessing()">
                     <i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-400 mb-2"></i>
-                    <p class="text-sm font-semibold">Cliquez ici pour photographier ou importer les copies de la classe</p>
-                    <p class="text-xs text-slate-400 mt-1">Analyse intelligente par matière (Maths, Français, Dictée)</p>
+                    <p class="text-sm font-semibold">Cliquez ici pour photographier ou importer les copies</p>
                 </div>
 
                 <div id="ocr-progress" class="hidden text-center text-amber-300 text-sm mb-4">
-                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Analyse OCR et diagnostic par matière en cours...
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Analyse OCR et diagnostic en cours...
                 </div>
 
                 <div class="flex justify-end">
@@ -287,8 +374,6 @@ function simulateOCRProcessing() {
             let randBonus = Math.floor(Math.random() * 3);
             s.score = Math.min(20, s.score + randBonus);
             s.mastery = s.score >= 12;
-            s.subjects.math = Math.min(20, s.subjects.math + randBonus);
-            s.subjects.french = Math.min(20, s.subjects.french + randBonus);
             if(!s.history) s.history = [10, 11, 12, 12, 13, s.score];
             else s.history.push(s.score);
         });
@@ -296,8 +381,8 @@ function simulateOCRProcessing() {
         renderClassroomDesks();
         updateKPISummary();
 
-        speakText("Correction et analyse par matière terminées. Bulletins et appréciations générés.");
-        alert("✅ Succès : Copies corrigées ! Malado a identifié les besoins par matière et rédigé les appréciations automatiques.");
+        speakText("Correction et analyse terminées. Bulletins et appréciations générés.");
+        alert("✅ Succès : Copies corrigées ! Bulletins actualisés.");
     }, 2000);
 }
 
@@ -319,7 +404,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Cerveau principal stable
+// Cerveau principal stable (avec écoute du Journal de bord vocal)
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -352,7 +437,19 @@ function handleCommand(command) {
     else if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         let cleanQ = q.replace('assistante', '').trim();
 
-        if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('permutation')) {
+        // Détection de mémo vocal pour le journal de bord
+        if (cleanQ.startsWith('note que') || cleanQ.startsWith('rappelle-moi') || cleanQ.startsWith('ajoute')) {
+            let parts = cleanQ.split(' pour ');
+            if (parts.length > 1) {
+                let memoContent = parts[0];
+                let studentName = parts[1];
+                addMemoToLogbook(studentName, memoContent);
+                reponse = `C'est noté dans le journal de bord.`;
+            } else {
+                reponse = "Précisez pour quel élève vous souhaitez enregistrer ce mémo.";
+            }
+        }
+        else if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('permutation')) {
             triggerVygotskyPermutationSimulation();
             reponse = "J'ouvre l'analyse logique et les propositions de permutation Vygotsky.";
         }
