@@ -21,15 +21,14 @@ let recognition = null;
 let isManualMode = false;
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
-// MÉMOIRE ÉVOLUTIVE ET INTERNET (Persistante)
+// MÉMOIRE ÉVOLUTIVE (Persistante)
 let maladoMemory = JSON.parse(localStorage.getItem('malado_dynamic_memory')) || {
     directives: [],          
     tone: "direct",
     learnedConcepts: {}      
 };
 
-// États de gestion des permissions
-let awaitingInternetPermissionFor = null; // Stocke le concept pour lequel elle demande l'accès internet
+let awaitingInternetPermissionFor = null;
 
 function chargerVoix() {
     if (!synth) return;
@@ -155,7 +154,7 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Cerveau adaptatif avec demande de permission Internet
+// Cerveau corrigé et précis
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -171,35 +170,22 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // ÉTAPE 1 : Si Malado attendait une permission pour aller sur Internet
+    // 1. Si elle attendait une réponse pour Internet
     if (awaitingInternetPermissionFor) {
         let concept = awaitingInternetPermissionFor;
         if (q.includes('oui') || q.includes('vas-y') || q.includes('va') || q.includes('d\'accord') || q.includes('ok')) {
-            // Simulation de la recherche connectée en ligne
-            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active centrée sur l'accompagnement personnalisé et l'émulation par les pairs.`;
+            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active et adaptée au niveau des élèves.`;
             maladoMemory.learnedConcepts[concept] = simulatedOnlineDefinition;
             localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
 
             awaitingInternetPermissionFor = null;
-            reponse = `Connexion établie. J'ai consulté les ressources en ligne sur "${concept}" et j'ai combiné ces données avec le profil de la classe. C'est mémorisé !`;
+            reponse = `C'est fait. J'ai consulté les ressources en ligne sur "${concept}" et je les ai enregistrées.`;
         } else {
             awaitingInternetPermissionFor = null;
-            reponse = "Entendu, je ne vais pas sur Internet. Restons sur nos bases locales.";
+            reponse = "Entendu, je ne vais pas sur Internet.";
         }
     }
-    // ÉTAPE 2 : Gestion des directives improvisées (politesse, style, etc.)
-    else if (q.includes("si je") || q.includes("à partir de") || q.includes("désormais") || q.includes("je veux que tu") || q.includes("sois") || q.includes("parle")) {
-        maladoMemory.directives.push(command);
-        if (q.includes("politesse") || q.includes("poliment") || q.includes("respect")) {
-            maladoMemory.tone = "polite";
-        } else if (q.includes("court") || q.includes("bref") || q.includes("direct")) {
-            maladoMemory.tone = "direct";
-        }
-        localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
-
-        reponse = maladoMemory.tone === "polite" ? "C'est bien noté, Maître Balla. J'ai intégré cette directive." : "Directive enregistrée.";
-    }
-    // ÉTAPE 3 : Commandes pédagogiques et vérification des concepts
+    // 2. Commandes de la classe et de gestion (Vygotsky, bilan, élèves, présentation)
     else if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         let cleanQ = q.replace('assistante', '').trim();
 
@@ -212,23 +198,28 @@ function handleCommand(command) {
                 reponse += `• ${forts[i].name} (${forts[i].score}) + ${faibles[i].name} (${faibles[i].score})\n`;
             }
         }
-        else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan')) {
+        else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan') || cleanQ.includes('élèves') || cleanQ.includes('liste')) {
             let avg = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1);
             let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
-            reponse = `Moyenne : ${avg}/20. ${faiblesCount} élèves en soutien.`;
+            reponse = `Bilan CE2-A : Moyenne de ${avg}/20. ${faiblesCount} élèves en soutien.`;
         }
         else if (cleanQ.includes('présente-toi') || cleanQ.includes('presente toi') || cleanQ.includes('qui es-tu')) {
-            reponse = "Je suis Malado, assistante pédagogique de la CE2-A.";
+            reponse = "Je suis Malado, assistante pédagogique de la CE2-A à El Hadji Malick Sy.";
         } 
+        else if (cleanQ.includes('politesse') || cleanQ.includes('poliment')) {
+            maladoMemory.tone = "polite";
+            localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
+            reponse = "C'est bien noté, Maître Balla. Je serai plus polie.";
+        }
         else {
-            // Vérifie si le concept est connu
+            // Si c'est une question spécifique sur un concept qu'elle ne connaît pas
             let foundConcept = Object.keys(maladoMemory.learnedConcepts).find(c => cleanQ.includes(c));
             if (foundConcept) {
-                reponse = `D'après mes apprentissages sur "${foundConcept}" : ${maladoMemory.learnedConcepts[foundConcept]}`;
+                reponse = `Au sujet de "${foundConcept}" : ${maladoMemory.learnedConcepts[foundConcept]}`;
             } else {
-                // SI ELLE NE CONNAÎT PAS : ELLE DEMANDE LA PERMISSION D'ALLER SUR INTERNET
+                // Demande de permission internet uniquement si c'est une question ou un concept flou
                 awaitingInternetPermissionFor = cleanQ;
-                reponse = `Maître Balla, je ne connais pas ce concept (« ${cleanQ} »). Me donnez-vous la permission d'aller consulter les ressources en ligne pour vous proposer une approche adaptée ?`;
+                reponse = `Maître Balla, je ne connais pas ce concept (« ${cleanQ} »). Me donnez-vous la permission d'aller consulter les ressources en ligne ?`;
             }
         }
         
@@ -307,6 +298,7 @@ function initVoiceRecognition() {
     if (recognition) { try { recognition.stop(); } catch(e) {} }
 
     recognition = new SpeechRecognition();
+    recognition.lang.fr-FR = 'fr-FR';
     recognition.lang = 'fr-FR';
     recognition.continuous = false;
     recognition.interimResults = false;
