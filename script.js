@@ -1,4 +1,4 @@
-// Base des 18 élèves (intégrée en dur pour garantir un affichage instantané sans erreur de chargement)
+// Base des 18 élèves (intégrée en dur)
 let studentsDatabase = [
     // RANGÉE 1 (GAUCHE) - 3 Pupitres doubles
     { id: 1, name: "Awa Diop", score: 14, mastery: true, column: 1, depth: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse." },
@@ -62,11 +62,9 @@ function renderClassroomDesks() {
     if (!container) return;
     container.innerHTML = '';
 
-    // Conteneur de scène 3D globale
     const sceneWrapper = document.createElement('div');
     sceneWrapper.className = 'classroom-scene-container w-full max-w-7xl mx-auto space-y-8';
 
-    // Grille 3D des 3 rangées verticales
     const gridWrapper = document.createElement('div');
     gridWrapper.className = 'grid grid-cols-1 md:grid-cols-3 gap-8 w-full row-depth-effect pt-2';
 
@@ -82,7 +80,6 @@ function renderClassroomDesks() {
         let desksListDiv = document.createElement('div');
         desksListDiv.className = 'space-y-6';
 
-        // 3 pupitres doubles en profondeur pour chaque rangée
         for (let depth = 1; depth <= 3; depth++) {
             let studentsAtDesk = studentsDatabase.filter(s => (s.column || 1) === col && (s.depth || 1) === depth);
             
@@ -97,7 +94,6 @@ function renderClassroomDesks() {
             let seatsGrid = document.createElement('div');
             seatsGrid.className = 'grid grid-cols-2 gap-3 relative z-10';
 
-            // 2 places par pupitre
             for (let seatIndex = 1; seatIndex <= 2; seatIndex++) {
                 let student = studentsAtDesk[seatIndex - 1];
                 let seatBox = document.createElement('div');
@@ -130,12 +126,10 @@ function renderClassroomDesks() {
 
             deskCard.appendChild(seatsGrid);
 
-            // Casier sous le plateau
             let shelf = document.createElement('div');
             shelf.className = 'desk-shelf-3d mt-2';
             deskCard.appendChild(shelf);
 
-            // Chaises sous le pupitre
             let chairsRow = document.createElement('div');
             chairsRow.className = 'flex justify-around mt-2';
             for (let c = 0; c < 2; c++) {
@@ -157,7 +151,7 @@ function renderClassroomDesks() {
     container.appendChild(sceneWrapper);
 }
 
-// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (OUVERTURE SILENCIEUSE)
+// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (NOTES, ÉVOLUTION, JOURNAL INTIME)
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -165,39 +159,101 @@ function showStudentDetails(studentId) {
 
     let history = student.history || [10, 10, 10, student.score];
     let subs = student.subjects || { math: 10, french: 10, dictation: 10 };
-    let logbookEntries = student.logbook || ["Aucune observation."];
+    let logbookEntries = student.logbook || ["Aucune observation récente."];
+    let personalityAnalysis = student.personality || "Profil en cours d'analyse par Malado.";
+
+    let assistantAppreciation = student.score >= 14 
+        ? `« Élève très solide. Peut encadrer un pair en difficulté grâce à sa maîtrise globale. »`
+        : student.score >= 10 
+        ? `« Progrès réguliers observés sur le mois. Un renforcement méthodologique consolidera ses acquis. »`
+        : `« Nécessite un soutien prioritaire. Jumelage Vygotsky recommandé au premier rang. »`;
 
     const modalHtml = `
         <div id="student-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
             <div class="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-2xl w-full p-6 text-white shadow-2xl relative max-h-[90vh] overflow-y-auto">
                 <button onclick="closeStudentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+                
                 <div class="flex items-center gap-4 mb-4">
-                    <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400" alt="${student.name}">
+                    <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md" alt="${student.name}">
                     <div>
                         <h3 class="text-xl font-bold text-amber-400">${student.name}</h3>
-                        <p class="text-xs text-slate-400">Rangée ${student.column} • Profondeur #${student.depth} • CE2-A Mbour</p>
-                        <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut : ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}</p>
+                        <p class="text-xs text-slate-400">Rangée ${student.column} • Pupitre Profondeur #${student.depth} • CE2 (École El Hadji Malick Sy, Mbour)</p>
+                        <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut CEB : ${student.mastery ? 'Maîtrise' : 'Soutien'}</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
-                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                        <div class="text-xs text-slate-400">Maths</div>
-                        <div class="text-lg font-bold text-amber-400">${subs.math}/20</div>
+
+                <div class="flex border-b border-slate-700 mb-4">
+                    <button onclick="switchTab('tab-notes')" id="btn-tab-notes" class="px-4 py-2 text-sm font-bold text-amber-400 border-b-2 border-amber-400">Notes & Évolution</button>
+                    <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white">📖 Journal Intime & Personnalité</button>
+                </div>
+
+                <div id="tab-notes" class="tab-content">
+                    <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+                        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <div class="text-xs text-slate-400">Mathématiques</div>
+                            <div class="text-lg font-bold text-amber-400">${subs.math}/20</div>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <div class="text-xs text-slate-400">Français</div>
+                            <div class="text-lg font-bold text-amber-400">${subs.french}/20</div>
+                        </div>
+                        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                            <div class="text-xs text-slate-400">Dictée</div>
+                            <div class="text-lg font-bold text-amber-400">${subs.dictation}/20</div>
+                        </div>
                     </div>
-                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                        <div class="text-xs text-slate-400">Français</div>
-                        <div class="text-lg font-bold text-amber-400">${subs.french}/20</div>
+
+                    <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                        <h4 class="font-bold text-amber-300 text-sm mb-3">📈 Courbe d'Évolution (Les 4 Vendredis du Mois)</h4>
+                        <div class="flex justify-between items-end h-32 gap-3 pt-6 px-4 bg-slate-950 rounded-lg border border-slate-700">
+                            ${history.map((val, idx) => {
+                                let barHeight = (val / 20) * 100;
+                                return `
+                                    <div class="flex flex-col items-center gap-1 flex-1 h-full justify-end">
+                                        <span class="text-[10px] text-amber-400 font-bold">${val}</span>
+                                        <div class="w-full bg-amber-500 rounded-t transition-all shadow" style="height: ${barHeight}%; min-height: 15px;"></div>
+                                        <span class="text-[10px] text-slate-300 mt-1">Vendredi ${idx+1}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
                     </div>
-                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
-                        <div class="text-xs text-slate-400">Dictée</div>
-                        <div class="text-lg font-bold text-amber-400">${subs.dictation}/20</div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
+                        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                            <h4 class="font-bold text-slate-300 mb-1">✍️ Appréciation du Maître</h4>
+                            <p class="text-xs text-slate-400 italic">${student.info}</p>
+                        </div>
+                        <div class="bg-amber-500/10 p-4 rounded-xl border border-amber-500/30">
+                            <h4 class="font-bold text-amber-300 mb-1">🤖 Appréciation de Malado</h4>
+                            <p class="text-xs text-amber-200 italic">${assistantAppreciation}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="flex justify-between items-center border-t border-slate-800 pt-4 mt-4">
-                    <button onclick="exportStudentBulletin(${student.id})" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs hover:bg-emerald-500 flex items-center gap-2">
-                        <i class="fa-solid fa-print"></i> Imprimer Bulletin
+
+                <div id="tab-journal" class="tab-content hidden">
+                    <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                        <h4 class="font-bold text-emerald-400 text-sm mb-2">🧠 Analyse Continue de la Personnalité (IA Malado)</h4>
+                        <p class="text-xs text-slate-300 italic bg-slate-900 p-3 rounded-lg border border-slate-800">${personalityAnalysis}</p>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                        <h4 class="font-bold text-amber-300 text-sm mb-2">📖 Journal Intime / Observations du Maître</h4>
+                        <ul class="list-disc list-inside text-xs text-slate-300 space-y-1 mb-3">
+                            ${logbookEntries.map(entry => `<li>${entry}</li>`).join('')}
+                        </ul>
+                        <div class="flex gap-2">
+                            <input type="text" id="new-memo-input" placeholder="Ajouter une observation rapide..." class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white w-full">
+                            <button onclick="addManualMemo(${student.id})" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-emerald-500">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 justify-between items-center border-t border-slate-800 pt-4 mt-2">
+                    <button onclick="exportStudentBulletin(${student.id})" class="bg-emerald-600 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-emerald-500 text-sm flex items-center gap-2 shadow-lg">
+                        <i class="fa-solid fa-print"></i> Imprimer / Exporter le Bulletin Officiel
                     </button>
-                    <button onclick="closeStudentModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-xs hover:bg-slate-700">Fermer</button>
+                    <button onclick="closeStudentModal()" class="bg-slate-800 text-slate-300 px-4 py-2.5 rounded-xl hover:bg-slate-700 text-sm">Fermer</button>
                 </div>
             </div>
         </div>
@@ -208,23 +264,94 @@ function showStudentDetails(studentId) {
     document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById(tabId).classList.remove('hidden');
+
+    document.getElementById('btn-tab-notes').className = "px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white border-b-2 border-transparent";
+    document.getElementById('btn-tab-journal').className = "px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white border-b-2 border-transparent";
+
+    if (tabId === 'tab-notes') {
+        document.getElementById('btn-tab-notes').className = "px-4 py-2 text-sm font-bold text-amber-400 border-b-2 border-amber-400";
+    } else {
+        document.getElementById('btn-tab-journal').className = "px-4 py-2 text-sm font-bold text-emerald-400 border-b-2 border-emerald-400";
+    }
+}
+
 function closeStudentModal() {
     const modal = document.getElementById('student-modal');
     if (modal) modal.remove();
 }
 
+function addManualMemo(studentId) {
+    const input = document.getElementById('new-memo-input');
+    if (!input || !input.value.trim()) return;
+    let student = studentsDatabase.find(s => s.id === studentId);
+    if (student) {
+        if (!student.logbook) student.logbook = [];
+        student.logbook.push(input.value.trim());
+        localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
+        showStudentDetails(studentId);
+        speakText("Observation enregistrée dans le journal intime.");
+    }
+}
+
 function exportStudentBulletin(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
+
     let printWindow = window.open('', '_blank');
     printWindow.document.write(`
-        <html><head><title>Bulletin - ${student.name}</title></head>
-        <body style="font-family:sans-serif;padding:20px;">
-            <h2>ÉCOLE ÉLÉMENTAIRE EL HADJI MALICK SY - MBOUR</h2>
-            <h3>BULLETIN DE NOTES - ${student.name}</h3>
-            <p><strong>Moyenne :</strong> ${student.score}/20</p>
+        <html>
+        <head>
+            <title>Bulletin - ${student.name}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+                .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+                .student-info { display: flex; gap: 20px; align-items: center; margin-bottom: 20px; }
+                .student-info img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #333; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                th, td { border: 1px solid #999; padding: 8px; text-align: left; font-size: 14px; }
+                th { background-color: #f2f2f2; }
+                .appreciation { border: 1px solid #999; padding: 12px; margin-bottom: 15px; border-radius: 5px; font-size: 13px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h2>ÉCOLE ÉLÉMENTAIRE EL HADJI MALICK SY - MBOUR</h2>
+                <p>Inspection de l'Éducation et de la Formation (IEP) de Mbour • Classe de CE2-A</p>
+                <h3>BULLETIN MENSUEL DE NOTES & ÉVALUATION</h3>
+            </div>
+            <div class="student-info">
+                <img src="${student.photo}" alt="${student.name}">
+                <div>
+                    <strong>Nom & Prénom :</strong> ${student.name}<br>
+                    <strong>Position :</strong> Rangée ${student.column} (Pupitre Profondeur #${student.depth})<br>
+                    <strong>Moyenne Mensuelle :</strong> ${student.score} / 20<br>
+                    <strong>Statut CEB :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
+                </div>
+            </div>
+            <table>
+                <tr><th>Matière</th><th>Note (/20)</th><th>Appréciation / Niveau</th></tr>
+                <tr><td>Mathématiques / Numération</td><td>${student.subjects.math}</td><td>${student.subjects.math >= 12 ? 'Maîtrise satisfaisante' : 'En consolidation'}</td></tr>
+                <tr><td>Français / Grammaire</td><td>${student.subjects.french}</td><td>${student.subjects.french >= 12 ? 'Bon niveau' : 'Soutien nécessaire'}</td></tr>
+                <tr><td>Dictée / Orthographe</td><td>${student.subjects.dictation}</td><td>${student.subjects.dictation >= 12 ? 'Acquis' : 'À renforcer'}</td></tr>
+            </table>
+            <div class="appreciation">
+                <strong>✍️ Appréciation du Maître (Maître Balla) :</strong><br>
+                ${student.info}
+            </div>
+            <div class="appreciation" style="background-color: #f9f9f9;">
+                <strong>🤖 Appréciation de l'Assistant Pédagogique (Malado AI) :</strong><br>
+                ${student.personality}
+            </div>
+            <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+                <div>Signature du Maître :</div>
+                <div>Cachet de l'École :</div>
+            </div>
             <script>window.print();</script>
-        </body></html>
+        </body>
+        </html>
     `);
     printWindow.document.close();
 }
@@ -235,7 +362,7 @@ function handleCommand(command) {
     let reponse = "";
     if (q.includes('imprime') && q.includes('bulletin')) {
         let found = studentsDatabase.find(s => q.includes(s.name.toLowerCase()));
-        if (found) { exportStudentBulletin(found.id); reponse = `Impression pour ${found.name}`; }
+        if (found) { exportStudentBulletin(found.id); reponse = `Impression du bulletin pour ${found.name}.`; }
     } else {
         reponse = `Consigne enregistrée : "${command}"`;
     }
