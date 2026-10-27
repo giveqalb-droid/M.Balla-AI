@@ -1,24 +1,9 @@
-// Données des 12 élèves de la classe de CE2-A (Mbour, Sénégal)
-let studentsDatabase = JSON.parse(localStorage.getItem('malado_students_db')) || [
-    { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, info: "Excellente et rigoureuse. Idéale comme tutrice." },
-    { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, info: "En difficulté en calcul. À jumeler avec un tuteur (Effet Vygotsky)." },
-    { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, info: "Bonne élève, attentive en grammaire." },
-    { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, info: "Besoin d'un appui renforcé en numération." },
-    { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, info: "En tête de classe, très bonne en expression écrite." },
-    { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, info: "Proche du seuil, progresse bien." },
-    { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, info: "Très à l'aise en géométrie et logique." },
-    { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, info: "Soutien prioritaire sur les problèmes." },
-    { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, info: "Acquiert progressivement les bases." },
-    { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, info: "Dynamique, tire le groupe vers le haut." },
-    { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, info: "Demande un suivi individualisé rapproché." },
-    { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, info: "Très bon niveau, actif et entraide naturelle." }
-];
-
+let studentsDatabase = [];
 let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false; // Faux par défaut (Mode Écoute Auto actif)
+let isManualMode = false;
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
 // MÉMOIRE ÉVOLUTIVE (Persistante)
@@ -29,6 +14,31 @@ let maladoMemory = JSON.parse(localStorage.getItem('malado_dynamic_memory')) || 
 };
 
 let awaitingInternetPermissionFor = null;
+
+// Chargement initial depuis database.json ou LocalStorage
+async function loadInitialDatabase() {
+    const localData = localStorage.getItem('malado_students_db');
+    if (localData) {
+        studentsDatabase = JSON.parse(localData);
+        initUI();
+    } else {
+        try {
+            const response = await fetch('database.json');
+            const data = await response.json();
+            studentsDatabase = data.students || [];
+            localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
+        } catch (error) {
+            console.error("Erreur lors du chargement de database.json :", error);
+        }
+        initUI();
+    }
+}
+
+function initUI() {
+    renderClassroomDesks();
+    updateKPISummary();
+    setTimeout(() => { initVoiceRecognition(); }, 1000);
+}
 
 function chargerVoix() {
     if (!synth) return;
@@ -139,6 +149,7 @@ function handleCurriculumUpload(event) {
 
 function updateKPISummary() {
     const total = studentsDatabase.length;
+    if (total === 0) return;
     const avgScore = (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / total).toFixed(1);
     const masteryCount = studentsDatabase.filter(s => s.mastery).length;
     const supportCount = total - masteryCount;
@@ -154,7 +165,6 @@ function updateKPISummary() {
     if (kpiSupport) kpiSupport.innerHTML = `${supportCount} <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span>`;
 }
 
-// Cerveau principal stable
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -170,7 +180,6 @@ function handleCommand(command) {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // 1. Gestion des réponses en attente de permission Internet
     if (awaitingInternetPermissionFor) {
         let concept = awaitingInternetPermissionFor;
         if (q.includes('oui') || q.includes('vas-y') || q.includes('va') || q.includes('d\'accord') || q.includes('ok')) {
@@ -185,7 +194,6 @@ function handleCommand(command) {
             reponse = "Entendu, je ne vais pas sur Internet.";
         }
     }
-    // 2. En mode manuel OU si le réveil "Assistante" a été prononcé en mode auto
     else if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         let cleanQ = q.replace('assistante', '').trim();
 
@@ -212,14 +220,12 @@ function handleCommand(command) {
             reponse = "C'est bien noté, Maître Balla. Je serai plus polie.";
         }
         else {
-            // Vérifie si le concept est déjà connu
             let foundConcept = Object.keys(maladoMemory.learnedConcepts).find(c => cleanQ.includes(c));
             if (foundConcept) {
                 reponse = `Au sujet de "${foundConcept}" : ${maladoMemory.learnedConcepts[foundConcept]}`;
             } else if (cleanQ === "" || cleanQ === "assistante") {
                 reponse = "Oui, Maître Balla ?";
             } else {
-                // Demande de permission internet pour un concept inconnu
                 awaitingInternetPermissionFor = cleanQ;
                 reponse = `Maître Balla, je ne connais pas ce concept (« ${cleanQ} »). Me donnez-vous la permission d'aller consulter les ressources en ligne ?`;
             }
@@ -228,12 +234,11 @@ function handleCommand(command) {
         maladoModeAwake = false;
     } 
     else {
-        // En mode Écoute Auto (veille), attend le mot-clé "Assistante"
         if (q.includes('assistante')) {
             maladoModeAwake = true;
             reponse = "Oui ?";
         } else {
-            reponse = ""; // Silence radio en arrière-plan
+            reponse = ""; 
         }
     }
 
@@ -251,7 +256,6 @@ function handleCommand(command) {
     }
 }
 
-// Correction du bouton de bascule Mode Auto / Manuel
 function toggleVoiceMode() {
     stopSpeaking();
     isManualMode = !isManualMode;
@@ -266,22 +270,17 @@ function toggleVoiceMode() {
         maladoModeAwake = false;
         if (modeText) modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
         if (modeIcon) modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
-        console.log("Mode Manuel activé.");
     } else {
         if (modeText) modeText.textContent = "Mode : Écoute Auto (\"Assistante\")";
         if (modeIcon) modeIcon.className = "fa-solid fa-microphone text-emerald-400";
         initVoiceRecognition();
-        console.log("Mode Écoute Auto activé.");
     }
 }
 
 function startManualListening() {
     stopSpeaking(); 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Reconnaissance vocale non supportée par ce navigateur.");
-        return;
-    }
+    if (!SpeechRecognition) return;
 
     const manualRec = new SpeechRecognition();
     manualRec.lang = 'fr-FR';
@@ -334,7 +333,5 @@ function initVoiceRecognition() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    renderClassroomDesks();
-    updateKPISummary();
-    setTimeout(() => { initVoiceRecognition(); }, 1000);
+    loadInitialDatabase();
 });
