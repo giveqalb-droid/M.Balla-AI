@@ -53,23 +53,23 @@
 
     <!-- Contenu Principal -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-8">
-        <!-- STATISTIQUES RÉSUMÉES (12 ÉLÈVES) -->
+        <!-- STATISTIQUES RÉSUMÉES (18 ÉLÈVES) -->
         <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Effectif Total</p>
-                <p class="text-2xl font-black text-white mt-1" id="kpi-total-students">12 <span class="text-xs font-normal text-slate-400">Élèves suivis</span></p>
+                <p class="text-2xl font-black text-white mt-1" id="kpi-total-students">18 <span class="text-xs font-normal text-slate-400">Élèves suivis</span></p>
             </div>
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Moyenne Classe</p>
-                <p class="text-2xl font-black text-amber-400 mt-1" id="kpi-avg-score">11.6 <span class="text-xs font-normal text-slate-400">/ 20</span></p>
+                <p class="text-2xl font-black text-amber-400 mt-1" id="kpi-avg-score">11.8 <span class="text-xs font-normal text-slate-400">/ 20</span></p>
             </div>
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Maîtrise Acquise</p>
-                <p class="text-2xl font-black text-emerald-400 mt-1" id="kpi-mastery-count">5 <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span></p>
+                <p class="text-2xl font-black text-emerald-400 mt-1" id="kpi-mastery-count">9 <span class="text-xs font-normal text-slate-400">Élèves (&ge;12)</span></p>
             </div>
             <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-sm">
                 <p class="text-xs font-semibold text-slate-400">Soutien & Progrès</p>
-                <p class="text-2xl font-black text-rose-400 mt-1" id="kpi-support-count">7 <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span></p>
+                <p class="text-2xl font-black text-rose-400 mt-1" id="kpi-support-count">9 <span class="text-xs font-normal text-slate-400">Élèves (&lt;12)</span></p>
             </div>
         </section>
 
@@ -95,19 +95,21 @@
             </div>
         </section>
 
-        <!-- SECTION : Disposition des Pupitres de la Classe -->
-        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+        <!-- SECTION : Disposition des Pupitres de la Classe (3 Rangées Verticales Pleine Largeur) -->
+        <section class="bg-slate-900/70 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl w-full">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-9 h-9 rounded-xl bg-emerald-950 border border-emerald-600/40 text-emerald-400 flex items-center justify-center text-base">
                     <i class="fa-solid fa-chair"></i>
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-white">Plan de Classe CE2-A</h2>
-                    <p class="text-xs text-slate-400">Cliquez sur un élève pour afficher sa fiche détaillée</p>
+                    <h2 class="text-lg font-bold text-white">Plan de Classe CE2-A (3 Rangées Verticales - 18 Élèves)</h2>
+                    <p class="text-xs text-slate-400">Cliquez sur un élève pour afficher sa fiche détaillée et son journal intime</p>
                 </div>
             </div>
-            <div id="classroom-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                <!-- Les bureaux des élèves seront générés ici par JavaScript -->
+            
+            <!-- Conteneur généré par script.js occupant toute la largeur -->
+            <div id="classroom-container" class="w-full">
+                <!-- Les rangées de pupitres doubles seront injectées ici -->
             </div>
         </section>
 
@@ -126,7 +128,7 @@
             <!-- Boîte de Chat -->
             <div id="chat-box" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-48 overflow-y-auto space-y-3 mb-4 text-xs">
                 <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl">
-                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Le mode écoute auto est actif (dites 'Assistante'). Vous pouvez aussi basculer en mode manuel en haut pour cliquer sur le micro."
+                    <strong>🤖 Malado :</strong> "Bonjour Maître Balla. Le plan de classe à 3 rangées est prêt. Dites par exemple : 'Malado, imprime le bulletin d'Awa Diop'."
                 </div>
             </div>
 
