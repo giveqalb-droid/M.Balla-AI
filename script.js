@@ -1,4 +1,4 @@
-// Base des 18 élèves (École Aql al Kamil - Le Sommet du Savoir)
+// Base des 18 élèves (intégrée en dur)
 let studentsDatabase = [
     // RANGÉE 1 (GAUCHE) - 3 Pupitres doubles
     { id: 1, name: "Awa Diop", score: 14, mastery: true, column: 1, depth: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse." },
@@ -56,25 +56,25 @@ function speakText(text) {
     synth.speak(utterance);
 }
 
-// RENDU VISUEL IMMERSIF 3D INDIVIDUEL (Chaque pupitre possède son relief et ses chaises)
+// RENDU VISUEL IMMERSIF 3D (3 Rangées verticales, 3 pupitres doubles en profondeur)
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
     container.innerHTML = '';
 
     const sceneWrapper = document.createElement('div');
-    sceneWrapper.className = 'w-full max-w-7xl mx-auto space-y-8';
+    sceneWrapper.className = 'classroom-scene-container w-full max-w-7xl mx-auto space-y-8';
 
     const gridWrapper = document.createElement('div');
-    gridWrapper.className = 'grid grid-cols-1 md:grid-cols-3 gap-8 w-full pt-2';
+    gridWrapper.className = 'grid grid-cols-1 md:grid-cols-3 gap-8 w-full row-depth-effect pt-2';
 
     for (let col = 1; col <= 3; col++) {
         let colDiv = document.createElement('div');
-        colDiv.className = 'bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl flex flex-col gap-6 backdrop-blur-md';
+        colDiv.className = 'bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 shadow-2xl flex flex-col gap-6 backdrop-blur-sm';
         
         let colTitle = document.createElement('div');
         colTitle.className = 'text-center text-xs font-bold text-amber-400 uppercase tracking-widest border-b border-slate-700/60 pb-2';
-        colTitle.innerHTML = `📌 Rangée ${col === 1 ? 'Gauche' : col === 2 ? 'du Milieu' : 'Droite'}<br><span class="text-[10px] text-slate-400 font-normal">3 Pupitres Doubles Indépendants</span>`;
+        colTitle.innerHTML = `📌 Rangée ${col === 1 ? 'Gauche' : col === 2 ? 'du Milieu' : 'Droite'}<br><span class="text-[10px] text-slate-400 font-normal">3 Pupitres Doubles (Profondeur)</span>`;
         colDiv.appendChild(colTitle);
 
         let desksListDiv = document.createElement('div');
@@ -83,17 +83,14 @@ function renderClassroomDesks() {
         for (let depth = 1; depth <= 3; depth++) {
             let studentsAtDesk = studentsDatabase.filter(s => (s.column || 1) === col && (s.depth || 1) === depth);
             
-            // Conteneur individuel pour chaque pupitre en relief 3D
-            let singleDeskContainer = document.createElement('div');
-            singleDeskContainer.className = 'bg-gradient-to-b from-[#e7d7c1] to-[#c8b093] border-2 border-[#4e342e] rounded-xl p-3 shadow-2xl relative transition-transform duration-300 hover:scale-[1.02]';
+            let deskCard = document.createElement('div');
+            deskCard.className = 'desk-3d-card p-3 flex flex-col justify-between shadow-xl';
             
-            // En-tête du pupitre (Bois & Métal)
             let deskHeader = document.createElement('div');
-            deskHeader.className = 'flex justify-between items-center text-[10px] text-[#3e2723] font-black mb-2 border-b border-[#4e342e]/30 pb-1';
-            deskHeader.innerHTML = `<span>🪵 Pupitre Double #${depth}</span> <span class="bg-[#3e2723] text-amber-300 px-2 py-0.5 rounded text-[9px]">Profondeur ${depth}/3</span>`;
-            singleDeskContainer.appendChild(deskHeader);
+            deskHeader.className = 'flex justify-between items-center text-[10px] text-slate-900 font-bold mb-2 border-b border-stone-500/40 pb-1';
+            deskHeader.innerHTML = `<span>🪑 Pupitre Double #${depth}</span> <span class="text-amber-900">Rang ${depth}/3</span>`;
+            deskCard.appendChild(deskHeader);
 
-            // Grille des 2 places d'élèves sur le pupitre
             let seatsGrid = document.createElement('div');
             seatsGrid.className = 'grid grid-cols-2 gap-3 relative z-10';
 
@@ -102,10 +99,10 @@ function renderClassroomDesks() {
                 let seatBox = document.createElement('div');
 
                 if (student) {
-                    seatBox.className = `p-2 rounded-lg cursor-pointer transition-all border text-left flex flex-col justify-between shadow-md ${
+                    seatBox.className = `p-2 rounded-lg cursor-pointer transition-all border text-left flex flex-col justify-between shadow ${
                         student.mastery 
-                        ? 'bg-emerald-950/95 border-emerald-500 text-emerald-100 hover:bg-emerald-900' 
-                        : 'bg-amber-950/95 border-amber-500 text-amber-100 hover:bg-amber-900'
+                        ? 'bg-emerald-950/90 border-emerald-500/80 text-emerald-100 hover:bg-emerald-900' 
+                        : 'bg-amber-950/90 border-amber-500/80 text-amber-100 hover:bg-amber-900'
                     }`;
                     seatBox.innerHTML = `
                         <div class="flex items-center gap-2">
@@ -126,25 +123,24 @@ function renderClassroomDesks() {
                 }
                 seatsGrid.appendChild(seatBox);
             }
-            singleDeskContainer.appendChild(seatsGrid);
 
-            // Casier en bois sombre sous le pupitre
+            deskCard.appendChild(seatsGrid);
+
             let shelf = document.createElement('div');
-            shelf.className = 'bg-[#3e2723] h-3 w-full rounded-md mt-2 border-t border-black/40 shadow-inner';
-            singleDeskContainer.appendChild(shelf);
+            shelf.className = 'desk-shelf-3d mt-2';
+            deskCard.appendChild(shelf);
 
-            // Chaises individuelles associées à ce pupitre précis
             let chairsRow = document.createElement('div');
-            chairsRow.className = 'flex justify-around mt-2 pt-1 border-t border-[#4e342e]/20';
+            chairsRow.className = 'flex justify-around mt-2';
             for (let c = 0; c < 2; c++) {
                 let chair = document.createElement('div');
-                chair.className = 'bg-gradient-to-b from-[#d7ccc8] to-[#a1887f] border border-[#3e2723] w-12 h-5 rounded-t-md shadow flex items-center justify-center text-[9px] font-bold text-black';
-                chair.innerHTML = '🪑';
+                chair.className = 'chair-3d w-10 h-4 rounded-t-sm shadow flex items-center justify-center text-[8px]';
+                chair.innerText = '🪑';
                 chairsRow.appendChild(chair);
             }
-            singleDeskContainer.appendChild(chairsRow);
+            deskCard.appendChild(chairsRow);
 
-            desksListDiv.appendChild(singleDeskContainer);
+            desksListDiv.appendChild(deskCard);
         }
 
         colDiv.appendChild(desksListDiv);
@@ -155,7 +151,7 @@ function renderClassroomDesks() {
     container.appendChild(sceneWrapper);
 }
 
-// DOSSIER PÉDAGOGIQUE DE L'ÉLÈVE
+// DOSSIER PÉDAGOGIQUE AVEC ONGLETS (NOTES, ÉVOLUTION, JOURNAL INTIME)
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -181,7 +177,7 @@ function showStudentDetails(studentId) {
                     <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md" alt="${student.name}">
                     <div>
                         <h3 class="text-xl font-bold text-amber-400">${student.name}</h3>
-                        <p class="text-xs text-slate-400">Rangée ${student.column} • Pupitre Profondeur #${student.depth} • École Aql al Kamil (Mbour)</p>
+                        <p class="text-xs text-slate-400">Rangée ${student.column} • Pupitre Profondeur #${student.depth} • CE2 (École El Hadji Malick Sy, Mbour)</p>
                         <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut CEB : ${student.mastery ? 'Maîtrise' : 'Soutien'}</p>
                     </div>
                 </div>
@@ -300,7 +296,6 @@ function addManualMemo(studentId) {
     }
 }
 
-// EXPORTATEUR DE BULLETIN OFFICIEL (École Aql al Kamil)
 function exportStudentBulletin(studentId) {
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
@@ -323,8 +318,8 @@ function exportStudentBulletin(studentId) {
         </head>
         <body>
             <div class="header">
-                <h2>ÉCOLE AQL AL KAMIL (LE SOMMET DU SAVOIR) - MBOUR</h2>
-                <p>Inspection de l'Éducation et de la Formation (IEF) de Mbour • Classe de CE2-A</p>
+                <h2>ÉCOLE ÉLÉMENTAIRE EL HADJI MALICK SY - MBOUR</h2>
+                <p>Inspection de l'Éducation et de la Formation (IEP) de Mbour • Classe de CE2-A</p>
                 <h3>BULLETIN MENSUEL DE NOTES & ÉVALUATION</h3>
             </div>
             <div class="student-info">
@@ -333,7 +328,7 @@ function exportStudentBulletin(studentId) {
                     <strong>Nom & Prénom :</strong> ${student.name}<br>
                     <strong>Position :</strong> Rangée ${student.column} (Pupitre Profondeur #${student.depth})<br>
                     <strong>Moyenne Mensuelle :</strong> ${student.score} / 20<br>
-                    <strong>Statut :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
+                    <strong>Statut CEB :</strong> ${student.mastery ? 'Maîtrise Acquise' : 'Soutien Requis'}
                 </div>
             </div>
             <table>
@@ -361,56 +356,22 @@ function exportStudentBulletin(studentId) {
     printWindow.document.close();
 }
 
-// COMMANDE VOCALE & TEXTUELLE AVEC OPTIMISEUR VYGOTSKY PROACTIF
 function handleCommand(command) {
-    stopSpeaking(); 
+    stopSpeaking();
     const q = command.toLowerCase().trim();
     let reponse = "";
-
+    if (q.includes('imprime') && q.includes('bulletin')) {
+        let found = studentsDatabase.find(s => q.includes(s.name.toLowerCase()));
+        if (found) { exportStudentBulletin(found.id); reponse = `Impression du bulletin pour ${found.name}.`; }
+    } else {
+        reponse = `Consigne enregistrée : "${command}"`;
+    }
     const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-slate-800 text-white p-2.5 rounded-xl ml-auto text-right max-w-lg my-2">
-                <strong>Maître Balla :</strong> "${command}"
-            </div>
-        `;
+    if (chatBox && reponse) {
+        chatBox.innerHTML += `<div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2"><strong>🤖 Malado :</strong> "${reponse}"</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-
-    // GESTION DE L'OPTIMISEUR VYGOTSKY PROACTIF (Déclenché par écriture ou voix)
-    if (q.includes('vygotsky') || q.includes('optimise') || q.includes('changer') || q.includes('place') || q.includes('binôme') || q.includes('tuteur')) {
-        reponse = `💡 **Suggestion Pédagogique (Principe de Vygotsky - ZPD)** :\n\n` +
-                  `Maître Balla, je vous suggère de placer **Oumar Sarr** (en soutien, note 9) au premier rang de la rangée gauche, directement à côté d'**Awa Diop** (maîtrise solide, note 14).\n\n` +
-                  `🔍 **Raisons du changement** : Lev Vygotsky démontre que l'interaction avec un pair plus avancé stimule l'apprentissage par étayage social.\n\n` +
-                  `📈 **Prédictions estimatives sur 1 mois** :\n` +
-                  `• Semaine 1 : Adaptation et réduction de l'anxiété face au calcul.\n` +
-                  `• Semaine 2 : Hausse estimée de la moyenne d'Oumar à 11.5 / 20.\n` +
-                  `• Semaine 3 : Autonomie accrue en résolution de problèmes.\n` +
-                  `• Semaine 4 : Consolidation de l'acquis et atteinte du seuil de maîtrise (12+ / 20).`;
-    }
-    else if (q.includes('imprime') && q.includes('bulletin')) {
-        let foundStudent = studentsDatabase.find(s => q.includes(s.name.toLowerCase()));
-        if (foundStudent) {
-            exportStudentBulletin(foundStudent.id);
-            reponse = `J'ouvre la fenêtre d'impression du bulletin pour ${foundStudent.name}.`;
-        } else {
-            reponse = "Précisez le nom de l'élève dont vous souhaitez imprimer le bulletin.";
-        }
-    }
-    else {
-        reponse = `Consigne bien reçue, Maître Balla. Dites « Optimise le plan de classe » pour lancer une analyse Vygotsky.`;
-    }
-
-    if (reponse && chatBox) {
-        chatBox.innerHTML += `
-            <div class="bg-amber-500/10 border border-amber-500/30 text-amber-300 p-3 rounded-xl max-w-xl my-2 whitespace-pre-line">
-                <strong>🤖 Malado :</strong> "${reponse}"
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    if (reponse) speakText(reponse.replace(/[*_#]/g, '')); // Lecture vocale épurée
+    if (reponse) speakText(reponse);
 }
 
 function toggleVoiceMode() {
