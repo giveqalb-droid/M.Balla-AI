@@ -1,0 +1,19 @@
+{
+  "className": "CE2-A",
+  "school": "École El Hadji Malick Sy",
+  "location": "Mbour, Sénégal",
+  "students": [
+    { "id": 1, "name": "Awa Diop", "score": 14, "mastery": true, "desk": 1, "info": "Excellente et rigoureuse. Idéale comme tutrice." },
+    { "id": 2, "name": "Oumar Sarr", "score": 9, "mastery": false, "desk": 2, "info": "En difficulté en calcul. À jumeler avec un tuteur (Effet Vygotsky)." },
+    { "id": 3, "name": "Fatou Ndiaye", "score": 12, "mastery": true, "desk": 3, "info": "Bonne élève, attentive en grammaire." },
+    { "id": 4, "name": "Moussa Fall", "score": 7, "mastery": false, "desk": 4, "info": "Besoin d'un appui renforcé en numération." },
+    { "id": 5, "name": "Aïcha Mbaye", score: 15, "mastery": true, "desk": 5, "info": "En tête de classe, très bonne en expression écrite." },
+    { "id": 6, "name": "Ibrahima Traoré", score: 10, "mastery": false, "desk:: 6": 6, "info": "Proche du seuil, progresse bien." },
+    { "id": 7, "name": "Mariama Camara", score: 13, "mastery": true, "desk": 7, "info": "Très à l'aise en géométrie et logique." },
+    { "id": 8, "name": "Cheikh Diallo", score: 8, "mastery": false, "desk": 8, "info": "Soutien prioritaire sur les problèmes." },
+    { "id": 9, "name": "Léona Mendy", score: 11, "mastery": false, "desk": 9, "info": "Acquiert progressivement les bases." },
+    { id: 10, "name": "Karim Sow", score: 16, "mastery": true, "desk": 10, "info": "Dynamique, tire le groupe vers le haut." },
+    { id: 11, "name": "Diana Gaye", score: 6, "mastery": false, "desk": 11, "info": "Demande un suivi individualisé rapproché." },
+    { id: 12, "name": "Amadou Bocoum", score: 14, "mastery": true, "desk": 12, "info": "Très bon niveau, actif et entraide naturelle." }
+  ]
+}
