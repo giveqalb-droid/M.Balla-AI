@@ -1,6 +1,4 @@
-// Base des 18 élèves (École Aql al Kamil - Le Sommet du Savoir)
 let studentsDatabase = [
-    // RANGÉE 1 (GAUCHE) - 3 Pupitres doubles
     { id: 1, name: "Awa Diop", score: 14, mastery: true, column: 1, depth: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse." },
     { id: 2, name: "Oumar Sarr", score: 9, mastery: false, column: 1, depth: 1, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [8, 8, 9, 9], logbook: ["Besoin d'aide en calcul."], personality: "Kinésthésique.", info: "Soutien en mathématiques." },
     
@@ -10,7 +8,6 @@ let studentsDatabase = [
     { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, column: 1, depth: 3, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [14, 14, 15, 15], logbook: ["Très active à l'oral."], personality: "Créative.", info: "Excellente rédaction." },
     { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, column: 1, depth: 3, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [9, 9, 10, 10], logbook: ["Progrès réguliers."], personality: "Réservé.", info: "Proche du seuil." },
 
-    // RANGÉE 2 (MILIEU) - 3 Pupitres doubles
     { id: 7, name: "Mariama Camara", score: 13, mastery: true, column: 2, depth: 1, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [12, 12, 13, 13], logbook: ["Très organisée."], personality: "Structurée.", info: "À l'aise en géométrie." },
     { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, column: 2, depth: 1, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [7, 7, 8, 8], logbook: ["Timide à l'oral."], personality: "Réfléchi.", info: "Soutien en résolution." },
 
@@ -20,7 +17,6 @@ let studentsDatabase = [
     { id: 11, name: "Diana Gaye", score: 6, mastery: false, column: 2, depth: 3, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [5, 5, 6, 6], logbook: ["Fatigue matinale."], personality: "Discrète.", info: "Suivi rapproché en français." },
     { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, column: 2, depth: 3, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [13, 13, 14, 14], logbook: ["Entraide naturelle."], personality: "Empathique.", info: "Très bon niveau." },
 
-    // RANGÉE 3 (DROITE) - 3 Pupitres doubles
     { id: 13, name: "Seynabou Ba", score: 15, mastery: true, column: 3, depth: 1, subjects: { math: 15, french: 15, dictation: 14 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [13, 14, 15, 15], logbook: ["Très attentive."], personality: "Sérieuse.", info: "Excellente élève." },
     { id: 14, name: "Pape Diop", score: 10, mastery: false, column: 3, depth: 1, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [9, 9, 10, 10], logbook: ["Écoute bien."], personality: "Calme.", info: "Régulier." },
 
@@ -55,7 +51,6 @@ function speakText(text) {
     synth.speak(utterance);
 }
 
-// GESTION DE L'UPLOAD DU PROGRAMME PÉDAGOGIQUE
 function handleCurriculumUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -72,7 +67,6 @@ function handleCurriculumUpload(event) {
     reader.readAsText(file);
 }
 
-// RENDU VISUEL : PUPITRES INDIVIDUELS AVEC CHAISES INTÉGRÉES
 function renderClassroomDesks() {
     const container = document.getElementById('classroom-container');
     if (!container) return;
@@ -99,7 +93,6 @@ function renderClassroomDesks() {
         for (let depth = 1; depth <= 3; depth++) {
             let studentsAtDesk = studentsDatabase.filter(s => (s.column || 1) === col && (s.depth || 1) === depth);
             
-            // Pupitre individuel réaliste en relief bois
             let singleDeskContainer = document.createElement('div');
             singleDeskContainer.className = 'bg-gradient-to-b from-[#e7d7c1] to-[#c8b093] border-2 border-[#4e342e] rounded-xl p-3 shadow-2xl relative';
             
@@ -108,7 +101,6 @@ function renderClassroomDesks() {
             deskHeader.innerHTML = `<span>🪵 Pupitre Double #${depth}</span> <span class="bg-[#3e2723] text-amber-300 px-2 py-0.5 rounded text-[9px]">Profondeur ${depth}/3</span>`;
             singleDeskContainer.appendChild(deskHeader);
 
-            // Grille des deux places sur le pupitre
             let seatsGrid = document.createElement('div');
             seatsGrid.className = 'grid grid-cols-2 gap-3 relative z-10';
 
@@ -143,12 +135,11 @@ function renderClassroomDesks() {
             }
             singleDeskContainer.appendChild(seatsGrid);
 
-            // Casier sous plateau
             let shelf = document.createElement('div');
             shelf.className = 'bg-[#3e2723] h-3 w-full rounded-md mt-2 border-t border-black/40 shadow-inner';
             singleDeskContainer.appendChild(shelf);
 
-            // 🪑 VRAIES CHAISES INTÉGRÉES POUR CHAQUE PLACE AU PUPITRE (Les élèves ne sont pas debout !)
+            // Vraies chaises intégrées (élèves assis)
             let chairsRow = document.createElement('div');
             chairsRow.className = 'flex justify-around mt-2 pt-1 border-t border-[#4e342e]/20';
             for (let c = 0; c < 2; c++) {
@@ -170,7 +161,7 @@ function renderClassroomDesks() {
     container.appendChild(sceneWrapper);
 }
 
-// DOSSIER PÉDAGOGIQUE DE L'ÉLÈVE
+// DOSSIER PÉDAGOGIQUE (AVEC "OBSERVATIONS" AU LIEU DE "JOURNAL INTIME")
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -203,7 +194,7 @@ function showStudentDetails(studentId) {
 
                 <div class="flex border-b border-slate-700 mb-4">
                     <button onclick="switchTab('tab-notes')" id="btn-tab-notes" class="px-4 py-2 text-sm font-bold text-amber-400 border-b-2 border-amber-400">Notes & Évolution</button>
-                    <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white">📖 Journal Intime & Personnalité</button>
+                    <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white">📋 Observations & Personnalité</button>
                 </div>
 
                 <div id="tab-notes" class="tab-content">
@@ -257,7 +248,7 @@ function showStudentDetails(studentId) {
                     </div>
 
                     <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
-                        <h4 class="font-bold text-amber-300 text-sm mb-2">📖 Journal Intime / Observations du Maître</h4>
+                        <h4 class="font-bold text-amber-300 text-sm mb-2">📋 Observations & Notes du Maître</h4>
                         <ul class="list-disc list-inside text-xs text-slate-300 space-y-1 mb-3">
                             ${logbookEntries.map(entry => `<li>${entry}</li>`).join('')}
                         </ul>
@@ -309,7 +300,7 @@ function addManualMemo(studentId) {
         student.logbook.push(input.value.trim());
         localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
         showStudentDetails(studentId);
-        speakText("Observation enregistrée dans le journal intime.");
+        speakText("Observation enregistrée.");
     }
 }
 
@@ -373,7 +364,6 @@ function exportStudentBulletin(studentId) {
     printWindow.document.close();
 }
 
-// COMMANDE VOCALE & TEXTUELLE AVEC IA PROACTIVE (Vygotsky & Programme)
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
