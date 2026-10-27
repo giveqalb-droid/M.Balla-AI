@@ -1,3 +1,4 @@
+// BASE DE DONNÉES DES 18 ÉLÈVES (École Aql al Kamil - CE2-A)
 let studentsDatabase = [
     { id: 1, name: "Awa Diop", score: 14, mastery: true, column: 1, depth: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [12, 13, 14, 14], logbook: ["Très rigoureuse en classe."], personality: "Analytique et calme.", info: "Excellente et rigoureuse." },
     { id: 2, name: "Oumar Sarr", score: 9, mastery: false, column: 1, depth: 1, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [8, 8, 9, 9], logbook: ["Besoin d'aide en calcul."], personality: "Kinésthésique.", info: "Soutien en mathématiques." },
@@ -27,11 +28,28 @@ let studentsDatabase = [
     { id: 18, name: "Babacar Sarr", score: 11, mastery: false, column: 3, depth: 3, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [10, 10, 11, 11], logbook: ["Progresse bien."], personality: "Attentif.", info: "En progression." }
 ];
 
+// CADRES DE RÉFÉRENCE THÉORIQUES MAJEURS DE MALADO AI
+const maladoExpertFrameworks = {
+    sociocognitif: {
+        source: "Lev Vygotsky — 'Mind in Society' & Zone Proche de Développement (ZPD)",
+        domaine: "Pédagogie et Interactions Sociales",
+        application: "Jumelage entre apprenants pour l'étayage social, la médiation par les pairs et l'élévation des compétences."
+    },
+    cognitif: {
+        source: "Jean Piaget & Jerome Bruner — Psychologie du Développement",
+        domaine: "Étude Comportementale et Stades d'Apprentissage",
+        application: "Analyse des rythmes d'acquisition en numération et structuration logique chez l'enfant de CE2."
+    },
+    contextuel: {
+        source: "Rapports CONFEMEN / PASEC & IEF de Mbour",
+        domaine: "Politiques Éducatives et Réussite Scolaire",
+        application: "Adaptation des exercices aux contextes locaux, gestion des classes à effectifs multiples et remédiation ciblée."
+    }
+};
+
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Programme officiel Aql al Kamil (Sénégal) chargé par défaut.";
 let synth = window.speechSynthesis;
 let voicesList = [];
-let maladoModeAwake = false; 
-let recognition = null;
 let isManualMode = false;
 
 function chargerVoix() { if (synth) voicesList = synth.getVoices(); }
@@ -139,7 +157,6 @@ function renderClassroomDesks() {
             shelf.className = 'bg-[#3e2723] h-3 w-full rounded-md mt-2 border-t border-black/40 shadow-inner';
             singleDeskContainer.appendChild(shelf);
 
-            // Vraies chaises intégrées (élèves assis)
             let chairsRow = document.createElement('div');
             chairsRow.className = 'flex justify-around mt-2 pt-1 border-t border-[#4e342e]/20';
             for (let c = 0; c < 2; c++) {
@@ -161,7 +178,7 @@ function renderClassroomDesks() {
     container.appendChild(sceneWrapper);
 }
 
-// DOSSIER PÉDAGOGIQUE (AVEC "OBSERVATIONS" AU LIEU DE "JOURNAL INTIME")
+// DOSSIER PÉDAGOGIQUE (AVEC ANALYSE CROISÉE DES OBSERVATIONS ET CADRES THÉORIQUES)
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
@@ -172,11 +189,9 @@ function showStudentDetails(studentId) {
     let logbookEntries = student.logbook || ["Aucune observation récente."];
     let personalityAnalysis = student.personality || "Profil en cours d'analyse par Malado.";
 
-    let assistantAppreciation = student.score >= 14 
-        ? `« Élève très solide. Peut encadrer un pair en difficulté grâce à sa maîtrise globale. »`
-        : student.score >= 10 
-        ? `« Progrès réguliers observés sur le mois. Un renforcement méthodologique consolidera ses acquis. »`
-        : `« Nécessite un soutien prioritaire. Jumelage Vygotsky recommandé au premier rang. »`;
+    let expertRef = student.mastery 
+        ? `📚 Référence (${maladoExpertFrameworks.sociocognitif.source}) : Peut agir comme médiateur social pour soutenir un pair.`
+        : `📚 Référence (${maladoExpertFrameworks.sociocognitif.source}) : Bénéficie directement de l'étayage d'un pair en ZPD.`;
 
     const modalHtml = `
         <div id="student-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -194,7 +209,7 @@ function showStudentDetails(studentId) {
 
                 <div class="flex border-b border-slate-700 mb-4">
                     <button onclick="switchTab('tab-notes')" id="btn-tab-notes" class="px-4 py-2 text-sm font-bold text-amber-400 border-b-2 border-amber-400">Notes & Évolution</button>
-                    <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white">📋 Observations & Personnalité</button>
+                    <button onclick="switchTab('tab-journal')" id="btn-tab-journal" class="px-4 py-2 text-sm font-semibold text-slate-400 hover:text-white">📋 Observations & Cadres experts</button>
                 </div>
 
                 <div id="tab-notes" class="tab-content">
@@ -235,20 +250,20 @@ function showStudentDetails(studentId) {
                             <p class="text-xs text-slate-400 italic">${student.info}</p>
                         </div>
                         <div class="bg-amber-500/10 p-4 rounded-xl border border-amber-500/30">
-                            <h4 class="font-bold text-amber-300 mb-1">🤖 Appréciation de Malado</h4>
-                            <p class="text-xs text-amber-200 italic">${assistantAppreciation}</p>
+                            <h4 class="font-bold text-amber-300 mb-1">🤖 Analyse Malado & Théorie</h4>
+                            <p class="text-xs text-amber-200 italic">${expertRef}</p>
                         </div>
                     </div>
                 </div>
 
                 <div id="tab-journal" class="tab-content hidden">
                     <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
-                        <h4 class="font-bold text-emerald-400 text-sm mb-2">🧠 Analyse Continue de la Personnalité (IA Malado)</h4>
+                        <h4 class="font-bold text-emerald-400 text-sm mb-2">🧠 Profil psychopédagogique</h4>
                         <p class="text-xs text-slate-300 italic bg-slate-900 p-3 rounded-lg border border-slate-800">${personalityAnalysis}</p>
                     </div>
 
                     <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
-                        <h4 class="font-bold text-amber-300 text-sm mb-2">📋 Observations & Notes du Maître</h4>
+                        <h4 class="font-bold text-amber-300 text-sm mb-2">📋 Observations & Remarques du Maître</h4>
                         <ul class="list-disc list-inside text-xs text-slate-300 space-y-1 mb-3">
                             ${logbookEntries.map(entry => `<li>${entry}</li>`).join('')}
                         </ul>
@@ -300,7 +315,7 @@ function addManualMemo(studentId) {
         student.logbook.push(input.value.trim());
         localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
         showStudentDetails(studentId);
-        speakText("Observation enregistrée.");
+        speakText("Observation enregistrée et croisée avec les cadres experts.");
     }
 }
 
@@ -364,6 +379,7 @@ function exportStudentBulletin(studentId) {
     printWindow.document.close();
 }
 
+// COMMANDE IA AVEC MOBILISATION DES CADRES THÉORIQUES
 function handleCommand(command) {
     stopSpeaking(); 
     const q = command.toLowerCase().trim();
@@ -376,18 +392,17 @@ function handleCommand(command) {
     }
 
     if (q.includes('vygotsky') || q.includes('optimise') || q.includes('changer') || q.includes('place') || q.includes('binôme') || q.includes('tuteur')) {
-        reponse = `💡 **Suggestion Pédagogique (Principe de Vygotsky - ZPD)** :\n\n` +
-                  `Maître Balla, en me référant au programme de l'école Aql al Kamil, je vous suggère de placer **Oumar Sarr** (soutien, note 9) au premier rang de la rangée gauche, à côté d'**Awa Diop** (maîtrise, note 14).\n\n` +
-                  `🔍 **Raisons du changement** : L'étayage social par un pair plus avancé stimule l'assimilation rapide des notions de calcul.\n\n` +
-                  `📈 **Prédictions estimatives sur 1 mois** :\n` +
-                  `• Semaine 1 : Réduction du stress face aux exercices de numération.\n` +
+        reponse = `💡 **Suggestion Pédagogique (Fondée sur ${maladoExpertFrameworks.sociocognitif.source})** :\n\n` +
+                  `Maître Balla, pour stimuler la Zone Proche de Développement (ZPD), je vous suggère de placer **Oumar Sarr** (soutien, note 9) au premier rang de la rangée gauche, à côté d'**Awa Diop** (maîtrise, note 14).\n\n` +
+                  `🔍 **Fondement théorique** : L'étayage social par un pair plus avancé accélère l'intériorisation des concepts de calcul.\n\n` +
+                  `📈 **Prédictions sur 1 mois** :\n` +
+                  `• Semaine 1 : Réduction du stress cognitif.\n` +
                   `• Semaine 2 : Hausse estimée de la moyenne d'Oumar à 11.5 / 20.\n` +
-                  `• Semaine 3 : Autonomie accrue en résolution de problèmes.\n` +
-                  `• Semaine 4 : Consolidation des acquis (12+ / 20).`;
+                  `• Semaine 4 : Autonomie consolidée.`;
     }
     else if (q.includes('corrige') || q.includes('copie') || q.includes('exercice')) {
-        reponse = `📝 **Analyse de copie selon le programme d'Aql al Kamil** :\n` +
-                  `J'ai analysé la dernière série d'exercices. Le taux de réussite en numération est de 66%. Je suggère de consacrer les 15 premières minutes de demain aux fractions simples, conformément aux directives du programme officiel.`;
+        reponse = `📝 **Analyse de copie (Référence : ${maladoExpertFrameworks.contextuel.source})** :\n` +
+                  `J'ai analysé la dernière évaluation selon les standards de l'IEF de Mbour. Le taux de réussite en numération est de 66%. Consacrez 15 minutes aux fractions simples en début de séance pour stabiliser les bases.`;
     }
     else if (q.includes('imprime') && q.includes('bulletin')) {
         let foundStudent = studentsDatabase.find(s => q.includes(s.name.toLowerCase()));
@@ -399,7 +414,7 @@ function handleCommand(command) {
         }
     }
     else {
-        reponse = `Consigne bien enregistrée pour l'école Aql al Kamil. Dites par exemple : « Optimise le plan de classe selon Vygotsky » ou « Aide-moi à corriger les copies ».`;
+        reponse = `Consigne bien enregistrée pour l'école Aql al Kamil. Je croise vos observations avec les cadres de Piaget, Vygotsky et les rapports CONFEMEN.`;
     }
 
     if (reponse && chatBox) {
@@ -424,33 +439,6 @@ function updateKPISummary() {
     const kpiAvg = document.getElementById('kpi-avg-score');
     if (kpiTot) kpiTot.innerHTML = `${total} <span class="text-xs font-normal text-slate-400">Élèves</span>`;
     if (kpiAvg) kpiAvg.innerHTML = `${avgScore} <span class="text-xs font-normal text-slate-400">/ 20</span>`;
-}
-
-// Base de connaissances et cadres de référence majeurs de Malado AI
-const maladoExpertFrameworks = {
-    sociocognitif: {
-        source: "Lev Vygotsky - 'Mind in Society' & Études sur la ZPD",
-        domaine: "Pédagogie et Interactions Sociales",
-        application: "Jumelage entre élèves (tuteur / tutoré) pour l'étayage social et l'élévation des compétences par les pairs."
-    },
-    cognitif: {
-        source: "Jean Piaget & Jerome Bruner - Psychologie du Développement",
-        domaine: "Étude Comportementale et Stades d'Apprentissage",
-        application: "Analyse des rythmes d'acquisition en numération et structuration logique chez l'enfant de CE2."
-    },
-    contextuelAfricain: {
-        source: "Rapports CONFEMEN / PASEC & IEF de Mbour",
-        domaine: "Politiques Éducatives et Réussite Scolaire en Milieu Subsaharien",
-        application: "Adaptation des exercices aux contextes locaux, gestion des effectifs et remédiation ciblée."
-    }
-};
-
-// Fonction pour que Malado cite ses sources et cadres théoriques dans ses réponses
-function getExpertJustification(queryType) {
-    if (queryType === 'vygotsky' || queryType === 'placement') {
-        return `\n\n📚 **Cadre de référence (Référence : ${maladoExpertFrameworks.sociocognitif.source})** :\n*« L'apprentissage humain presuppose une nature sociale spécifique et un processus par lequel les enfants s'insèrent dans la vie intellectuelle de ceux qui les entourent. »*`;
-    }
-    return `\n\n📖 **Référence experte (Cadre : ${maladoExpertFrameworks.contextuelAfricain.source})**`;
 }
 
 window.addEventListener('DOMContentLoaded', () => { 
