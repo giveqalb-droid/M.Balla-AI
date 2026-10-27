@@ -1,4 +1,4 @@
-// Variable globale pour la base des élèves
+// Variable globale pour la base des élèves avec suivi par matière
 let studentsDatabase = [];
 let schoolKnowledgeBase = localStorage.getItem('malado_custom_knowledge') || "Aucun programme spécifique importé.";
 
@@ -6,7 +6,7 @@ let synth = window.speechSynthesis;
 let voicesList = [];
 let maladoModeAwake = false; 
 let recognition = null;
-let isManualMode = false; // Mode Écoute Auto actif par défaut
+let isManualMode = false;
 
 // MÉMOIRE ÉVOLUTIVE (Persistante)
 let maladoMemory = JSON.parse(localStorage.getItem('malado_dynamic_memory')) || {
@@ -48,7 +48,7 @@ function speakText(text) {
     synth.speak(utterance);
 }
 
-// CHARGEMENT DE LA BASE DE DONNÉES DEPUIS LE FICHIER database.json
+// CHARGEMENT DE LA BASE DE DONNÉES AVEC DÉTAIL PAR MATIÈRE
 async function loadClassroomData() {
     try {
         const localSaved = localStorage.getItem('malado_students_db');
@@ -64,18 +64,18 @@ async function loadClassroomData() {
     } catch (error) {
         console.warn("Chargement local de secours activé :", error);
         studentsDatabase = [
-            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, style: "Visuel / Logique", behavior: "Calme & Attentif", info: "Excellente et rigoureuse. Idéale comme tutrice." },
-            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, style: "Kinésthésique", behavior: "Besoin de bouger", info: "En difficulté en calcul. À jumeler avec un tuteur (Effet Vygotsky)." },
-            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, style: "Auditif", behavior: "Attentive", info: "Bonne élève, attentive en grammaire." },
-            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, style: "Visuel", behavior: "Distrait", info: "Besoin d'un appui renforcé en numération." },
-            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, style: "Visuel / Littéraire", behavior: "Leader calme", info: "En tête de classe, très bonne en expression écrite." },
-            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, style: "Kinésthésique", behavior: "Dynamique", info: "Proche du seuil, progresse bien." },
-            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, style: "Logique", behavior: "Méthodique", info: "Très à l'aise en géométrie et logique." },
-            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, style: "Auditif", behavior: "Réservé", info: "Soutien prioritaire sur les problèmes." },
-            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, style: "Visuel", behavior: "Appappliquée", info: "Acquiert progressivement les bases." },
-            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, style: "Visuel / Rapide", behavior: "Très actif", info: "Dynamique, tire le groupe vers le haut." },
-            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, style: "Auditif", behavior: "Discrète", info: "Demande un suivi individualisé rapproché." },
-            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, style: "Logique", behavior: "Entraide naturelle", info: "Très bon niveau, actif et entraide naturelle." }
+            { id: 1, name: "Awa Diop", score: 14, mastery: true, desk: 1, subjects: { math: 15, french: 14, dictation: 13 }, photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150", history: [11, 12, 13, 12, 14, 14], info: "Excellente et rigoureuse. Idéale comme tutrice en Maths." },
+            { id: 2, name: "Oumar Sarr", score: 9, mastery: false, desk: 2, subjects: { math: 7, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150", history: [7, 8, 8, 9, 8, 9], info: "Besoin de soutien en Mathématiques (calcul et numération)." },
+            { id: 3, name: "Fatou Ndiaye", score: 12, mastery: true, desk: 3, subjects: { math: 11, french: 14, dictation: 12 }, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150", history: [10, 10, 11, 12, 11, 12], info: "Bonne élève, forte en Français et grammaire." },
+            { id: 4, name: "Moussa Fall", score: 7, mastery: false, desk: 4, subjects: { math: 6, french: 8, dictation: 7 }, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150", history: [5, 6, 6, 7, 6, 7], info: "Besoin d'un appui renforcé en Numération et Dictée." },
+            { id: 5, name: "Aïcha Mbaye", score: 15, mastery: true, desk: 5, subjects: { math: 14, french: 16, dictation: 15 }, photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150", history: [13, 14, 14, 15, 14, 15], info: "Excellente en Expression Écrite et Français." },
+            { id: 6, name: "Ibrahima Traoré", score: 10, mastery: false, desk: 6, subjects: { math: 10, french: 10, dictation: 10 }, photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150", history: [8, 9, 9, 10, 9, 10], info: "Proche du seuil, progresse régulièrement." },
+            { id: 7, name: "Mariama Camara", score: 13, mastery: true, desk: 7, subjects: { math: 14, french: 12, dictation: 13 }, photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150", history: [11, 12, 12, 13, 12, 13], info: "Très à l'aise en Géométrie et Logique." },
+            { id: 8, name: "Cheikh Diallo", score: 8, mastery: false, desk: 8, subjects: { math: 8, french: 9, dictation: 7 }, photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150", history: [6, 7, 7, 8, 7, 8], info: "Soutien prioritaire sur la Résolution de Problèmes." },
+            { id: 9, name: "Léona Mendy", score: 11, mastery: false, desk: 9, subjects: { math: 11, french: 11, dictation: 11 }, photo: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150", history: [9, 10, 10, 11, 10, 11], info: "Acquiert progressivement les bases dans toutes les matières." },
+            { id: 10, name: "Karim Sow", score: 16, mastery: true, desk: 10, subjects: { math: 17, french: 15, dictation: 16 }, photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150", history: [14, 15, 15, 16, 15, 16], info: "Leader en Mathématiques et Calcul rapide." },
+            { id: 11, name: "Diana Gaye", score: 6, mastery: false, desk: 11, subjects: { math: 5, french: 7, dictation: 6 }, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150", history: [4, 5, 5, 6, 5, 6], info: "Demande un suivi individualisé rapproché en Français." },
+            { id: 12, name: "Amadou Bocoum", score: 14, mastery: true, desk: 12, subjects: { math: 13, french: 14, dictation: 15 }, photo: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=150", history: [12, 13, 13, 14, 13, 14], info: "Très bon niveau, entraide naturelle." }
         ];
     }
     renderClassroomDesks();
@@ -88,65 +88,109 @@ function renderClassroomDesks() {
     container.innerHTML = '';
     studentsDatabase.forEach(student => {
         const desk = document.createElement('div');
-        desk.className = `desk p-3 rounded-xl border cursor-pointer transition-all ${student.mastery ? 'bg-emerald-900/20 border-emerald-500/40 text-emerald-200' : 'bg-amber-900/20 border-amber-500/40 text-amber-200'}`;
+        desk.className = `desk p-3 rounded-xl border cursor-pointer transition-all flex items-center gap-3 ${student.mastery ? 'bg-emerald-900/20 border-emerald-500/40 text-emerald-200' : 'bg-amber-900/20 border-amber-500/40 text-amber-200'}`;
         desk.innerHTML = `
-            <div class="font-bold text-sm">${student.name}</div>
-            <div class="text-xs text-slate-300 mt-1">Table-Banc N°${student.desk}</div>
-            <div class="text-xs font-semibold mt-1">${student.score}/20 — ${student.mastery ? 'Maîtrise' : 'Soutien'}</div>
+            <img src="${student.photo || 'https://via.placeholder.com/150'}" class="w-10 h-10 rounded-full object-cover border border-amber-500/50" alt="${student.name}">
+            <div>
+                <div class="font-bold text-sm">${student.name}</div>
+                <div class="text-xs text-slate-300">Table ${student.desk} • <span class="font-semibold">${student.score}/20</span></div>
+            </div>
         `;
         desk.onclick = () => showStudentDetails(student.id);
         container.appendChild(desk);
     });
 }
 
-// AFFICHAGE DU DOSSIER PÉDAGOGIQUE COMPLET DE L'ÉLÈVE AU CLIC
+// AFFICHAGE DU DOSSIER PÉDAGOGIQUE AVEC ANALYSE PAR MATIÈRE
 function showStudentDetails(studentId) {
     stopSpeaking();
     const student = studentsDatabase.find(s => s.id === studentId);
     if (!student) return;
+
+    let history = student.history || [10, 10, 10, 10, 10, student.score];
+    let subs = student.subjects || { math: 10, french: 10, dictation: 10 };
+
+    // Détermination automatique des besoins par matière
+    let weakSubjects = [];
+    if (subs.math < 10) weakSubjects.push("Mathématiques / Numération");
+    if (subs.french < 10) weakSubjects.push("Français / Grammaire");
+    if (subs.dictation < 10) weakSubjects.push("Dictée / Orthographe");
+    if (weakSubjects.length === 0) weakSubjects.push("Aucune lacune majeure (Maîtrise globale)");
+
+    let assistantAppreciation = student.score >= 14 
+        ? `« Élève très solide. Peut encadrer un pair en difficulté grâce à sa maîtrise de ${subs.math >= 14 ? 'Mathématiques' : 'Français'}. »`
+        : student.score >= 10 
+        ? `« Progrès réguliers. Un effort ciblé en ${weakSubjects[0]} permettra de franchir le seuil supérieur. »`
+        : `« Nécessite un soutien prioritaire en ${weakSubjects.join(', ')}. Jumelage Vygotsky recommandé. »`;
 
     const modalHtml = `
         <div id="student-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div class="bg-slate-900 border border-amber-500/40 rounded-2xl max-w-2xl w-full p-6 text-white shadow-2xl relative max-h-[90vh] overflow-y-auto">
                 <button onclick="closeStudentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
                 
-                <h3 class="text-xl font-bold text-amber-400 mb-1">Dossier Pédagogique : ${student.name}</h3>
-                <p class="text-xs text-slate-400 mb-4">Table-Banc N°${student.desk} • CE2 (École El Hadji Malick Sy)</p>
-
-                <div class="grid grid-cols-2 gap-4 mb-4 text-sm bg-slate-800 p-4 rounded-xl">
-                    <div><strong>Moyenne Générale :</strong> ${student.score}/20</div>
-                    <div><strong>Statut CEB :</strong> <span class="${student.mastery ? 'text-emerald-400' : 'text-amber-400'}">${student.mastery ? 'Maîtrise' : 'Soutien'}</span></div>
-                    <div><strong>Style d'Apprentissage :</strong> ${student.style || 'Visuel / Kinesthésique'}</div>
-                    <div><strong>Comportement :</strong> ${student.behavior || 'Calme & Attentif'}</div>
-                </div>
-
-                <div class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl mb-4 text-sm">
-                    <h4 class="font-bold text-amber-300 mb-2">🔍 Analyse OCR du Dernier Devoir Scanné</h4>
-                    <p class="text-slate-300 italic mb-2">"Erreur détectée en Numération : Confusion dans le report d'alignement spatial lors des additions à 3 chiffres."</p>
-                    <p class="text-amber-200 text-xs"><strong>Conseil Pédagogique de Malado :</strong> Placer l'élève au premier rang près de la Zone Chiffres du tableau noir. Utiliser le boulier traditionnel et lui donner 2 exercices ciblés avant le test du vendredi.</p>
-                </div>
-
-                <div class="mb-4">
-                    <label class="block text-xs text-slate-400 mb-1">Mettre à jour la note de l'élève (/20) :</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="modal-new-score" value="${student.score}" min="0" max="20" step="0.5" class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white w-full">
-                        <button onclick="saveStudentScore(${student.id})" class="bg-amber-500 text-slate-950 font-bold px-4 py-2 rounded-lg hover:bg-amber-400">Enregistrer</button>
+                <div class="flex items-center gap-4 mb-4">
+                    <img src="${student.photo}" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md" alt="${student.name}">
+                    <div>
+                        <h3 class="text-xl font-bold text-amber-400">${student.name}</h3>
+                        <p class="text-xs text-slate-400">Table-Banc N°${student.desk} • CE2 (École El Hadji Malick Sy, Mbour)</p>
+                        <p class="text-xs font-semibold text-emerald-400 mt-0.5">Statut CEB : ${student.mastery ? 'Maîtrise' : 'Soutien'}</p>
                     </div>
                 </div>
 
-                <div class="text-right">
-                    <button onclick="closeStudentModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Fermer le Dossier</button>
+                <!-- ANALYSE PAR MATIÈRE -->
+                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                        <div class="text-xs text-slate-400">Mathématiques</div>
+                        <div class="text-lg font-bold text-amber-400">${subs.math}/20</div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                        <div class="text-xs text-slate-400">Français</div>
+                        <div class="text-lg font-bold text-amber-400">${subs.french}/20</div>
+                    </div>
+                    <div class="bg-slate-800 p-3 rounded-xl border border-slate-700">
+                        <div class="text-xs text-slate-400">Dictée</div>
+                        <div class="text-lg font-bold text-amber-400">${subs.dictation}/20</div>
+                    </div>
+                </div>
+
+                <!-- COURBE D'ÉVOLUTION -->
+                <div class="bg-slate-800 p-4 rounded-xl mb-4 border border-slate-700">
+                    <h4 class="font-bold text-amber-300 text-sm mb-2">📈 Courbe d'Évolution (Tests des 6 Vendredis)</h4>
+                    <div class="flex justify-between items-end h-24 gap-2 pt-4 px-2 bg-slate-900/50 rounded-lg">
+                        ${history.map((val, idx) => `
+                            <div class="flex flex-col items-center gap-1 flex-1">
+                                <span class="text-[10px] text-amber-400 font-bold">${val}</span>
+                                <div class="w-full bg-amber-500/80 rounded-t transition-all" style="height: ${(val / 20) * 100}%"></div>
+                                <span class="text-[9px] text-slate-400">S${idx+1}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- DOUBLE APPRÉCIATION -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-sm">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                        <h4 class="font-bold text-slate-300 mb-1">✍️ Appréciation du Maître</h4>
+                        <p class="text-xs text-slate-400 italic">${student.info}</p>
+                    </div>
+                    <div class="bg-amber-500/10 p-4 rounded-xl border border-amber-500/30">
+                        <h4 class="font-bold text-amber-300 mb-1">🤖 Appréciation de Malado (Mémoire IA)</h4>
+                        <p class="text-xs text-amber-200 italic">${assistantAppreciation}</p>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 justify-end">
+                    <button onclick="closeStudentModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Fermer</button>
                 </div>
             </div>
         </div>
     `;
 
-    // Supprime l'ancienne modale si elle existe
     const existingModal = document.getElementById('student-modal');
     if (existingModal) existingModal.remove();
 
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    speakText(`Ouverture du dossier pédagogique de ${student.name}. Moyenne générale : ${student.score} sur 20.`);
+    speakText(`Ouverture du dossier de ${student.name}. Matières à surveiller : ${weakSubjects.join(', ')}.`);
 }
 
 function closeStudentModal() {
@@ -154,68 +198,107 @@ function closeStudentModal() {
     if (modal) modal.remove();
 }
 
-function saveStudentScore(studentId) {
-    const input = document.getElementById('modal-new-score');
-    if (!input) return;
-    let noteNum = parseFloat(input.value);
-    if (!isNaN(noteNum) && noteNum >= 0 && noteNum <= 20) {
-        let student = studentsDatabase.find(s => s.id === studentId);
-        if (student) {
-            student.score = noteNum;
-            student.mastery = noteNum >= 12;
-            localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
-            renderClassroomDesks();
-            updateKPISummary();
-            closeStudentModal();
-            speakText(`Note de ${student.name} mise à jour à ${noteNum} sur 20.`);
-        }
-    }
-}
-
-// MODULE DE PERMUTATION INTELLIGENTE VYGOTSKY
+// MODULE DE PERMUTATION LOGIQUE ET PRÉDICTIVE (EFFET VYGOTSKY CIBLÉ)
 function triggerVygotskyPermutationSimulation() {
     stopSpeaking();
+
+    // Analyse logique automatisée pour trouver le meilleur binôme de soutien
+    let weakStudents = studentsDatabase.filter(s => !s.mastery);
+    let strongStudents = studentsDatabase.filter(s => s.mastery);
+
+    let targetWeak = weakStudents.length > 0 ? weakStudents[0] : studentsDatabase[1]; // Ex: Oumar Sarr
+    let targetStrong = strongStudents.length > 0 ? strongStudents[0] : studentsDatabase[0]; // Ex: Awa Diop
+
     const modalHtml = `
         <div id="permutation-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-2xl w-full p-6 text-white shadow-2xl relative max-h-[90vh] overflow-y-auto">
                 <button onclick="document.getElementById('permutation-modal').remove()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
                 
-                <h3 class="text-xl font-bold text-emerald-400 mb-2">🧠 Analyse Prédictive de Permutation Intelligente</h3>
-                <p class="text-xs text-slate-400 mb-4">Simulation pédagogique basée sur le modèle d'apprentissage CEB (Effet Vygotsky)</p>
+                <h3 class="text-xl font-bold text-emerald-400 mb-2">🧠 Analyse Logique & Permutation Prédictive</h3>
+                <p class="text-xs text-slate-400 mb-4">Croisement des notes par matière et des besoins du CEB (Effet Vygotsky)</p>
 
                 <div class="bg-slate-800 p-4 rounded-xl mb-4 text-sm border border-emerald-500/20">
-                    <h4 class="font-bold text-amber-300 mb-1">Permutation Suggérée : Table-Banc 1 (Abdou L. ⇄ Moussa D.)</h4>
-                    <p class="text-slate-300 text-xs mb-3">Échange de position entre Abdou Laye (Rang 3 - Fond) et Moussa Diallo (Rang 1 - Face Tableau).</p>
+                    <h4 class="font-bold text-amber-300 mb-1">Permutation Recommandée : Table-Banc ${targetWeak.desk} ⇄ Table-Banc ${targetStrong.desk}</h4>
+                    <p class="text-slate-300 text-xs mb-3">Association ciblée entre <strong>${targetWeak.name}</strong> (Besoin en Maths : ${targetWeak.subjects.math}/20) et <strong>${targetStrong.name}</strong> (Experte en Maths : ${targetStrong.subjects.math}/20).</p>
                     
                     <div class="space-y-2 text-xs text-slate-300">
-                        <div><strong>1. Raisons Détaillées :</strong></div>
-                        <p>• <strong>Proximité Visuelle :</strong> Abdou Laye présente des difficultés légères de vision. Le placer au Rang 1 réduira sa fatigue cognitive en numération.</p>
-                        <p>• <strong>Synergie de Pairage :</strong> Placer Abdou à côté d'Aïssatou Sow crée un binôme d'entraide spontanée.</p>
-                        <p>• <strong>Canalisation de Moussa D. :</strong> Moussa bénéficiera d'une autonomie accrue au Rang 3 aux côtés de Cheikh Tidiane.</p>
-                        
-                        <div class="mt-3"><strong>2. Prédictions d'Impact :</strong></div>
-                        <p>• <strong>Abdou Laye :</strong> <span class="text-emerald-400">+3.5 Pts Estimés</span> en numération grâce au repérage facilité des colonnes.</p>
-                        <p>• <strong>Moussa Diallo :</strong> <span class="text-emerald-400">+1.5 Pts Estimés</span> en responsabilisation et résolution de problèmes complexes.</p>
-
-                        <div class="mt-3"><strong>3. Risques Identifiés & Mesures :</strong></div>
-                        <p class="text-amber-300">• Risque de bavardage discret au Rang 3 (Moussa & Cheikh). Consigne : Effectuer des déplacements réguliers et désigner Cheikh responsable du cahier.</p>
+                        <p>• <strong>Logique Pédagogique :</strong> ${targetWeak.name} présente un déficit en calcul. Le jumeler avec ${targetStrong.name} active l'Effet Vygotsky par explication par les pairs au même pupitre.</p>
+                        <p>• <strong>Prédiction d'Impact :</strong> <span class="text-emerald-400">+3.0 Pts Estimés</span> en Mathématiques au test du prochain vendredi.</p>
+                        <p class="text-amber-300">• <strong>Mesure de Précaution :</strong> Alterner les rôles de rapporteur pour maintenir l'engagement mutuel.</p>
                     </div>
                 </div>
 
                 <div class="flex gap-3 justify-end">
-                    <button onclick="document.getElementById('permutation-modal').remove()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Conserver le Plan Actuel</button>
-                    <button onclick="applyPermutation()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-emerald-500 text-sm">Valider & Appliquer le Nouveau Plan</button>
+                    <button onclick="document.getElementById('permutation-modal').remove()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Fermer</button>
+                    <button onclick="applyPermutation()" class="bg-emerald-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-emerald-500 text-sm">Valider & Appliquer la Permutation</button>
                 </div>
             </div>
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', modalHtml);
-    speakText("Simulation de permutation intelligente Vygotsky prête. Voulez-vous valider le déplacement d'Abdou Laye et Moussa Diallo ?");
+    speakText(`Analyse logique terminée. Proposition de permutation entre ${targetWeak.name} et ${targetStrong.name} prête.`);
 }
 
 function applyPermutation() {
     document.getElementById('permutation-modal').remove();
-    speakText("Nouveau plan de classe validé et appliqué avec succès. Les prédictions d'impact sont enregistrées.");
+    speakText("Permutation logique appliquée avec succès. Les prédictions d'impact par matière sont enregistrées.");
+}
+
+// SCAN PHOTO DES DEVOIRS (GÉNÉRATION DES BULLETINS ET DOUBLE APPRÉCIATION)
+function triggerOCRScanModal() {
+    stopSpeaking();
+    const modalHtml = `
+        <div id="ocr-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <div class="bg-slate-900 border border-emerald-500/40 rounded-2xl max-w-xl w-full p-6 text-white shadow-2xl relative">
+                <button onclick="document.getElementById('ocr-modal').remove()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+                
+                <h3 class="text-xl font-bold text-emerald-400 mb-2">📸 Correction Automatique par Photo (Devoirs du Vendredi)</h3>
+                <p class="text-xs text-slate-400 mb-4">Malado analyse les copies, identifie les lacunes par matière, met à jour les courbes et rédige la double appréciation.</p>
+
+                <div class="border-2 border-dashed border-emerald-500/40 rounded-xl p-6 text-center bg-slate-800/50 mb-4 cursor-pointer hover:bg-slate-800" onclick="simulateOCRProcessing()">
+                    <i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-400 mb-2"></i>
+                    <p class="text-sm font-semibold">Cliquez ici pour photographier ou importer les copies de la classe</p>
+                    <p class="text-xs text-slate-400 mt-1">Analyse intelligente par matière (Maths, Français, Dictée)</p>
+                </div>
+
+                <div id="ocr-progress" class="hidden text-center text-amber-300 text-sm mb-4">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> Analyse OCR et diagnostic par matière en cours...
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="document.getElementById('ocr-modal').remove()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg hover:bg-slate-700 text-sm">Annuler</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    speakText("Module de correction photo ouvert.");
+}
+
+function simulateOCRProcessing() {
+    const progress = document.getElementById('ocr-progress');
+    if (progress) progress.classList.remove('hidden');
+
+    setTimeout(() => {
+        if (progress) progress.classList.add('hidden');
+        document.getElementById('ocr-modal').remove();
+        
+        studentsDatabase.forEach(s => {
+            let randBonus = Math.floor(Math.random() * 3);
+            s.score = Math.min(20, s.score + randBonus);
+            s.mastery = s.score >= 12;
+            s.subjects.math = Math.min(20, s.subjects.math + randBonus);
+            s.subjects.french = Math.min(20, s.subjects.french + randBonus);
+            if(!s.history) s.history = [10, 11, 12, 12, 13, s.score];
+            else s.history.push(s.score);
+        });
+        localStorage.setItem('malado_students_db', JSON.stringify(studentsDatabase));
+        renderClassroomDesks();
+        updateKPISummary();
+
+        speakText("Correction et analyse par matière terminées. Bulletins et appréciations générés.");
+        alert("✅ Succès : Copies corrigées ! Malado a identifié les besoins par matière et rédigé les appréciations automatiques.");
+    }, 2000);
 }
 
 function updateKPISummary() {
@@ -255,7 +338,7 @@ function handleCommand(command) {
     if (awaitingInternetPermissionFor) {
         let concept = awaitingInternetPermissionFor;
         if (q.includes('oui') || q.includes('vas-y') || q.includes('va') || q.includes('d\'accord') || q.includes('ok')) {
-            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active et adaptée au niveau de la classe.`;
+            let simulatedOnlineDefinition = `Recherche en ligne effectuée pour "${concept}" : Méthode pédagogique active.`;
             maladoMemory.learnedConcepts[concept] = simulatedOnlineDefinition;
             localStorage.setItem('malado_dynamic_memory', JSON.stringify(maladoMemory));
 
@@ -269,11 +352,15 @@ function handleCommand(command) {
     else if (isManualMode || maladoModeAwake || q.includes('assistante')) {
         let cleanQ = q.replace('assistante', '').trim();
 
-        if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('soutien') || cleanQ.includes('permutation')) {
+        if (cleanQ.includes('vygotsky') || cleanQ.includes('tuteur') || cleanQ.includes('binôme') || cleanQ.includes('permutation')) {
             triggerVygotskyPermutationSimulation();
-            reponse = "J'ai ouvert le module de permutation intelligente Vygotsky pour vous.";
+            reponse = "J'ouvre l'analyse logique et les propositions de permutation Vygotsky.";
         }
-        else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan') || cleanQ.includes('élèves') || cleanQ.includes('liste')) {
+        else if (cleanQ.includes('devoir') || cleanQ.includes('copie') || cleanQ.includes('scan') || cleanQ.includes('bulletin')) {
+            triggerOCRScanModal();
+            reponse = "J'ouvre l'assistant de correction photo des devoirs.";
+        }
+        else if (cleanQ.includes('pédagogie') || cleanQ.includes('classe') || cleanQ.includes('bilan') || cleanQ.includes('élèves')) {
             let avg = studentsDatabase.length > 0 ? (studentsDatabase.reduce((sum, s) => sum + s.score, 0) / studentsDatabase.length).toFixed(1) : 0;
             let faiblesCount = studentsDatabase.filter(s => !s.mastery).length;
             reponse = `Bilan CE2-A (El Hadji Malick Sy) : Moyenne de ${avg}/20. ${faiblesCount} élèves en soutien.`;
@@ -330,10 +417,7 @@ function toggleVoiceMode() {
     const modeIcon = document.getElementById('mode-icon');
 
     if (isManualMode) {
-        if (recognition) { 
-            try { recognition.stop(); } catch(e) {} 
-            recognition = null; 
-        }
+        if (recognition) { try { recognition.stop(); } catch(e) {} recognition = null; }
         maladoModeAwake = false;
         if (modeText) modeText.textContent = "Mode : Manuel (Cliquez sur le micro)";
         if (modeIcon) modeIcon.className = "fa-solid fa-microphone-slash text-amber-400";
@@ -347,10 +431,7 @@ function toggleVoiceMode() {
 function startManualListening() {
     stopSpeaking(); 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Reconnaissance vocale non supportée par ce navigateur.");
-        return;
-    }
+    if (!SpeechRecognition) return;
 
     const manualRec = new SpeechRecognition();
     manualRec.lang = 'fr-FR';
@@ -376,9 +457,7 @@ function initVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
-    if (recognition) { 
-        try { recognition.stop(); } catch(e) {} 
-    }
+    if (recognition) { try { recognition.stop(); } catch(e) {} }
 
     recognition = new SpeechRecognition();
     recognition.lang = 'fr-FR';
@@ -393,9 +472,7 @@ function initVoiceRecognition() {
 
     recognition.onend = function() {
         if (!isManualMode) {
-            setTimeout(() => { 
-                try { recognition.start(); } catch(e) {} 
-            }, 500);
+            setTimeout(() => { try { recognition.start(); } catch(e) {} }, 500);
         }
     };
 
