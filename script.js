@@ -445,7 +445,6 @@ function updateKPISummary() {
 function triggerBehavioralAnalysis() {
     stopSpeaking();
     
-    // Synthèse des observations de tous les élèves
     let totalLogEntries = 0;
     let attentionAlerts = 0;
     let leadershipCount = 0;
@@ -474,12 +473,14 @@ function triggerBehavioralAnalysis() {
         `2. **Étayage par les pairs** : Capitalisez sur les ${peerSupportCount} situations d'entraide pour formaliser des binômes de tutorat en numération.\n` +
         `3. **Climat de classe** : Les observations montrent un bon équilibre relationnel. Maintenez les renforcements positifs pour encourager les élèves les plus réservés.`;
 
-    // Affichage dans le chat de Malado AI
     const chatBox = document.getElementById('chat-box');
     if (chatBox) {
         chatBox.innerHTML += `<div class="bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 p-4 rounded-2xl max-w-2xl my-3 whitespace-pre-line text-xs shadow-xl"><strong>🤖 Analyse Malado :</strong>\n\n${analysisReport}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }
+
+    speakText("L'analyse comportementale globale de la classe est prête.");
+}
 
     // Lecture vocale de synthèse
     speakText("L'analyse comportementale globale de la classe est prête. J'ai examiné l'ensemble de vos observations pour évaluer l'attention et les dynamiques de groupe.");
